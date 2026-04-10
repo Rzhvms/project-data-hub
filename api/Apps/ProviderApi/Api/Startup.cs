@@ -1,4 +1,5 @@
 using Application;
+using CoreLib.Api.Controllers;
 using Infrastructure;
 using Microsoft.OpenApi;
 
@@ -19,6 +20,8 @@ public sealed class Startup(IWebHostEnvironment env)
         services.AddControllers();
         services.AddApplication();
         services.AddInfrastructure();
+        
+        services.AddCoreControllers();
         
         services.AddCors(options =>
         {
