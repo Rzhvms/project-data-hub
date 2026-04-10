@@ -1,3 +1,5 @@
+using Application;
+using Infrastructure;
 using Microsoft.OpenApi;
 
 namespace Api;
@@ -15,8 +17,8 @@ public sealed class Startup(IWebHostEnvironment env)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        //services.AddApplication();
-        //services.AddInfrastructure();
+        services.AddApplication();
+        services.AddInfrastructure();
         
         services.AddCors(options =>
         {
@@ -36,7 +38,7 @@ public sealed class Startup(IWebHostEnvironment env)
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "SynchronizationApi",
+                Title = "IdentityApi",
                 Version = "v1"
             });
         });
@@ -53,7 +55,7 @@ public sealed class Startup(IWebHostEnvironment env)
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "SynchronizationApi v1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityApi v1");
             });
         }
 
