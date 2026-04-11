@@ -78,7 +78,7 @@ public sealed class AccessTokenSettings
 {
     public required string Issuer { get; init; }
     public required string Audience { get; init; }
-    public long LifeTimeInSeconds { get; init; }
+    public required int LifeTimeInSeconds { get; init; }
 }
 ```
 

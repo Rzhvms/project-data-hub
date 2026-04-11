@@ -65,7 +65,7 @@ public sealed class JwtGenerationService : IJwtGenerationService
     public string GenerateIdToken(JwtUserData user)
     {
         ArgumentNullException.ThrowIfNull(user);
-
+   
         var now = _timeProvider.GetUtcNow();
         var expires = now.AddSeconds(_settings.AccessTokenSettings.LifeTimeInSeconds);
 
