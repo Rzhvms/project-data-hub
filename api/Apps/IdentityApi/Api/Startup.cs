@@ -1,11 +1,17 @@
 using Application;
+using IdentityLib;
 using Infrastructure;
 using Microsoft.OpenApi;
 
 namespace Api;
 
-public sealed class Startup(IWebHostEnvironment env)
+public sealed class Startup(IWebHostEnvironment env, IConfiguration configuration)
 {
+    /// <summary>
+    /// Конфигурация приложения
+    /// </summary>
+    private IConfiguration Configuration { get; } = configuration;
+    
     /// <summary>
     /// Окружение приложения
     /// </summary>
@@ -19,6 +25,8 @@ public sealed class Startup(IWebHostEnvironment env)
         services.AddControllers();
         services.AddApplication();
         services.AddInfrastructure();
+        
+        services.AddIdentityLib(Configuration);
         
         services.AddCors(options =>
         {
