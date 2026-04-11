@@ -22,6 +22,7 @@ public sealed class AccessTokenSettings
     /// <summary>
     /// Время жизни токена в секундах.
     /// </summary>
-    [Range(1, long.MaxValue)]
-    public long LifeTimeInSeconds { get; init; }
+    [Required]
+    [Range(1, int.MaxValue)]
+    public required int LifeTimeInSeconds { get; init; }
 }
