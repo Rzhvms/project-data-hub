@@ -9,7 +9,7 @@ namespace IdentityLib.Tests.Encryption.PasswordEncryption;
 /// </summary>
 public class PasswordEncryptionTests
 {
-    private readonly PasswordEncryptionService _service = new();
+    private readonly IPasswordEncryptionService _service = new();
 
     /// <summary>
     /// Проверяет, что <see cref="PasswordEncryptionService.HashPassword"/> возвращает хеш

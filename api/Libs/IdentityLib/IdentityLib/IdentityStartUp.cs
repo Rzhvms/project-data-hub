@@ -1,3 +1,4 @@
+using IdentityLib.Encryption;
 using IdentityLib.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,5 +13,6 @@ public static class IdentityStartUp
     public static void AddIdentityLib(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddIdentityJwt(configuration);
+        services.AddIdentityEncryption();
     }
 }

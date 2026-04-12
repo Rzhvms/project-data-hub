@@ -1,5 +1,5 @@
 using CoreLib.Api.Controllers.ControllerTypes;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Auth;
 
@@ -9,5 +9,9 @@ namespace Api.Controllers.Auth;
 [Route("auth")]
 public class AuthClientController : ClientControllerBase
 {
-    
+    [HttpGet]
+    public ActionResult GetSmth()
+    {
+        return Ok();
+    }
 }

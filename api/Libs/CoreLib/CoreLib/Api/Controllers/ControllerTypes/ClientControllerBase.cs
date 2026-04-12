@@ -8,7 +8,7 @@ namespace CoreLib.Api.Controllers.ControllerTypes;
 /// Базовый контроллер для пользовательских запросов.
 /// </summary>
 [ClientController]
-[Authorize(Policy = Policies.ControllerPolicies.Internal)]
+[Authorize]
 public abstract class ClientControllerBase : ApiControllerBase
 {
 }

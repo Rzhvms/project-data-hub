@@ -1,12 +1,20 @@
 using Application;
 using CoreLib.Api.Controllers;
+using CoreLib.Api.Handlers;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
 namespace Api;
 
-public sealed class Startup(IWebHostEnvironment env)
+public sealed class Startup(IWebHostEnvironment env, IConfiguration configuration)
 {
+    /// <summary>
+    /// Конфигурация приложения
+    /// </summary>
+    private IConfiguration Configuration { get; } = configuration;
+    
     /// <summary>
     /// Окружение приложения
     /// </summary>
@@ -22,6 +30,34 @@ public sealed class Startup(IWebHostEnvironment env)
         services.AddInfrastructure();
         
         services.AddCoreControllers();
+        
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.Authority = Configuration["Jwt:Authority"];
+        
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+            
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+            
+                    ClockSkew = TimeSpan.Zero
+                };
+        
+                options.RefreshOnIssuerKeyNotFound = true;
+                options.SaveToken = true;
+        
+                options.BackchannelHttpHandler = new SystemRequestHttpHandler();
+            });
+    
+        services.AddAuthorization();
         
         services.AddCors(options =>
         {
@@ -44,6 +80,23 @@ public sealed class Startup(IWebHostEnvironment env)
                 Title = "SynchronizationApi",
                 Version = "v1"
             });
+            options.AddServer(new OpenApiServer
+            {
+                Url = "/sync"
+            });
+            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Type = SecuritySchemeType.Http,
+                In = ParameterLocation.Header,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                BearerFormat = "JWT",
+                Description = "Введите JWT токен в формате: {token}"
+            });
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
+            });
         });
     }
 
@@ -52,6 +105,8 @@ public sealed class Startup(IWebHostEnvironment env)
     /// </summary>
     public void Configure(IApplicationBuilder app)
     {
+        app.UsePathBase("/sync");
+
         if (Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -63,6 +118,9 @@ public sealed class Startup(IWebHostEnvironment env)
         }
 
         app.UseRouting();
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

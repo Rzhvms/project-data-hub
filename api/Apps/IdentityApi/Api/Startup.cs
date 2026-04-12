@@ -1,6 +1,10 @@
 using Application;
+using CoreLib.Api.Controllers;
+using CoreLib.Api.Handlers;
 using IdentityLib;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
 namespace Api;
@@ -26,7 +30,37 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         services.AddApplication();
         services.AddInfrastructure();
         
+        services.AddCoreControllers();
+        
         services.AddIdentityLib(Configuration);
+        
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.Authority = Configuration["Jwt:Authority"];
+        
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+            
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+            
+                    ClockSkew = TimeSpan.Zero
+                };
+        
+                options.RefreshOnIssuerKeyNotFound = true;
+                options.SaveToken = true;
+        
+                options.BackchannelHttpHandler = new SystemRequestHttpHandler();
+            });
+    
+        services.AddAuthorization();
         
         services.AddCors(options =>
         {
@@ -49,6 +83,23 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
                 Title = "IdentityApi",
                 Version = "v1"
             });
+            options.AddServer(new OpenApiServer
+            {
+                Url = "/identity"
+            });
+            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Type = SecuritySchemeType.Http,
+                In = ParameterLocation.Header,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                BearerFormat = "JWT",
+                Description = "Введите JWT токен в формате: {token}"
+            });
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
+            });
         });
     }
 
@@ -57,6 +108,8 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
     /// </summary>
     public void Configure(IApplicationBuilder app)
     {
+        app.UsePathBase("/identity");
+        
         if (Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -68,6 +121,9 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         }
 
         app.UseRouting();
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
