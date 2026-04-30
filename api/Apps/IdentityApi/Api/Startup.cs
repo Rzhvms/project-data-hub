@@ -1,6 +1,7 @@
 using Application;
 using CoreLib.Api.Controllers;
 using CoreLib.Api.Handlers;
+using CoreLib.Database.Migrations;
 using IdentityLib;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,9 +27,11 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
     /// </summary>
     public void ConfigureServices(IServiceCollection services)
     {
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
+        
         services.AddControllers();
         services.AddApplication();
-        services.AddInfrastructure();
+        services.AddInfrastructure(connectionString!);
         
         services.AddCoreControllers();
         
@@ -119,6 +122,8 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityApi v1");
             });
         }
+        
+        app.MigrateDatabase();
 
         app.UseRouting();
         

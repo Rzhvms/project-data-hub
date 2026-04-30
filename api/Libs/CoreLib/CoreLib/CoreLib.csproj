@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="FluentMigrator.Runner.Core" Version="8.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.9" />
       <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
