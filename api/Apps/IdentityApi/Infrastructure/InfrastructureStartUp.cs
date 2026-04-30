@@ -1,6 +1,9 @@
 using System.Data;
+using Application.Ports.Repositories;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
+using Infrastructure.Repositories.Auth;
+using Infrastructure.Repositories.RoleSystem;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -17,7 +20,7 @@ public static class InfrastructureStartUp
     public static void AddInfrastructure(this IServiceCollection services, string connectionString)
     {
         // Postgres
-        services.AddScoped<IDbConnection>(sp =>
+        services.AddScoped<IDbConnection>(_ =>
         {
             var conn = new NpgsqlConnection(connectionString);
             conn.Open();
@@ -31,5 +34,8 @@ public static class InfrastructureStartUp
                 .WithGlobalConnectionString(connectionString)
                 .ScanIn(typeof(Date_202604290210_AddIdentityTables).Assembly).For.Migrations())
             .AddLogging(lb => lb.AddFluentMigratorConsole());
+
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
     }
 }

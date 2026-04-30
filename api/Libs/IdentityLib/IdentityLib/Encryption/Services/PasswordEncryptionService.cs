@@ -14,7 +14,7 @@ public class PasswordEncryptionService : IPasswordEncryptionService
     private const int Iterations = 2;
     private const int MemorySize = 19456;
     private const int Parallelism = 1;
-
+    
     /// <inheritdoc />
     public string HashPassword(string password)
     {

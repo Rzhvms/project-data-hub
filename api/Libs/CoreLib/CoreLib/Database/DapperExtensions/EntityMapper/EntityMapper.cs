@@ -10,8 +10,10 @@ namespace CoreLib.Database.DapperExtensions.EntityMapper;
 /// </summary>
 /// <example>
 /// <code>
-/// var table = EntityMapper.TbName&lt;User&gt;(); - "User"
-/// var column = EntityMapper.ColName&lt;User&gt;(x => x.Id); - "Id"
+/// var table = EntityMapper.TbName&lt;User&gt;();                  // "User"
+/// var quotedTable = EntityMapper.TbName&lt;User&gt;(withQuotes: false);        // User
+/// var column = EntityMapper.ColName&lt;User&gt;(x => x.Id);       // "Id"
+/// var quotedColumn = EntityMapper.ColName&lt;User&gt;(x => x.Id, withQuotes: false); // "Id"
 /// </code>
 /// </example>
 public static class EntityMapper
@@ -22,26 +24,35 @@ public static class EntityMapper
     /// <summary>
     /// Возвращает имя таблицы для сущности типа <typeparamref name="TEntity"/>.
     /// </summary>
-    public static string TbName<TEntity>() => TbName(typeof(TEntity));
+    /// <param name="withQuotes">Нужно ли оборачивать имя в двойные кавычки.</param>
+    public static string TbName<TEntity>(bool withQuotes = true) => TbName(typeof(TEntity), withQuotes);
 
     /// <summary>
     /// Возвращает имя таблицы для указанного CLR-типа.
     /// </summary>
-    private static string TbName(Type entityType)
+    /// <param name="entityType">Тип сущности.</param>
+    /// <param name="withQuotes">Нужно ли оборачивать имя в двойные кавычки.</param>
+    private static string TbName(Type entityType, bool withQuotes = true)
     {
         ArgumentNullException.ThrowIfNull(entityType);
-        return TableNameCache.GetOrAdd(entityType, static t => t.Name);
+
+        var name = TableNameCache.GetOrAdd(entityType, static t => t.Name);
+        return withQuotes ? Quote(name) : name;
     }
 
     /// <summary>
     /// Возвращает имя колонки, соответствующей свойству или полю сущности.
     /// </summary>
-    public static string ColName<TEntity>(Expression<Func<TEntity, object?>> expression)
+    /// <param name="expression">Выражение, указывающее на свойство или поле.</param>
+    /// <param name="withQuotes">Нужно ли оборачивать имя в двойные кавычки.</param>
+    public static string ColName<TEntity>(Expression<Func<TEntity, object?>> expression, bool withQuotes = true)
     {
         ArgumentNullException.ThrowIfNull(expression);
 
         var member = ExtractMember(expression);
-        return ColumnNameCache.GetOrAdd(member, static m => m.Name);
+        var name = ColumnNameCache.GetOrAdd(member, static m => m.Name);
+
+        return withQuotes ? Quote(name) : name;
     }
 
     /// <summary>
@@ -59,7 +70,6 @@ public static class EntityMapper
         }
 
         var memberExpression = ExtractDeepestMemberExpression(body);
-
         return memberExpression.Member;
     }
 
@@ -84,5 +94,13 @@ public static class EntityMapper
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Оборачивает параметр в двойные кавычки.
+    /// </summary>
+    private static string Quote(string parameter)
+    {
+        return $"\"{parameter}\"";
     }
 }

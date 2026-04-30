@@ -34,13 +34,12 @@ public class Date_202604290210_AddIdentityTables : Migration
             .WithColumn(EntityMapper.ColName<User>(x => x.Email)).AsString(50).NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.Phone)).AsString(50).Nullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.Password)).AsString().NotNullable()
-            .WithColumn(EntityMapper.ColName<User>(x => x.SaltHash)).AsString().NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.IsEmailConfirmed)).AsBoolean().NotNullable().WithDefaultValue(false)
             .WithColumn(EntityMapper.ColName<User>(x => x.FirstName)).AsString(50).Nullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.LastName)).AsString(50).Nullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.RoleId)).AsGuid().NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.CreatedAt)).AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
-            .WithColumn(EntityMapper.ColName<User>(x => x.UpdateAt)).AsDateTime().Nullable();
+            .WithColumn(EntityMapper.ColName<User>(x => x.UpdatedAt)).AsDateTime().Nullable();
             
         Create.UniqueConstraint("uq_users_username")
             .OnTable(_userTableName)
@@ -57,7 +56,7 @@ public class Date_202604290210_AddIdentityTables : Migration
         Create.Table(_refreshTokenTableName)
             .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.Id)).AsGuid().PrimaryKey().NotNullable()
             .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.UserId)).AsGuid().NotNullable()
-            .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.Value)).AsString(512).NotNullable()
+            .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.Value)).AsString(512).Nullable()
             .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.Active)).AsBoolean().NotNullable().WithDefaultValue(true)
             .WithColumn(EntityMapper.ColName<RefreshToken>(x => x.ExpirationDate)).AsDateTime().NotNullable();
         
