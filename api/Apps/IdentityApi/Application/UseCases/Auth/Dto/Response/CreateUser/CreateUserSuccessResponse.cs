@@ -1,4 +1,4 @@
-namespace Application.UseCases.Auth.Dto.Response;
+namespace Application.UseCases.Auth.Dto.Response.CreateUser;
 
 /// <summary>
 /// Выходная модель с успешным созданием пользователя

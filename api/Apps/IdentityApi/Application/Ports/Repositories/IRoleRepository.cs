@@ -11,4 +11,9 @@ public interface IRoleRepository
     /// Получение роли по <see cref="Role.RoleCode"/>
     /// </summary>
     Task<Role> GetRoleByRoleCode(string roleCode);
+    
+    /// <summary>
+    /// Получение роли по идентификатору.
+    /// </summary>
+    Task<Role> GetRoleByIdAsync(Guid id);
 }

@@ -54,7 +54,7 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
 
         app.UseRouting();
         app.UseCors();
-        app.UseRateLimiter();
+        //app.UseRateLimiter();
         
         app.UseEndpoints(endpoints =>
         {

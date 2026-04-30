@@ -35,6 +35,11 @@ public record User
     /// Хэш пароля пользователя.
     /// </summary>
     public string Password { get; init; } = null!;
+    
+    /// <summary>
+    /// Дополнительная hash-строка, используемая при генерации пароля.
+    /// </summary>
+    public string HashSalt { get; init; } = null!;
 
     /// <summary>
     /// Подтверждена ли почта.

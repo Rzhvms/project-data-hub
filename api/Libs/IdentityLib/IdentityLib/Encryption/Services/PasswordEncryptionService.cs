@@ -14,17 +14,21 @@ public class PasswordEncryptionService : IPasswordEncryptionService
     private const int Iterations = 2;
     private const int MemorySize = 19456;
     private const int Parallelism = 1;
+
+    /// <inheritdoc />
+    public byte[] GenerateSalt()
+    {
+        return RandomNumberGenerator.GetBytes(SaltSize);
+    }
     
     /// <inheritdoc />
-    public string HashPassword(string password)
+    public string HashPassword(string password, byte[] hashSalt)
     {
         ArgumentNullException.ThrowIfNull(password);
 
-        var salt = RandomNumberGenerator.GetBytes(SaltSize);
-
         using var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
         {
-            Salt = salt,
+            Salt = hashSalt,
             Iterations = Iterations,
             MemorySize = MemorySize,
             DegreeOfParallelism = Parallelism
@@ -38,7 +42,7 @@ public class PasswordEncryptionService : IPasswordEncryptionService
             Iterations,
             MemorySize,
             Parallelism,
-            Convert.ToBase64String(salt),
+            Convert.ToBase64String(hashSalt),
             Convert.ToBase64String(hash));
     }
 

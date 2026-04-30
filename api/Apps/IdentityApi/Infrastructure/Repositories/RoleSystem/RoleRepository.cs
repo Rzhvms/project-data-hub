@@ -17,4 +17,13 @@ public class RoleRepository(IDbConnection dbConnection) : IRoleRepository
         
         return await dbConnection.QuerySingleAsync<Role>(sql, new { RoleCode = roleCode });
     }
+
+    /// <inheritdoc/>
+    public async Task<Role> GetRoleByIdAsync(Guid id)
+    {
+        var sql = $@"SELECT * FROM {EntityMapper.TbName<Role>()} 
+                     WHERE {EntityMapper.ColName<Role>(x => x.Id)} = @Id";
+        
+        return await dbConnection.QuerySingleAsync<Role>(sql, new { Id = id });
+    }
 }

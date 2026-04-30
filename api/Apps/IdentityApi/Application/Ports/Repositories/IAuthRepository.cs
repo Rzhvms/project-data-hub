@@ -8,9 +8,15 @@ namespace Application.Ports.Repositories;
 public interface IAuthRepository
 {
     /// <summary>
-    /// Получает пользователя по адресу электронной почты
+    /// Получает пользователя по адресу электронной почты или username
     /// </summary>
     Task<User?> GetUserByEmailOrUsernameAsync(string email, string username);
+
+    /// <summary>
+    /// Получает пользователя по адресу электронной почты или username.
+    /// Поиск происходит по одному идентификатору.
+    /// </summary>
+    Task<User?> GetUserByEmailOrUsernameAsync(string identifier);
 
     /// <summary>
     /// Получает пользователя по уникальному идентификатору

@@ -1,7 +1,7 @@
 using CoreLib.Api.Controllers.ControllerTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.ProjectManage;
+namespace Api;
 
 /// <summary>
 /// Контроллер управления информацией о проектах.
