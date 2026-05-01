@@ -42,25 +42,32 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
+
                 options.Authority = Configuration["Jwt:Authority"];
-        
+                options.RefreshOnIssuerKeyNotFound = true;
+                options.SaveToken = true;
+                options.BackchannelHttpHandler = new SystemRequestHttpHandler();
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-            
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Audience"],
-            
+
+                    ValidIssuer = Configuration["Jwt:AccessTokenSettings:Issuer"],
+                    ValidAudience = Configuration["Jwt:AccessTokenSettings:Audience"],
+
                     ClockSkew = TimeSpan.Zero
                 };
-        
-                options.RefreshOnIssuerKeyNotFound = true;
-                options.SaveToken = true;
-        
-                options.BackchannelHttpHandler = new SystemRequestHttpHandler();
+                
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        
+                    }
+                };
             });
     
         services.AddAuthorization();

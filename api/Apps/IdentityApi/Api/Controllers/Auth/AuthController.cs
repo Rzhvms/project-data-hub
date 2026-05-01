@@ -1,7 +1,7 @@
 using Application.UseCases.Auth.Dto.Request;
-using Application.UseCases.Auth.Dto.Response;
 using Application.UseCases.Auth.Dto.Response.ConnectToken;
 using Application.UseCases.Auth.Dto.Response.CreateUser;
+using Application.UseCases.Auth.Dto.Response.RefreshToken;
 using Application.UseCases.Auth.Dto.Response.RevocateToken;
 using Application.UseCases.Auth.interfaces;
 using CoreLib.Extensions;
@@ -17,7 +17,7 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     /// <summary>
     /// Создание пользователя / регистрация
     /// </summary>
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<CreateUserResponse> RegisterAsync(CreateUserRequest request)
@@ -42,11 +42,34 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     /// Выход пользователя из системы. Отзыв refresh токена
     /// </summary>
     [Authorize]
-    [HttpPost("token/revocation")]
+    [HttpPost("token/revoke")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<RevocateTokenResponse> RevocateRefreshTokenAsync()
     {
         var userId = User.GetUserId();
         return await authUseCaseManager.RevocateRefreshTokenAsync(userId);
+    }
+    
+    /// <summary>
+    /// Обновление Refresh токена
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("token/refresh")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+        return await authUseCaseManager.RefreshTokenAsync(request);
+    }
+    
+    /// <summary>
+    /// Изменение пароля
+    /// </summary>
+    [Authorize]
+    [HttpPost("change-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task ChangePasswordAsync(ChangePasswordRequest request)
+    {
+        var userId = User.GetUserId();
+        await authUseCaseManager.ChangePasswordAsync(userId, request);
     }
 }

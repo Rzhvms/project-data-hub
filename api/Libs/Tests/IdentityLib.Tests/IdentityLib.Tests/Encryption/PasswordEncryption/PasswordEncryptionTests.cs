@@ -1,3 +1,4 @@
+using IdentityLib.Encryption.Interfaces;
 using IdentityLib.Encryption.Services;
 using Xunit;
 
@@ -7,10 +8,8 @@ namespace IdentityLib.Tests.Encryption.PasswordEncryption;
 /// Набор unit-тестов для <see cref="PasswordEncryptionService"/>.
 /// Проверяет формат хеша, корректность верификации, обработку некорректных данных и защитное поведение при ошибочных входах.
 /// </summary>
-public class PasswordEncryptionTests
+public class PasswordEncryptionTests(IPasswordEncryptionService service)
 {
-    private readonly IPasswordEncryptionService _service = new();
-
     /// <summary>
     /// Проверяет, что <see cref="PasswordEncryptionService.HashPassword"/> возвращает хеш
     /// в ожидаемом формате Argon2id и заполняет все части строки.
@@ -19,8 +18,8 @@ public class PasswordEncryptionTests
     public void HashPassword_ShouldReturnValidFormattedHash()
     {
         var password = "password123";
-
-        var hash = _service.HashPassword(password);
+        var salt = service.GenerateSalt();
+        var hash = service.HashPassword(password, salt);
 
         Assert.False(string.IsNullOrWhiteSpace(hash));
 
@@ -44,9 +43,10 @@ public class PasswordEncryptionTests
     public void VerifyPassword_ShouldReturnTrue_ForCorrectPassword()
     {
         var password = "securePassword!";
-        var hash = _service.HashPassword(password);
+        var salt = service.GenerateSalt();
+        var hash = service.HashPassword(password, salt);
 
-        var result = _service.VerifyPassword(password, hash);
+        var result = service.VerifyPassword(password, hash);
 
         Assert.True(result);
     }
@@ -58,9 +58,9 @@ public class PasswordEncryptionTests
     public void HashPassword_ShouldGenerateDifferentHashes_ForSamePassword()
     {
         var password = "samePassword";
-
-        var first = _service.HashPassword(password);
-        var second = _service.HashPassword(password);
+        var salt = service.GenerateSalt();
+        var first = service.HashPassword(password, salt);
+        var second = service.HashPassword(password, salt);
 
         Assert.NotEqual(first, second);
     }
@@ -74,9 +74,10 @@ public class PasswordEncryptionTests
     [InlineData("anotherWrongPassword")]
     public void VerifyPassword_ShouldReturnFalse_ForWrongPassword(string wrongPassword)
     {
-        var hash = _service.HashPassword("correctPassword");
+        var salt = service.GenerateSalt();
+        var hash = service.HashPassword("correctPassword", salt);
 
-        var result = _service.VerifyPassword(wrongPassword, hash);
+        var result = service.VerifyPassword(wrongPassword, hash);
 
         Assert.False(result);
     }
@@ -91,7 +92,7 @@ public class PasswordEncryptionTests
     [InlineData("argon2id:bad:format")]
     public void VerifyPassword_ShouldReturnFalse_ForInvalidHash(string invalidHash)
     {
-        var result = _service.VerifyPassword("password", invalidHash);
+        var result = service.VerifyPassword("password", invalidHash);
 
         Assert.False(result);
     }
@@ -105,7 +106,7 @@ public class PasswordEncryptionTests
     [InlineData("argon2id:2:19456:1:notbase64:alsoinvalid")]
     public void VerifyPassword_ShouldReturnFalse_ForCorruptedBase64(string badHash)
     {
-        var result = _service.VerifyPassword("password", badHash);
+        var result = service.VerifyPassword("password", badHash);
 
         Assert.False(result);
     }
@@ -117,7 +118,8 @@ public class PasswordEncryptionTests
     [Fact]
     public void HashPassword_ShouldThrowArgumentNullException_WhenPasswordIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => _service.HashPassword(null!));
+        var salt = service.GenerateSalt();
+        Assert.Throws<ArgumentNullException>(() => service.HashPassword(null!, salt));
     }
 
     /// <summary>
@@ -128,7 +130,7 @@ public class PasswordEncryptionTests
     [InlineData(null, "hash")]
     public void VerifyPassword_ShouldThrowArgumentNullException_WhenPasswordIsNull(string? password, string hash)
     {
-        Assert.Throws<ArgumentNullException>(() => _service.VerifyPassword(password!, hash));
+        Assert.Throws<ArgumentNullException>(() => service.VerifyPassword(password!, hash));
     }
 
     /// <summary>
@@ -139,6 +141,6 @@ public class PasswordEncryptionTests
     [InlineData("password", null)]
     public void VerifyPassword_ShouldThrowArgumentNullException_WhenStoredHashIsNull(string password, string? hash)
     {
-        Assert.Throws<ArgumentNullException>(() => _service.VerifyPassword(password, hash!));
+        Assert.Throws<ArgumentNullException>(() => service.VerifyPassword(password, hash!));
     }
 }

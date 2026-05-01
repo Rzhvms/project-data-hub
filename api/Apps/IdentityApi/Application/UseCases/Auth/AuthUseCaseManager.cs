@@ -4,6 +4,7 @@ using Application.UseCases.Auth.Dto.Request;
 using Application.UseCases.Auth.Dto.Response.Base;
 using Application.UseCases.Auth.Dto.Response.ConnectToken;
 using Application.UseCases.Auth.Dto.Response.CreateUser;
+using Application.UseCases.Auth.Dto.Response.RefreshToken;
 using Application.UseCases.Auth.Dto.Response.RevocateToken;
 using Application.UseCases.Auth.interfaces;
 using Domain.Entities.IdentityUser;
@@ -19,7 +20,7 @@ namespace Application.UseCases.Auth;
 public class AuthUseCaseManager(
     IPasswordEncryptionService encryptionService,
     ILogger<AuthUseCaseManager> logger,
-    IAuthRepository authRepository,
+    IUserRepository userRepository,
     IRoleRepository roleRepository,
     IJwtGenerationService jwtGenerationService)
     : IAuthUseCaseManager
@@ -28,7 +29,7 @@ public class AuthUseCaseManager(
     public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
     {
         // Проверяем, существует ли пользователь
-        var existingUser = await authRepository.GetUserByEmailOrUsernameAsync(request.Email, request.Username);
+        var existingUser = await userRepository.GetUserByEmailOrUsernameAsync(request.Email, request.Username);
         if (existingUser != null)
         {
             return new CreateUserErrorResponse
@@ -54,7 +55,7 @@ public class AuthUseCaseManager(
             RoleId = role.Id
         };
 
-        await authRepository.CreateUserAsync(user);
+        await userRepository.CreateUserAsync(user);
         
         logger.LogInformation("Пользователь {UserName} {Email} успешно создан", user.Username, user.Email);
 
@@ -67,7 +68,7 @@ public class AuthUseCaseManager(
     /// <inheritdoc />
     public async Task<ConnectTokenResponse> ConnectTokenAsync(ConnectTokenRequest request)
     {
-        var user = await authRepository.GetUserByEmailOrUsernameAsync(request.Login);
+        var user = await userRepository.GetUserByEmailOrUsernameAsync(request.Login);
 
         if (user == null)
         {
@@ -81,8 +82,95 @@ public class AuthUseCaseManager(
         
         user.RefreshToken = CreateRefreshTokenAsync();
 
-        await authRepository.UpdateUserAsync(user);
+        await userRepository.UpdateUserAsync(user);
 
+        var jwtUserData = await CreateJwtUserDataAsync(user);
+        
+        var accessToken = jwtGenerationService.GenerateAccessToken(jwtUserData);
+        
+        return new ConnectTokenSuccessResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = user.RefreshToken.Value
+        };
+    }
+
+    /// <inheritdoc />
+    public async Task<RevocateTokenResponse> RevocateRefreshTokenAsync(Guid userId)
+    {
+        var user = await userRepository.GetUserByUserIdAsync(userId);
+        if (user == null) return CreateErrorResponse<RevocateTokenErrorResponse>(ErrorCodes.UserDoesNotExist);
+
+        if (user.RefreshToken != null)
+        {
+            user.RefreshToken.Active = false;
+            await userRepository.UpdateUserAsync(user);
+        }
+
+        logger.LogInformation("Пользователь {UserId} успешно вышел из системы.", user.Id);
+        
+        return new RevocateTokenSuccessResponse()
+        {
+            Message = $"Пользователь вышел из системы в {DateTime.UtcNow:O} (UTC)."
+        };
+    }
+    
+    /// <inheritdoc />
+    public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+        var isValid = jwtGenerationService.IsTokenValid(request.AccessToken, false);
+        if (!isValid) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.AccessTokenIsNotValid);
+        
+
+        var userId = jwtGenerationService.GetUserIdFromToken(request.AccessToken);
+        var user = await userRepository.GetUserByUserIdAsync(userId);
+
+        if (user == null) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.UserDoesNotExist);
+
+        var token = user.RefreshToken;
+        ArgumentNullException.ThrowIfNull(token);
+        
+        if (!token.Active) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.RefreshTokenIsNotActive);
+        if (token.ExpirationDate < DateTime.UtcNow) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.RefreshTokenHasExpired);
+        if (token.Value != request.RefreshToken) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.RefreshTokenIsNotCorrect);
+
+        var jwtUserData = await CreateJwtUserDataAsync(user);
+        
+        var newAccessToken = jwtGenerationService.GenerateAccessToken(jwtUserData);
+        var newRefreshTokenValue = jwtGenerationService.GenerateRefreshToken();
+
+        user.RefreshToken!.Value = newRefreshTokenValue;
+        user.RefreshToken.Active = true;
+        user.RefreshToken.ExpirationDate = DateTime.UtcNow.AddMinutes(jwtGenerationService.GetRefreshTokenLifetimeInMinutes());
+
+        await userRepository.UpdateUserAsync(user);
+
+        logger.LogInformation("Refresh-токен обновлён для пользователя {UserId}", user.Id);
+
+        return new RefreshTokenSuccessResponse
+        {
+            AccessToken = newAccessToken,
+            RefreshToken = newRefreshTokenValue,
+            RefreshTokenExpirationDate = user.RefreshToken.ExpirationDate
+        };
+    }
+
+    /// <inheritdoc />
+    public async Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
+    {
+        var user = await userRepository.GetUserByUserIdAsync(userId);
+        ArgumentNullException.ThrowIfNull(user);
+        
+        var newPasswordHash = encryptionService.HashPassword(request.Password, Convert.FromBase64String(user.HashSalt));
+
+        await userRepository.ChangeUserPasswordAsync(user.Id, newPasswordHash, user.HashSalt);
+    }
+    
+    /// <summary>
+    /// Формирование модели для генерации Jwt
+    /// </summary>
+    private async Task<JwtUserData> CreateJwtUserDataAsync(User user)
+    {
         var role = await roleRepository.GetRoleByIdAsync(user.RoleId);
         
         // Добавляем информацию о роли и правах в клеймы
@@ -101,34 +189,8 @@ public class AuthUseCaseManager(
             LastName = user.LastName,
             Claims = claims
         };
-        
-        var accessToken = jwtGenerationService.GenerateAccessToken(jwtUserData);
-        
-        return new ConnectTokenSuccessResponse
-        {
-            AccessToken = accessToken,
-            RefreshToken = user.RefreshToken.Value
-        };
-    }
 
-    /// <inheritdoc />
-    public async Task<RevocateTokenResponse> RevocateRefreshTokenAsync(Guid userId)
-    {
-        var user = await authRepository.GetUserByUserIdAsync(userId);
-        if (user == null) return CreateErrorResponse<RevocateTokenErrorResponse>(ErrorCodes.UserDoesNotExist);
-
-        if (user.RefreshToken != null)
-        {
-            user.RefreshToken.Active = false;
-            await authRepository.UpdateUserAsync(user);
-        }
-
-        logger.LogInformation("Пользователь {UserId} успешно вышел из системы.", user.Id);
-        
-        return new RevocateTokenSuccessResponse()
-        {
-            Message = $"Пользователь вышел из системы в {DateTime.UtcNow:O} (UTC)."
-        };
+        return jwtUserData;
     }
     
     /// <summary>

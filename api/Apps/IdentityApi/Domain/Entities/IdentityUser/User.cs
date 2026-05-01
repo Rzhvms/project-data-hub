@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Domain.Entities.IdentityUser;
 
 /// <summary>
-/// Модель таблицы пользователей для базы данных.
+/// Модель пользователя.
 /// </summary>
 public record User
 {

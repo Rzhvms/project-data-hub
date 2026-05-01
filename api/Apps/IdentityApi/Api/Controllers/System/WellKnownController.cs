@@ -20,7 +20,7 @@ namespace Api.Controllers.System;
 /// - RFC 8615 (.well-known URIs)
 /// </remarks>
 [Route(".well-known")]
-public class WellKnownController(IRsaKeyProvider keyProvider) : SystemControllerBase
+public class WellKnownController(IRsaKeyProvider keyProvider, IConfiguration configuration) : SystemControllerBase
 {
     /// <summary>
     /// Возвращает JSON Web Key Set — публичные ключи для проверки JWT.
@@ -65,10 +65,13 @@ public class WellKnownController(IRsaKeyProvider keyProvider) : SystemController
     [HttpGet("openid-configuration")]
     public IActionResult GetConfig()
     {
+        var issuer = configuration["Jwt:AccessTokenSettings:Issuer"];
+        var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
         return Ok(new
         {
-            issuer = "IdentityApi",
-            jwks_uri = $"{Request.Scheme}://{Request.Host}/.well-known/jwks.json"
+            issuer = issuer,
+            jwks_uri = $"{baseUrl}/.well-known/jwks.json"
         });
     }
 }

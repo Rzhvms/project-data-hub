@@ -2,10 +2,11 @@ using System.Data;
 using Application.Ports.Repositories;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
-using Infrastructure.Repositories.Auth;
 using Infrastructure.Repositories.RoleSystem;
+using Infrastructure.Repositories.Users;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using UserRepository = Infrastructure.Repositories.Users.UserRepository;
 
 namespace Infrastructure;
 
@@ -35,7 +36,7 @@ public static class InfrastructureStartUp
                 .ScanIn(typeof(Date_202604290210_AddIdentityTables).Assembly).For.Migrations())
             .AddLogging(lb => lb.AddFluentMigratorConsole());
 
-        services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 }

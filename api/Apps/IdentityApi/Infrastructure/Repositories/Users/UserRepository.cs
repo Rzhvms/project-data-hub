@@ -1,13 +1,14 @@
 using System.Data;
 using Application.Ports.Repositories;
 using CoreLib.Database.DapperExtensions.EntityMapper;
+using CoreLib.Exceptions;
 using Dapper;
 using Domain.Entities.IdentityUser;
 
-namespace Infrastructure.Repositories.Auth;
+namespace Infrastructure.Repositories.Users;
 
 /// <inheritdoc />
-public class AuthRepository(IDbConnection dbConnection) : IAuthRepository
+public class UserRepository(IDbConnection dbConnection) : IUserRepository
 {
     /// <inheritdoc />
     public async Task<User?> GetUserByEmailOrUsernameAsync(string email, string username)
@@ -188,6 +189,52 @@ public class AuthRepository(IDbConnection dbConnection) : IAuthRepository
         {
             transaction.Rollback();
             throw;
+        }
+    }
+    
+    /// <inheritdoc />
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    {
+        var sql = $@"SELECT * FROM {EntityMapper.TbName<User>()}";
+        var users = await dbConnection.QueryAsync<User>(sql);
+        return users;
+    }
+    
+    /// <inheritdoc />
+    public async Task<IEnumerable<User>> GetPagedUsersAsync(int page, int pageSize)
+    {
+        var sql = $@"SELECT * FROM {EntityMapper.TbName<User>()} 
+                 ORDER BY {EntityMapper.ColName<User>(x => x.CreatedAt)} DESC
+                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+        return await dbConnection.QueryAsync<User>(sql, new 
+        { 
+            Offset = (page - 1) * pageSize, 
+            PageSize = pageSize 
+        });
+    }
+
+    /// <inheritdoc />
+    public async Task ChangeUserPasswordAsync(Guid id, string password, string hashSalt)
+    {
+        var sql = $@"
+            UPDATE {EntityMapper.TbName<User>()}
+            SET {EntityMapper.ColName<User>(x => x.Password)} = @Password,
+                {EntityMapper.ColName<User>(x => x.HashSalt)} = @HashSalt,
+                {EntityMapper.ColName<User>(x => x.UpdatedAt)} = @UpdatedAt
+            WHERE {EntityMapper.ColName<User>(x => x.Id)} = @Id";
+        
+        await dbConnection.ExecuteAsync(sql, new { Id = id, Password = password, HashSalt = hashSalt, UpdatedAt = DateTime.UtcNow });
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteUserByIdAsync(Guid id)
+    {
+        var sql = $@"DELETE FROM {EntityMapper.TbName<User>()} WHERE {EntityMapper.ColName<User>(x => x.Id)} = @Id";
+        var deleted = await dbConnection.ExecuteAsync(sql, new { Id = id });
+        if (deleted == 0)
+        {
+            throw new EntityNotFoundException($"Пользователь с идентификатором {id} не найден");
         }
     }
 }

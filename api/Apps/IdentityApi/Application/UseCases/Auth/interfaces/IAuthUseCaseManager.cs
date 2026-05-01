@@ -2,6 +2,7 @@ using Application.UseCases.Auth.Dto.Request;
 using Application.UseCases.Auth.Dto.Response;
 using Application.UseCases.Auth.Dto.Response.ConnectToken;
 using Application.UseCases.Auth.Dto.Response.CreateUser;
+using Application.UseCases.Auth.Dto.Response.RefreshToken;
 using Application.UseCases.Auth.Dto.Response.RevocateToken;
 
 namespace Application.UseCases.Auth.interfaces;
@@ -25,4 +26,14 @@ public interface IAuthUseCaseManager
     /// Деавторизация. Отзыв токена.
     /// </summary>
     Task<RevocateTokenResponse> RevocateRefreshTokenAsync(Guid userId);
+    
+    /// <summary>
+    /// Обновление токена.
+    /// </summary>
+    Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request);
+
+    /// <summary>
+    /// Изменение пароля.
+    /// </summary>
+    Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
 }

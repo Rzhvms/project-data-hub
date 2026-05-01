@@ -5,7 +5,7 @@ namespace Application.Ports.Repositories;
 /// <summary>
 /// Репозиторий для работы с пользователями в базе данных
 /// </summary>
-public interface IAuthRepository
+public interface IUserRepository
 {
     /// <summary>
     /// Получает пользователя по адресу электронной почты или username
@@ -32,4 +32,24 @@ public interface IAuthRepository
     /// Обновляет данные существующего пользователя.
     /// </summary>
     Task UpdateUserAsync(User user);
+    
+    /// <summary>
+    /// Получение всех пользователей.
+    /// </summary>
+    Task<IEnumerable<User>> GetAllUsersAsync();
+
+    /// <summary>
+    /// Постраничное получение списка пользователей
+    /// </summary>
+    Task<IEnumerable<User>> GetPagedUsersAsync(int page, int pageSize);
+
+    /// <summary>
+    /// Обновление пароля пользователя
+    /// </summary>
+    Task ChangeUserPasswordAsync(Guid id, string password, string hashSalt);
+
+    /// <summary>
+    /// Удаление пользователя по идентификатору
+    /// </summary>
+    Task DeleteUserByIdAsync(Guid id);
 }

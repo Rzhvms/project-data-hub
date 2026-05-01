@@ -14,7 +14,7 @@ namespace IdentityLib.Jwt.Services;
 /// <summary>
 /// Сервис генерации и проверки JWT.
 /// </summary>
-internal sealed class JwtGenerationService : IJwtGenerationService
+public sealed class JwtGenerationService : IJwtGenerationService
 {
     /// <summary>
     /// Время жизни access-токена для сценария сброса пароля.
