@@ -1,5 +1,7 @@
 using Application.UseCases.Auth;
 using Application.UseCases.Auth.interfaces;
+using Application.UseCases.Users;
+using Application.UseCases.Users.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -15,5 +17,6 @@ public static class ApplicationStartUp
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IAuthUseCaseManager, AuthUseCaseManager>();
+        services.AddScoped<IUserUseCaseManager, UserUseCaseManager>();
     }
 }
