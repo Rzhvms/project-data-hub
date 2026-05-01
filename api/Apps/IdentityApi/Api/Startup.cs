@@ -60,14 +60,6 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
 
                     ClockSkew = TimeSpan.Zero
                 };
-                
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async context =>
-                    {
-                        
-                    }
-                };
             });
     
         services.AddAuthorization();
