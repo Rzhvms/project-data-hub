@@ -1,0 +1,2 @@
+CREATE DATABASE "Identity";
+CREATE DATABASE "Provider";
