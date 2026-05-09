@@ -10,15 +10,30 @@ public sealed record JwtUserData
     /// <summary>
     /// Идентификатор пользователя
     /// </summary>
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
     
     /// <summary>
     /// Адрес электронной почты
     /// </summary>
-    public string? Email { get; set; }
+    public string? Email { get; init; }
+    
+    /// <summary>
+    /// Имя пользователя
+    /// </summary>
+    public string? FirstName { get; set; }
+    
+    /// <summary>
+    /// Фамилия пользователя
+    /// </summary>
+    public string? LastName { get; set; }
+    
+    /// <summary>
+    /// Отчество пользователя.
+    /// </summary>
+    public string? Patronymic { get; set; }
     
     /// <summary>
     /// Claims токена
     /// </summary>
-    public IReadOnlyCollection<Claim>? Claims { get; set; }
+    public IReadOnlyCollection<Claim>? Claims { get; init; }
 }

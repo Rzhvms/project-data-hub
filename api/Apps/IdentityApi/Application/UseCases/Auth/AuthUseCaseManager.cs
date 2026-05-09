@@ -49,6 +49,9 @@ public class AuthUseCaseManager(
             Password = encryptionService.HashPassword(request.Password, salt),
             HashSalt = Convert.ToBase64String(salt),
             RoleId = role.Id,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Patronymic = request.Patronymic,
             CreatedAt = DateTime.UtcNow,
         };
 
@@ -180,6 +183,8 @@ public class AuthUseCaseManager(
         {
             UserId = user.Id,
             Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
             Claims = claims
         };
 

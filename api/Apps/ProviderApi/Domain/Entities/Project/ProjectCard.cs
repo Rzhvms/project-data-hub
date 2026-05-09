@@ -96,11 +96,6 @@ public sealed record ProjectCard
     public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
-    /// SEO-блок карточки объекта.
-    /// </summary>
-    public ProjectSeo? Seo { get; set; }
-
-    /// <summary>
     /// Набор технико-экономических показателей объекта.
     /// </summary>
     public ProjectMetrics? Metrics { get; set; }

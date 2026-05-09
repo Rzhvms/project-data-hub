@@ -19,9 +19,4 @@ public enum ProjectPublicationStatus
     /// Архивный
     /// </summary>
     Archived = 5,
-    
-    /// <summary>
-    /// Ошибка публикации
-    /// </summary>
-    PublicationError = 6 // TODO: лишнее 
 }

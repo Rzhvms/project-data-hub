@@ -26,6 +26,29 @@ public record CreateUserRequest
     public required string Password { get; init; }
     
     /// <summary>
+    /// Имя
+    /// </summary>
+    [Required]
+    [JsonPropertyName("firstName")]
+    [MaxLength(50)]
+    public required string FirstName { get; init; }
+    
+    /// <summary>
+    /// Фамилия
+    /// </summary>
+    [Required]
+    [JsonPropertyName("lastName")]
+    [MaxLength(50)]
+    public required string LastName { get; init; }
+    
+    /// <summary>
+    /// Отчество пользователя.
+    /// </summary>
+    [MaxLength(50)]
+    [JsonPropertyName("patronymic")]
+    public string? Patronymic { get; init; }
+    
+    /// <summary>
     /// Название роли (Viewer / Editor / Administrator)
     /// </summary>
     [JsonPropertyName("roleName")]

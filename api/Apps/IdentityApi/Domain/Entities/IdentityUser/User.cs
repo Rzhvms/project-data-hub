@@ -19,7 +19,6 @@ public record User
     [MaxLength(50)]
     public string Email { get; init; } = null!;
     
-
     /// <summary>
     /// Хэш пароля пользователя.
     /// </summary>
@@ -39,6 +38,24 @@ public record User
     /// Идентификатор роли.
     /// </summary>
     public Guid RoleId { get; init; }
+    
+    /// <summary>
+    /// Имя пользователя.
+    /// </summary>
+    [MaxLength(50)]
+    public string? FirstName { get; init; }
+
+    /// <summary>
+    /// Фамилия пользователя.
+    /// </summary>
+    [MaxLength(50)]
+    public string? LastName { get; init; }
+    
+    /// <summary>
+    /// Отчество пользователя.
+    /// </summary>
+    [MaxLength(50)]
+    public string? Patronymic { get; init; }
 
     /// <summary>
     /// Дата создания пользователя.

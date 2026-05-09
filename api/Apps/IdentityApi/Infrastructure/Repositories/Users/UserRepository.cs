@@ -58,7 +58,7 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
         try
         {
             var insertUserSql = $@"INSERT INTO {EntityMapper.TbName<User>()}
-                     VALUES (@Id, @Email, @Password, @HashSalt, @IsEmailConfirmed, @RoleId, @CreatedAt, @UpdatedAt)";
+                     VALUES (@Id, @Email, @Password, @HashSalt, @IsEmailConfirmed, @FirstName, @LastName, @Patronymic, @RoleId, @CreatedAt, @UpdatedAt)";
 
             await dbConnection.ExecuteAsync(insertUserSql, new
             {
@@ -67,6 +67,9 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
                 user.Password,
                 user.HashSalt,
                 user.IsEmailConfirmed,
+                user.FirstName,
+                user.LastName,
+                user.Patronymic,
                 user.RoleId,
                 user.CreatedAt,
                 user.UpdatedAt
@@ -109,6 +112,9 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
                 {EntityMapper.ColName<User>(x => x.Password)} = @Password,
                 {EntityMapper.ColName<User>(x => x.HashSalt)} = @HashSalt,
                 {EntityMapper.ColName<User>(x => x.IsEmailConfirmed)} = @IsEmailConfirmed,
+                {EntityMapper.ColName<User>(x => x.FirstName)} = @FirstName,
+                {EntityMapper.ColName<User>(x => x.LastName)} = @LastName,
+                {EntityMapper.ColName<User>(x => x.Patronymic)} = @Patronymic,
                 {EntityMapper.ColName<User>(x => x.RoleId)} = @RoleId,
                 {EntityMapper.ColName<User>(x => x.UpdatedAt)} = @UpdatedAt
             WHERE {EntityMapper.ColName<User>(x => x.Id)} = @Id";
@@ -120,6 +126,9 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
                 user.Password,
                 user.HashSalt,
                 user.IsEmailConfirmed,
+                user.FirstName,
+                user.LastName,
+                user.Patronymic,
                 user.RoleId,
                 UpdatedAt = DateTime.UtcNow
             }, transaction);
@@ -195,6 +204,7 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
     /// <inheritdoc />
     public async Task DeleteUserByIdAsync(Guid id)
     {
+        
         var sql = $@"DELETE FROM {EntityMapper.TbName<User>()} WHERE {EntityMapper.ColName<User>(x => x.Id)} = @Id";
         var deleted = await dbConnection.ExecuteAsync(sql, new { Id = id });
         if (deleted == 0)

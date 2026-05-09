@@ -2,6 +2,7 @@ using Application;
 using CoreLib.Api.Controllers;
 using CoreLib.Api.Handlers;
 using CoreLib.Database.Migrations;
+using CoreLib.Middlewares;
 using IdentityLib;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -124,6 +125,8 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         
         app.MigrateDatabase();
 
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+        
         app.UseRouting();
         
         app.UseAuthentication();

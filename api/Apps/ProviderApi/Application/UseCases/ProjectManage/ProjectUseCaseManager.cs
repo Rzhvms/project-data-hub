@@ -11,6 +11,6 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IPr
     /// <inheritdoc/>
     public async Task<CreateProjectResponse> CreateProjectAsync(CreateProjectRequest request)
     {
-        
+        throw new NotImplementedException();
     }
 }
