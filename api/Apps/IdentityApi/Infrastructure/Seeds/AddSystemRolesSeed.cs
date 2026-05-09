@@ -8,7 +8,7 @@ namespace Infrastructure.Seeds;
 /// Заполнение таблицы ролей системными значениями по умолчанию.
 /// </summary>
 [Migration(202604302100)]
-public class Date202604302100AddSystemRolesSeed : Migration
+public class AddSystemRolesSeed : Migration
 {
     private readonly string _roleTableName = EntityMapper.TbName<Role>();
 

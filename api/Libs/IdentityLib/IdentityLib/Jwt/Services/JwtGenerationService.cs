@@ -50,7 +50,7 @@ public sealed class JwtGenerationService : IJwtGenerationService
             ? now.Add(PasswordResetAccessTokenLifetime)
             : now.AddSeconds(_settings.AccessTokenSettings.LifeTimeInSeconds);
 
-        var claims = BuildAccessTokenClaims(user);
+        var claims = BuildIdTokenClaims(user);
 
         return CreateToken(
             issuer: _settings.AccessTokenSettings.Issuer,
@@ -163,6 +163,11 @@ public sealed class JwtGenerationService : IJwtGenerationService
         if (!string.IsNullOrWhiteSpace(user.LastName))
         {
             claims.Add(new Claim(ClaimTypes.Surname, user.LastName));
+        }
+        
+        if (!string.IsNullOrWhiteSpace(user.Patronymic))
+        {
+            claims.Add(new Claim("patronymic", user.Patronymic));
         }
 
         if (user.Claims is not null)

@@ -9,6 +9,11 @@ namespace Application.UseCases.ProjectManage.Interfaces;
 public interface IProjectUseCaseManager
 {
     /// <summary>
+    /// Получение списка объектов для главной страницы
+    /// </summary>
+    Task<GetSimpleProjectListResponse> GetSimpleProjectListAsync();
+    
+    /// <summary>
     /// Создание проекта
     /// </summary>
     Task<CreateProjectResponse> CreateProjectAsync(CreateProjectRequest request);
