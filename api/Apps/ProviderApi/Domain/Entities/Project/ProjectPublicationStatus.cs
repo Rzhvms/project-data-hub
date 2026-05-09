@@ -11,16 +11,6 @@ public enum ProjectPublicationStatus
     Draft = 1,
     
     /// <summary>
-    /// На проверке
-    /// </summary>
-    OnReview = 2,
-    
-    /// <summary>
-    /// Требуется доработка
-    /// </summary>
-    ForRevision = 3,
-    
-    /// <summary>
     /// Опубликован
     /// </summary>
     Published = 4,
@@ -33,5 +23,5 @@ public enum ProjectPublicationStatus
     /// <summary>
     /// Ошибка публикации
     /// </summary>
-    PublicationError = 6
+    PublicationError = 6 // TODO: лишнее 
 }

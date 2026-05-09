@@ -11,35 +11,12 @@ namespace Infrastructure.Repositories.Users;
 public class UserRepository(IDbConnection dbConnection) : IUserRepository
 {
     /// <inheritdoc />
-    public async Task<User?> GetUserByEmailOrUsernameAsync(string email, string username)
+    public async Task<User?> GetUserByEmailAsync(string email)
     {
         var sql = $@"SELECT * FROM {EntityMapper.TbName<User>()}
-                     WHERE {EntityMapper.ColName<User>(x => x.Email)} = @Email
-                     OR {EntityMapper.ColName<User>(x => x.Username)} = @Username";
+                     WHERE {EntityMapper.ColName<User>(x => x.Email)} = @Email";
 
-        var user = await dbConnection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email, Username = username });
-
-        if (user is not null)
-        {
-            var getTokenSql = $@"SELECT * FROM {EntityMapper.TbName<RefreshToken>()} 
-                                 WHERE {EntityMapper.ColName<RefreshToken>(x => x.UserId)} = @UserId";
-
-            user.RefreshToken = await dbConnection.QueryFirstOrDefaultAsync<RefreshToken>(
-                getTokenSql, new { UserId = user.Id });
-        }
-
-        return user;
-    }
-
-    /// <inheritdoc />
-    public async Task<User?> GetUserByEmailOrUsernameAsync(string identifier)
-    {
-        var sql = $@"SELECT * FROM {EntityMapper.TbName<User>()}
-                     WHERE {EntityMapper.ColName<User>(x => x.Email)} = @Email
-                     OR {EntityMapper.ColName<User>(x => x.Username)} = @Username";
-
-        var user = await dbConnection.QueryFirstOrDefaultAsync<User>(sql,
-            new { Email = identifier, Username = identifier });
+        var user = await dbConnection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
 
         if (user is not null)
         {
@@ -81,19 +58,15 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
         try
         {
             var insertUserSql = $@"INSERT INTO {EntityMapper.TbName<User>()}
-                     VALUES (@Id, @Username, @Email, @Phone, @Password, @HashSalt, @IsEmailConfirmed, @FirstName, @LastName, @RoleId, @CreatedAt, @UpdatedAt)";
+                     VALUES (@Id, @Email, @Password, @HashSalt, @IsEmailConfirmed, @RoleId, @CreatedAt, @UpdatedAt)";
 
             await dbConnection.ExecuteAsync(insertUserSql, new
             {
                 user.Id,
-                user.Username,
                 user.Email,
-                user.Phone,
                 user.Password,
                 user.HashSalt,
                 user.IsEmailConfirmed,
-                user.FirstName,
-                user.LastName,
                 user.RoleId,
                 user.CreatedAt,
                 user.UpdatedAt
@@ -132,13 +105,9 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
         {
             var sql = $@"
             UPDATE {EntityMapper.TbName<User>()}
-            SET {EntityMapper.ColName<User>(x => x.Username)} = @Username,
-                {EntityMapper.ColName<User>(x => x.Email)} = @Email,
-                {EntityMapper.ColName<User>(x => x.Phone)} = @Phone,
+            SET {EntityMapper.ColName<User>(x => x.Email)} = @Email,
                 {EntityMapper.ColName<User>(x => x.Password)} = @Password,
                 {EntityMapper.ColName<User>(x => x.HashSalt)} = @HashSalt,
-                {EntityMapper.ColName<User>(x => x.FirstName)} = @FirstName,
-                {EntityMapper.ColName<User>(x => x.LastName)} = @LastName,
                 {EntityMapper.ColName<User>(x => x.IsEmailConfirmed)} = @IsEmailConfirmed,
                 {EntityMapper.ColName<User>(x => x.RoleId)} = @RoleId,
                 {EntityMapper.ColName<User>(x => x.UpdatedAt)} = @UpdatedAt
@@ -147,13 +116,9 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
             await dbConnection.ExecuteAsync(sql, new
             {
                 user.Id,
-                user.Username,
                 user.Email,
-                user.Phone,
                 user.Password,
                 user.HashSalt,
-                user.FirstName,
-                user.LastName,
                 user.IsEmailConfirmed,
                 user.RoleId,
                 UpdatedAt = DateTime.UtcNow

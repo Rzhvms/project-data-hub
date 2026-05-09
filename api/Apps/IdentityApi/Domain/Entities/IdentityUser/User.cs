@@ -13,23 +13,12 @@ public record User
     public Guid Id { get; init; }
 
     /// <summary>
-    /// Логин пользователя.
-    /// </summary>
-    [MaxLength(50)]
-    public string Username { get; init; } = null!;
-
-    /// <summary>
     /// Электронная почта.
     /// </summary>
     [EmailAddress]
     [MaxLength(50)]
     public string Email { get; init; } = null!;
-
-    /// <summary>
-    /// Номер телефона.
-    /// </summary>
-    [MaxLength(50)]
-    public string? Phone { get; init; }
+    
 
     /// <summary>
     /// Хэш пароля пользователя.
@@ -39,24 +28,12 @@ public record User
     /// <summary>
     /// Дополнительная hash-строка, используемая при генерации пароля.
     /// </summary>
-    public string HashSalt { get; init; } = null!;
+    public string HashSalt { get; init; } = null!; // TODO: убрать // МОЖНО ПОЛУЧИТЬ ИЗ ХЭША ПАРОЛЯ
 
     /// <summary>
     /// Подтверждена ли почта.
     /// </summary>
     public bool IsEmailConfirmed { get; init; }
-
-    /// <summary>
-    /// Имя пользователя.
-    /// </summary>
-    [MaxLength(50)]
-    public string? FirstName { get; init; }
-
-    /// <summary>
-    /// Фамилия пользователя.
-    /// </summary>
-    [MaxLength(50)]
-    public string? LastName { get; init; }
 
     /// <summary>
     /// Идентификатор роли.

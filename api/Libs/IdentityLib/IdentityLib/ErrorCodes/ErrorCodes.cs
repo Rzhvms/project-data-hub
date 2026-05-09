@@ -36,7 +36,12 @@ public enum ErrorCodes
     RefreshTokenIsNotCorrect = 40005,
 
     /// <summary>
+    /// Пользователь с указанными учетными данными уже существует.
+    /// </summary>
+    UserAlreadyExists = 40006,
+    
+    /// <summary>
     /// Пользователь с указанными учетными данными не существует.
     /// </summary>
-    UserDoesNotExist = 40006
+    UserDoesNotExist = 40007
 }

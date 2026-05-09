@@ -48,13 +48,11 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
 
                 options.SwaggerEndpoint("/swagger/identity/swagger.json", "Identity API");
                 options.SwaggerEndpoint("/swagger/provider/swagger.json", "Provider API");
-                options.SwaggerEndpoint("/swagger/synchronization/swagger.json", "Synchronization API");
             });
         }
 
         app.UseRouting();
         app.UseCors();
-        //app.UseRateLimiter();
         
         app.UseEndpoints(endpoints =>
         {

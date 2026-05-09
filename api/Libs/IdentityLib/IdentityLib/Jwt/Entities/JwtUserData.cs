@@ -13,27 +13,12 @@ public sealed record JwtUserData
     public Guid UserId { get; set; }
     
     /// <summary>
-    /// Идентификатор (имя) пользователя
-    /// </summary>
-    public string? UserName { get; set; } = null;
-    
-    /// <summary>
     /// Адрес электронной почты
     /// </summary>
-    public string? Email { get; set; } = null;
-    
-    /// <summary>
-    /// Имя пользователя
-    /// </summary>
-    public string? FirstName { get; set; } = null;
-    
-    /// <summary>
-    /// Фамилия пользователя
-    /// </summary>
-    public string? LastName { get; set; } = null;
+    public string? Email { get; set; }
     
     /// <summary>
     /// Claims токена
     /// </summary>
-    public IReadOnlyCollection<Claim>? Claims { get; set; } = null;
+    public IReadOnlyCollection<Claim>? Claims { get; set; }
 }

@@ -150,25 +150,9 @@ public sealed class JwtGenerationService : IJwtGenerationService
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))
         };
 
-        if (!string.IsNullOrWhiteSpace(user.UserName))
-        {
-            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-            claims.Add(new Claim(ClaimTypes.GivenName, user.UserName));
-        }
-
         if (!string.IsNullOrWhiteSpace(user.Email))
         {
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
-        }
-
-        if (!string.IsNullOrWhiteSpace(user.FirstName))
-        {
-            claims.Add(new Claim(ClaimTypes.GivenName, user.FirstName));
-        }
-
-        if (!string.IsNullOrWhiteSpace(user.LastName))
-        {
-            claims.Add(new Claim(ClaimTypes.Surname, user.LastName));
         }
 
         if (user.Claims is not null)

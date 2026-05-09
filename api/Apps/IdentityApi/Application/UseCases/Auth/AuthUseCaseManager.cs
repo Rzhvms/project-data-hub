@@ -29,13 +29,13 @@ public class AuthUseCaseManager(
     public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
     {
         // Проверяем, существует ли пользователь
-        var existingUser = await userRepository.GetUserByEmailOrUsernameAsync(request.Email, request.Username);
+        var existingUser = await userRepository.GetUserByEmailAsync(request.Email);
         if (existingUser != null)
         {
             return new CreateUserErrorResponse
             {
-                Message = "Пользователь с таким логином / почтой уже существует.",
-                Code = ErrorCodes.UserDoesNotExist.ToString("D")
+                Message = "Пользователь с такой почтой уже существует.",
+                Code = ErrorCodes.UserAlreadyExists.ToString("D")
             };
         }
 
@@ -45,19 +45,15 @@ public class AuthUseCaseManager(
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = request.Username,
             Email = request.Email,
-            Phone = request.Phone,
             Password = encryptionService.HashPassword(request.Password, salt),
             HashSalt = Convert.ToBase64String(salt),
-            FirstName = request.FirstName,
-            LastName = request.LastName,
             RoleId = role.Id
         };
 
         await userRepository.CreateUserAsync(user);
         
-        logger.LogInformation("Пользователь {UserName} {Email} успешно создан", user.Username, user.Email);
+        logger.LogInformation("Пользователь {Email} успешно создан", user.Email);
 
         return new CreateUserSuccessResponse
         {
@@ -68,7 +64,7 @@ public class AuthUseCaseManager(
     /// <inheritdoc />
     public async Task<ConnectTokenResponse> ConnectTokenAsync(ConnectTokenRequest request)
     {
-        var user = await userRepository.GetUserByEmailOrUsernameAsync(request.Login);
+        var user = await userRepository.GetUserByEmailAsync(request.Login);
 
         if (user == null)
         {
@@ -120,7 +116,6 @@ public class AuthUseCaseManager(
     {
         var isValid = jwtGenerationService.IsTokenValid(request.AccessToken, false);
         if (!isValid) return CreateErrorResponse<RefreshTokenErrorResponse>(ErrorCodes.AccessTokenIsNotValid);
-        
 
         var userId = jwtGenerationService.GetUserIdFromToken(request.AccessToken);
         var user = await userRepository.GetUserByUserIdAsync(userId);
@@ -183,10 +178,7 @@ public class AuthUseCaseManager(
         var jwtUserData = new JwtUserData
         {
             UserId = user.Id,
-            UserName = user.Username,
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
             Claims = claims
         };
 

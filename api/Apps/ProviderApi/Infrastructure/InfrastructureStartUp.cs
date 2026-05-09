@@ -1,6 +1,8 @@
 using System.Data;
+using Application.Ports.Repositories;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
+using Infrastructure.Repositories.Project;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -31,5 +33,7 @@ public static class InfrastructureStartUp
                 .WithGlobalConnectionString(connectionString)
                 .ScanIn(typeof(Date_202605012350_AddProjectTables).Assembly).For.Migrations())
             .AddLogging(lb => lb.AddFluentMigratorConsole());
+
+        services.AddScoped<IProjectRepository, ProjectRepository>();
     }
 }

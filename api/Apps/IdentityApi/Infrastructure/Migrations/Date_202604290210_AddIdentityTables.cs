@@ -30,21 +30,13 @@ public class Date_202604290210_AddIdentityTables : Migration
         
         Create.Table(_userTableName)
             .WithColumn(EntityMapper.ColName<User>(x => x.Id)).AsGuid().PrimaryKey().NotNullable()
-            .WithColumn(EntityMapper.ColName<User>(x => x.Username)).AsString(50).NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.Email)).AsString(50).NotNullable()
-            .WithColumn(EntityMapper.ColName<User>(x => x.Phone)).AsString(50).Nullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.Password)).AsString().NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.HashSalt)).AsString().NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.IsEmailConfirmed)).AsBoolean().NotNullable().WithDefaultValue(false)
-            .WithColumn(EntityMapper.ColName<User>(x => x.FirstName)).AsString(50).Nullable()
-            .WithColumn(EntityMapper.ColName<User>(x => x.LastName)).AsString(50).Nullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.RoleId)).AsGuid().NotNullable()
             .WithColumn(EntityMapper.ColName<User>(x => x.CreatedAt)).AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
             .WithColumn(EntityMapper.ColName<User>(x => x.UpdatedAt)).AsDateTime().Nullable();
-            
-        Create.UniqueConstraint("uq_users_username")
-            .OnTable(_userTableName)
-            .Column(EntityMapper.ColName<User>(x => x.Username));
             
         Create.UniqueConstraint("uq_users_email")
             .OnTable(_userTableName)
