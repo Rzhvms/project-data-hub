@@ -48,7 +48,8 @@ public class AuthUseCaseManager(
             Email = request.Email,
             Password = encryptionService.HashPassword(request.Password, salt),
             HashSalt = Convert.ToBase64String(salt),
-            RoleId = role.Id
+            RoleId = role.Id,
+            CreatedAt = DateTime.UtcNow,
         };
 
         await userRepository.CreateUserAsync(user);
@@ -64,7 +65,7 @@ public class AuthUseCaseManager(
     /// <inheritdoc />
     public async Task<ConnectTokenResponse> ConnectTokenAsync(ConnectTokenRequest request)
     {
-        var user = await userRepository.GetUserByEmailAsync(request.Login);
+        var user = await userRepository.GetUserByEmailAsync(request.Email);
 
         if (user == null)
         {

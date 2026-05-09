@@ -9,12 +9,13 @@ namespace Application.UseCases.Auth.Dto.Request;
 public record ConnectTokenRequest
 {
     /// <summary>
-    /// Логин авторищации (email / username)
+    /// Электронная почта, по которой будет произведена авторизация
     /// </summary>
     [Required]
     [MaxLength(50)]
-    [JsonPropertyName("login")]
-    public required string Login { get; set; }
+    [JsonPropertyName("email")]
+    [EmailAddress]
+    public required string Email { get; set; }
     
     /// <summary>
     /// Пароль

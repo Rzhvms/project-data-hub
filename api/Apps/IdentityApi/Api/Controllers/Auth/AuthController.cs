@@ -17,7 +17,6 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     /// <summary>
     /// Создание пользователя / регистрация
     /// </summary>
-    [Authorize]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<CreateUserResponse> RegisterAsync(CreateUserRequest request)
@@ -44,10 +43,12 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     [Authorize]
     [HttpPost("token/revoke")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<RevocateTokenResponse> RevocateRefreshTokenAsync()
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RevocateRefreshTokenAsync()
     {
         var userId = User.GetUserId();
-        return await authUseCaseManager.RevocateRefreshTokenAsync(userId);
+        var response = await authUseCaseManager.RevocateRefreshTokenAsync(userId);
+        return response is RevocateTokenErrorResponse error ? BadRequest(error) : Ok(response);
     }
     
     /// <summary>
@@ -56,9 +57,10 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     [AllowAnonymous]
     [HttpPost("token/refresh")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest request)
     {
-        return await authUseCaseManager.RefreshTokenAsync(request);
+        var response = await authUseCaseManager.RefreshTokenAsync(request);
+        return response is RefreshTokenErrorResponse error ? BadRequest(error) : Ok(response);
     }
     
     /// <summary>
