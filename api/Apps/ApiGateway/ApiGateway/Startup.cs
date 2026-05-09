@@ -46,8 +46,13 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
             {
                 options.RoutePrefix = "swagger";
 
-                options.SwaggerEndpoint("/swagger/identity/swagger.json", "Identity API");
-                options.SwaggerEndpoint("/swagger/provider/swagger.json", "Provider API");
+                options.SwaggerEndpoint(
+                    "/identity/swagger/v1/swagger.json",
+                    "Identity API");
+
+                options.SwaggerEndpoint(
+                    "/provider/swagger/v1/swagger.json",
+                    "Provider API");
             });
         }
 

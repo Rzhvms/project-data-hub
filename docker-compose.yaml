@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+    ports:
+      - "${POSTGRES_PORT_EXTERNAL}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  apigateway:
+    build:
+      context: ./api
+      dockerfile: Apps/ApiGateway/ApiGateway/Dockerfile
+    container_name: apigateway
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+
+      ReverseProxy__Clusters__identity__Destinations__d1__Address: http://identityapi:8080/
+      ReverseProxy__Clusters__provider__Destinations__d1__Address: http://providerapi:8080/
+    ports:
+      - "${APIGATEWAY_PORT_EXTERNAL}:8080"
+    depends_on:
+      identityapi:
+        condition: service_started
+      providerapi:
+        condition: service_started
+    restart: unless-stopped
+
+  identityapi:
+    build:
+      context: ./api
+      dockerfile: Apps/IdentityApi/Api/Dockerfile
+    container_name: identityapi
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_IDENTITY_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+
+      Jwt__Authority: http://apigateway:8080/identity
+      Jwt__AccessTokenSettings__Issuer: http://apigateway:8080/identity
+      Jwt__AccessTokenSettings__Audience: IdentityClient
+      Jwt__AccessTokenSettings__LifeTimeInSeconds: 3600
+      Jwt__RefreshTokenSettings__Length: 64
+      Jwt__RefreshTokenSettings__LifeTimeInMinutes: 10080
+
+      JwtKeys__DirectoryPath: identity-keys
+    ports:
+      - "${IDENTITY_API_PORT_EXTERNAL}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  providerapi:
+    build:
+      context: ./api
+      dockerfile: Apps/ProviderApi/Api/Dockerfile
+    container_name: providerapi
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_PROVIDER_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+
+      Jwt__Authority: http://apigateway:8080/identity
+      Jwt__Issuer: http://apigateway:8080/identity
+      Jwt__Audience: IdentityClient
+    ports:
+      - "${PROVIDER_API_PORT_EXTERNAL}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

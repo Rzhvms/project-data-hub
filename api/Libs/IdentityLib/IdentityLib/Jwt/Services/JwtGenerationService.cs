@@ -154,6 +154,16 @@ public sealed class JwtGenerationService : IJwtGenerationService
         {
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
         }
+        
+        if (!string.IsNullOrWhiteSpace(user.FirstName))
+        {
+            claims.Add(new Claim(ClaimTypes.GivenName, user.FirstName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(user.LastName))
+        {
+            claims.Add(new Claim(ClaimTypes.Surname, user.LastName));
+        }
 
         if (user.Claims is not null)
         {

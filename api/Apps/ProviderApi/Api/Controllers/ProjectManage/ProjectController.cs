@@ -13,10 +13,10 @@ namespace Api.Controllers.ProjectManage;
 [ApiController]
 public class ProjectController(IProjectUseCaseManager useCaseManager) : ControllerBase
 {
-    public async Task GetProjectListAsync()
-    {
-        
-    }
+    // public async Task GetProjectListAsync()
+    // {
+    //     
+    // }
     
     /// <summary>
     /// Создание проекта

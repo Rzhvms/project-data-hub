@@ -109,8 +109,6 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
     /// </summary>
     public void Configure(IApplicationBuilder app)
     {
-        app.UsePathBase("/provider");
-        
         if (Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

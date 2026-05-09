@@ -10,11 +10,11 @@ public class AddDefaultCategoriesAndParticipants : Migration
 {
     public override void Up()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public override void Down()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

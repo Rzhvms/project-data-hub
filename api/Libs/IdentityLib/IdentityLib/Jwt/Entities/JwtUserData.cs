@@ -28,11 +28,6 @@ public sealed record JwtUserData
     public string? LastName { get; set; }
     
     /// <summary>
-    /// Отчество пользователя.
-    /// </summary>
-    public string? Patronymic { get; set; }
-    
-    /// <summary>
     /// Claims токена
     /// </summary>
     public IReadOnlyCollection<Claim>? Claims { get; init; }
