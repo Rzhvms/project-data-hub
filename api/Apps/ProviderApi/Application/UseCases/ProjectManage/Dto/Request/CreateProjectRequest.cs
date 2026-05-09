@@ -67,4 +67,8 @@ public record CreateProjectRequest
     /// </summary>
     public string? LongDescription { get; set; }
     
+    /// <summary>
+    /// Автор, ответственный (ФИО)
+    /// </summary>
+    public string? Publisher { get; set; }
 }

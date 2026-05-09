@@ -185,6 +185,7 @@ public class AuthUseCaseManager(
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            Patronymic = user.Patronymic,
             Claims = claims
         };
 

@@ -54,7 +54,8 @@ public class Date_202605012350_AddProjectTables : Migration
             .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.PublicationStatus)).AsInt16().NotNullable().WithDefaultValue(1)
                 .WithColumnDescription("1 - Черновик. 2 - На проверке. 3 - Требуется доработка. 4 - Опубликован. 5 - Архивный. 6 - Ошибка публикации.")
             .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.CreatedAt)).AsDateTime().NotNullable()
-            .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.UpdatedAt)).AsDateTime().Nullable();
+            .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.UpdatedAt)).AsDateTime().Nullable()
+            .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.Publisher)).AsString(255).Nullable();
         
         // Создание таблицы ProjectCardDraft
         Create.Table(_projectCardDraftTb)
