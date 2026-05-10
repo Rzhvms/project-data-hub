@@ -17,4 +17,9 @@ public interface IProjectUseCaseManager
     /// Создание проекта
     /// </summary>
     Task<CreateProjectResponse> CreateProjectAsync(CreateProjectRequest request);
+
+    /// <summary>
+    /// Опубликовать проект. Изменение статуса публикации и удаление черновика
+    /// </summary>
+    Task PublicateProjectAsync(PublicateProjectRequest request);
 }

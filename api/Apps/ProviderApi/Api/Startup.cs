@@ -1,6 +1,7 @@
 using Application;
 using CoreLib.Api.Controllers;
 using CoreLib.Api.Handlers;
+using CoreLib.Database;
 using CoreLib.Database.Migrations;
 using CoreLib.Middlewares;
 using Infrastructure;
@@ -34,6 +35,7 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         services.AddInfrastructure(connectionString!);
         
         services.AddCoreControllers();
+        services.AddCoreDatabases();
         
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
