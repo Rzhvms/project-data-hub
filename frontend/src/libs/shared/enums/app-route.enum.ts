@@ -1,3 +1,4 @@
 export enum AppRoute {
-    LoginPage = 'login'
+    LoginPage = 'login',
+    MainPage = ''
 }

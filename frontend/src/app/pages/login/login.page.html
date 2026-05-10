@@ -1,9 +1,19 @@
 <div class="login-page">
-    <div class="login-page__form" [formGroup]="loginForm">
+    <form
+        class="login-page__form"
+        [formGroup]="loginForm"
+        (ngSubmit)="login()"
+    >
         <tui-textfield class="login-page__form-control">
             <label for="emailControl" tuiLabel>Email</label>
-            <input id="emailControl" tuiInput formControlName="email" />
+            <input
+                id="emailControl"
+                tuiInput
+                formControlName="email"
+            />
         </tui-textfield>
+        <tui-error formControlName="email" />
+
         <tui-textfield class="login-page__form-control">
             <label for="passwordControl" tuiLabel>Пароль</label>
             <input
@@ -14,7 +24,17 @@
             />
             <tui-icon tuiPassword />
         </tui-textfield>
+        <tui-error formControlName="password" />
 
-        <button class="login-page__button" size="m" tuiButton type="button" (click)="login()">Войти</button>
-    </div>
+        <button
+            class="login-page__button"
+            size="m"
+            tuiButton
+            [loading]="isLoading()"
+            type="submit"
+        >
+            Войти
+        </button>
+        <tui-error [error]="authError()"/>
+    </form>
 </div>

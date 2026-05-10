@@ -1,3 +1,4 @@
 export enum ApiRoute {
-    Login = '/login'
+    Login = '/identity/api/connect/token',
+    RefreshTokens = '/identity/api/connnect/token/refresh'
 }
