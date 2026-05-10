@@ -5,7 +5,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Полное публичное название объекта.
     /// </summary>
-    public required string Title { get; set; }
+    public string? Title { get; set; }
 
     /// <summary>
     /// Краткое название объекта для списков, карточек и презентаций.
@@ -15,7 +15,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Город / Регион, в котором расположен объект.
     /// </summary>
-    public string CityRegion { get; set; } = null!;
+    public string? CityRegion { get; set; } = null!;
 
     /// <summary>
     /// Точный или ориентировочный адрес объекта.
@@ -35,12 +35,12 @@ public record CreateProjectRequest
     /// <summary>
     /// Статус проекта, например: концепция, проектная документация, реализован, в строительстве.
     /// </summary>
-    public string ProjectStatus { get; set; } = null!;
+    public string? ProjectStatus { get; set; } = null!;
 
     /// <summary>
     /// Тип объекта, например: жилой комплекс, общественное здание, благоустройство.
     /// </summary>
-    public string ObjectType { get; set; } = null!;
+    public string? ObjectType { get; set; } = null!;
 
     /// <summary>
     /// Заказчик объекта.
@@ -50,7 +50,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Роль компании ИНПАД в проекте.
     /// </summary>
-    public string InpadRole { get; set; } = null!;
+    public string? InpadRole { get; set; } = null!;
 
     /// <summary>
     /// Стадия проектирования, например: П, Р, концепция, эскизный проект.
@@ -60,7 +60,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Краткое описание объекта.
     /// </summary>
-    public string ShortDescription { get; set; } = null!;
+    public string? ShortDescription { get; set; } = null!;
 
     /// <summary>
     /// Полное описание объекта.

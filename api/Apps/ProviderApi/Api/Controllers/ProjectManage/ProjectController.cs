@@ -35,6 +35,10 @@ public class ProjectController(IProjectUseCaseManager useCaseManager) : Controll
         request.Publisher ??= User.GetUserFio();
         return await useCaseManager.CreateProjectAsync(request);
     }
-    
-    
+
+    [HttpPost("publish")]
+    public async Task PublicateProjectAsync(PublicateProjectRequest request)
+    {
+        await useCaseManager.PublicateProjectAsync(request);
+    }
 }
