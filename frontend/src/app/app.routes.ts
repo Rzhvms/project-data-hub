@@ -1,3 +1,10 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { AppRoute } from '../libs/shared/enums';
+
+export const routes: Routes = [
+    {
+        path: AppRoute.LoginPage,
+        loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPageComponent)
+    }
+];

@@ -1,0 +1,20 @@
+<div class="login-page">
+    <div class="login-page__form" [formGroup]="loginForm">
+        <tui-textfield class="login-page__form-control">
+            <label for="emailControl" tuiLabel>Email</label>
+            <input id="emailControl" tuiInput formControlName="email" />
+        </tui-textfield>
+        <tui-textfield class="login-page__form-control">
+            <label for="passwordControl" tuiLabel>Пароль</label>
+            <input
+                id="passwordControl"
+                type="password"
+                tuiInput
+                formControlName="password"
+            />
+            <tui-icon tuiPassword />
+        </tui-textfield>
+
+        <button class="login-page__button" size="m" tuiButton type="button" (click)="login()">Войти</button>
+    </div>
+</div>

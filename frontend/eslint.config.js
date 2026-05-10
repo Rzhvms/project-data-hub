@@ -106,6 +106,14 @@ module.exports = defineConfig([
             '@typescript-eslint/naming-convention': [
                 'error',
                 {
+                    selector: 'enumMember',
+                    format: ['PascalCase'],
+                    custom: {
+                        regex: '^[^А-ЯЁа-яё]*$',
+                        match: true,
+                    },
+                },
+                {
                     selector: 'default',
                     format: ['camelCase'],
                     custom: {
