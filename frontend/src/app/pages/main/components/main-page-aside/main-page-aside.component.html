@@ -1,3 +1,80 @@
-<div class="main-page-aside">
+<aside class="main-page-aside">
+    <header class="main-page-aside__header">
+        <tui-icon
+            class="main-page-aside__logo"
+            icon="logo"
+        />
+    </header>
+    <main class="main-page-aside__main">
+        @for (button of buttonList; track button.routerLink) {
+            <button
+                tuiButton
+                size="m"
+                [iconStart]="button.icon"
+                [tuiHint]="button.hint"
+                tuiHintAppearance="floating"
+                tuiHintDirection="end"
+                [aria-label]="button.hint"
+                [routerLink]="button.routerLink"
+                routerLinkActive
+                #rla="routerLinkActive"
+                [appearance]="rla.isActive ? 'primary' : 'floating'"
+            ></button>
+        }
+    </main>
+    <footer class="main-page-aside__footer">
+        <button
+            tuiButton
+            [tuiDropdown]="userDropdown"
+            tuiDropdownAuto
+            [tuiDropdownSided]="true"
+            tuiDropdownAlign="start"
+            size="m"
+            iconStart="@tui.user"
+            aria-label="Пользователь"
+            appearance="outline"
+            [style.color]="'#ACACAC'"
+        ></button>
+        <a
+            href="https://taiga-ui.dev"
+            rel="noopener noreferrer"
+            target="_blank"
+            tuiButton
+            size="m"
+            iconStart="@tui.file-text"
+            tuiHint="Документация и центр помощи"
+            tuiHintAppearance="floating"
+            tuiHintDirection="end"
+            aria-label="Документация и центр помощи"
+            appearance="outline"
+            [style.color]="'#ACACAC'"
+        ></a>
+    </footer>
+</aside>
 
-</div>
+<ng-template #userDropdown>
+    <div class="user-dropdown">
+        <div class="user-dropdown__credits">
+            <span class="user-dropdown__name">{{ user?.name }}</span>
+            <span class="user-dropdown__email">{{ user?.email }}</span>
+            <div
+                class="user-dropdown__role"
+                appearance="neutral"
+                size="m"
+                tuiBadge
+            >
+                {{ user?.role }}
+            </div>
+        </div>
+        <button
+            tuiButton
+            [loading]="isLogoutButtonLoading()"
+            size="s"
+            iconStart="@tui.log-out"
+            appearance="accent"
+            (click)="logout()"
+        >
+            Выйти из аккаунта
+        </button>
+    </div>
+</ng-template>

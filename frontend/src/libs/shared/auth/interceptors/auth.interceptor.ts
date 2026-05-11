@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 
-import { ApiRoute, AppRoute } from '../../enums';
+import { ApiRoute, AppRoute, LocalStorageKeys } from '../../enums';
 import { AuthService } from '../services/auth.service';
 
 let isRefreshing = false;
@@ -56,8 +56,8 @@ function shouldSkip401Handling(
 ): boolean {
     return (
         error.status !== 401 ||
-        req.url.includes(ApiRoute.Login) ||
-        req.url.includes(ApiRoute.RefreshTokens)
+        req.url.endsWith(ApiRoute.Login) ||
+        req.url.endsWith(ApiRoute.RefreshTokens)
     );
 }
 
@@ -81,7 +81,8 @@ function refreshTokens(
         }),
         catchError((error) => {
             isRefreshing = false;
-            authService.unauthorize();
+            localStorage.removeItem(LocalStorageKeys.AccessToken);
+            localStorage.removeItem(LocalStorageKeys.RefreshToken);
             void router.navigate([AppRoute.LoginPage]);
 
             return throwError(() => error);

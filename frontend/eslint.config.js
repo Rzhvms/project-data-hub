@@ -62,6 +62,7 @@ module.exports = defineConfig([
                     style: 'kebab-case',
                 },
             ],
+            "@typescript-eslint/consistent-type-definitions": "off",
             '@typescript-eslint/member-ordering': [
                 'error',
                 {

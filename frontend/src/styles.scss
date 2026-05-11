@@ -1,4 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+app-root {
+    display: flex;
+    height: 100%;
+}
+
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
