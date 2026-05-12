@@ -1,0 +1,31 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+
+    &__logo {
+        margin: 2rem 0;
+        fill: white;
+    }
+
+    &__title {
+        text-align: center;
+        font: var(--tui-typography-heading-h4);
+        margin: 1rem 0;
+    }
+
+    &__form {
+        width: 30rem;
+    }
+
+    &__button {
+        width: 100%;
+    }
+
+    &__support-link {
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: var(--tui-text-tertiary);
+    }
+}

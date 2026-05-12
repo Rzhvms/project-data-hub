@@ -1,4 +1,7 @@
 <div class="login-page">
+    <svg class="login-page__logo">
+        <use href="icons/logo-with-text.svg" />
+    </svg>
     <form
         class="login-page__form"
         tuiForm="m"
@@ -6,7 +9,8 @@
         [formGroup]="loginForm"
         (ngSubmit)="login()"
     >
-        <tui-textfield class="login-page__form-control">
+        <h1 class="login-page__title">Вход в панель администрирования</h1>
+        <tui-textfield>
             <label for="emailControl" tuiLabel>Email</label>
             <input
                 id="emailControl"
@@ -16,7 +20,7 @@
         </tui-textfield>
         <tui-error formControlName="email" />
 
-        <tui-textfield class="login-page__form-control">
+        <tui-textfield>
             <label for="passwordControl" tuiLabel>Пароль</label>
             <input
                 id="passwordControl"
@@ -38,5 +42,12 @@
             Войти
         </button>
         <tui-error [error]="authError()"/>
+
+        <span class="login-page__support-link">
+            По всем вопросам можете обращаться:<br>
+            <a target="_blank" href="mailto:adminexample@gmail.com?subject=Панель%20администрирования%20ИНПАД">
+                adminexample@gmail.com
+            </a>
+        </span>
     </form>
 </div>

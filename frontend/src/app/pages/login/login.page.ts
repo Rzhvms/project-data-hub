@@ -10,6 +10,7 @@ import { catchError, debounceTime, finalize, take, tap, throwError } from 'rxjs'
 
 import { AuthService } from '../../../libs/shared/auth';
 import { ApiErrorCode, AppRoute } from '../../../libs/shared/enums';
+import { ICON_RESOLVER_PROVIDER } from '../../../libs/shared/providers';
 
 type LoginForm = FormGroup<{
     email: FormControl<string>;
@@ -30,8 +31,10 @@ type LoginForm = FormGroup<{
         TuiButtonLoading,
         TuiError,
         TuiForm,
-        TuiCardLarge
-    ]
+        TuiCardLarge,
+        TuiIcon
+    ],
+    providers: [ICON_RESOLVER_PROVIDER]
 })
 export class LoginPageComponent {
     protected readonly isLoading = signal(false);
