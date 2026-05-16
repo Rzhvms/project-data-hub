@@ -15,4 +15,8 @@
       <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UseCases\Categories\Dto\Request\" />
+    </ItemGroup>
+
 </Project>

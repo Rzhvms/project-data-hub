@@ -24,6 +24,15 @@ public class ProjectController(IProjectUseCaseManager useCaseManager) : Controll
     {
         return await useCaseManager.GetSimpleProjectListAsync();
     }
+
+    /// <summary>
+    /// Получить полную информацию о проекте по идентификатору
+    /// </summary>
+    [HttpGet("{projectId}")]
+    public async Task<GetFullProjectResponse> GetFullProjectByIdAsync([FromRoute] Guid projectId)
+    {
+        return await useCaseManager.GetFullProjectByIdAsync(projectId);
+    }
     
     /// <summary>
     /// Создание проекта
@@ -35,10 +44,31 @@ public class ProjectController(IProjectUseCaseManager useCaseManager) : Controll
         request.Publisher ??= User.GetUserFio();
         return await useCaseManager.CreateProjectAsync(request);
     }
-
+    
+    /// <summary>
+    /// Опубликовать проект
+    /// </summary>
     [HttpPost("publish")]
     public async Task PublicateProjectAsync(PublicateProjectRequest request)
     {
         await useCaseManager.PublicateProjectAsync(request);
+    }
+
+    /// <summary>
+    /// Обновить информацию о проекте
+    /// </summary>
+    [HttpPatch("update/{projectId}")]
+    public async Task UpdateProjectAsync([FromRoute] Guid projectId, UpdateProjectRequest request)
+    {
+        await useCaseManager.UpdateProjectAsync(projectId, request);
+    }
+
+    /// <summary>
+    /// Удалить проект
+    /// </summary>
+    [HttpDelete("delete/{projectId}")]
+    public async Task DeleteProjectById([FromRoute] Guid projectId)
+    {
+        await useCaseManager.DeleteProjectAsync(projectId);
     }
 }
