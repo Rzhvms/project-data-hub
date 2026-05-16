@@ -1,6 +1,6 @@
 namespace Application.UseCases.ProjectManage.Dto.Request;
 
-public record CreateProjectRequest
+public record UpdateProjectRequest
 {
     /// <summary>
     /// Полное публичное название объекта.

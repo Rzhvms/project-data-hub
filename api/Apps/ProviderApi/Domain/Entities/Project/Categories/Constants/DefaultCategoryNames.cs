@@ -8,7 +8,7 @@ public static class DefaultCategoryNames
     public const string ResidentialComplexes = "Жилые комплексы";
     public const string PublicBuildings = "Общественные здания";
     public const string CommercialRealEstate = "Коммерческая недвижимость";
-    public const string Improvement = "•Благоустройство";
+    public const string Improvement = "Благоустройство";
     public const string UrbanPlanning = "Градостроительство";
     public const string Interior = "Интерьер";
     public const string Concept = "Концепция";

@@ -21,11 +21,6 @@ public sealed record ProjectParticipant
     public string? Description { get; set; }
 
     /// <summary>
-    /// Порядок сортировки в интерфейсе.
-    /// </summary>
-    public int SortOrder { get; set; }
-
-    /// <summary>
     /// Признак активности роли.
     /// </summary>
     public bool IsActive { get; set; }

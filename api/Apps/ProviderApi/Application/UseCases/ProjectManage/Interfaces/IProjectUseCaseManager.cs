@@ -12,6 +12,11 @@ public interface IProjectUseCaseManager
     /// Получение списка объектов для главной страницы
     /// </summary>
     Task<GetSimpleProjectListResponse> GetSimpleProjectListAsync();
+
+    /// <summary>
+    /// Получить полную информацию о проекте по идентификатору
+    /// </summary>
+    Task<GetFullProjectResponse> GetFullProjectByIdAsync(Guid projectId);
     
     /// <summary>
     /// Создание проекта
@@ -22,4 +27,14 @@ public interface IProjectUseCaseManager
     /// Опубликовать проект. Изменение статуса публикации и удаление черновика
     /// </summary>
     Task PublicateProjectAsync(PublicateProjectRequest request);
+
+    /// <summary>
+    /// Обновить информацию о проекте
+    /// </summary>
+    Task UpdateProjectAsync(Guid projectId, UpdateProjectRequest request);
+
+    /// <summary>
+    /// Удалить проект
+    /// </summary>
+    Task DeleteProjectAsync(Guid projectId);
 }

@@ -2,6 +2,7 @@ namespace Domain.Entities.Project;
 
 public sealed record ProjectDraftData
 {
+    public Guid? ProjectId { get; set; }
     public string? Title { get; set; }
     public string? ShortTitle { get; set; }
     public string? CityRegion { get; set; }
@@ -16,4 +17,5 @@ public sealed record ProjectDraftData
     public string? ShortDescription { get; set; }
     public string? LongDescription { get; set; }
     public string? Publisher { get; set; }
+    public Guid CategoryId { get; set; }
 }

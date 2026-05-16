@@ -10,13 +10,14 @@ using Domain.Entities.Project;
 namespace Application.UseCases.ProjectManage;
 
 /// <inheritdoc/>
-internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IProjectUseCaseManager
+internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICategoryRepository categoryRepository)
+    : IProjectUseCaseManager
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
-    
+
     /// <inheritdoc/>
     public async Task<GetSimpleProjectListResponse> GetSimpleProjectListAsync()
     {
@@ -30,20 +31,51 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IPr
                 Place = project.CityRegion,
                 ObjectType = project.ObjectType,
                 ProjectStatus = project.ProjectStatus,
-                CreatedAt  = project.CreatedAt,
+                CreatedAt = project.CreatedAt,
                 UpdatedAt = project.UpdatedAt,
                 Publisher = project.Publisher,
                 PublicationStatus = project.PublicationStatus.ToString()
             }).ToList()
         };
     }
-    
+
+    /// <inheritdoc/>
+    public async Task<GetFullProjectResponse> GetFullProjectByIdAsync(Guid projectId)
+    {
+        var project = await projectRepository.GetFullProjectByIdAsync(projectId);
+        var categoryId = await categoryRepository.GetCategoryIdByProjectIdAsync(projectId);
+
+        return new GetFullProjectResponse()
+        {
+            Id = project.Id,
+            Title = project.Title,
+            ShortTitle = project.ShortTitle,
+            CityRegion = project.CityRegion,
+            Address = project.Address,
+            DesignYearPeriod = project.DesignYearPeriod,
+            RealizationYear = project.RealizationYear,
+            ProjectStatus = project.ProjectStatus,
+            ObjectType = project.ObjectType,
+            Customer = project.Customer,
+            InpadRole = project.InpadRole,
+            DesignStage = project.DesignStage,
+            ShortDescription = project.ShortDescription,
+            LongDescription = project.LongDescription,
+            PublicationStatus = project.PublicationStatus.ToString(),
+            CreatedAt = project.CreatedAt,
+            UpdatedAt = project.UpdatedAt,
+            Publisher = project.Publisher,
+            CategoryId = categoryId
+        };
+    }
+
     /// <inheritdoc/>
     public async Task<CreateProjectResponse> CreateProjectAsync(CreateProjectRequest request)
     {
+        var projectId = Guid.NewGuid();
         var project = new ProjectCard()
         {
-            Id = Guid.NewGuid(),
+            Id = projectId,
             Title = request.Title ?? string.Empty,
             ShortTitle = request.ShortTitle,
             CityRegion = request.CityRegion ?? string.Empty,
@@ -61,10 +93,10 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IPr
             CreatedAt = DateTime.UtcNow,
             Publisher = request.Publisher
         };
-        
-        var draftData = FromCreateProjectRequest(request);
+
+        var draftData = FromRequest(projectId, request);
         var response = await projectRepository.CreateProjectAsync(project, draftData);
-        
+
         return new CreateProjectResponse
         {
             ProjectId = response
@@ -97,31 +129,91 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IPr
             throw;
         }
     }
-    
+
+    /// <inheritdoc/>
+    public async Task UpdateProjectAsync(Guid projectId, UpdateProjectRequest request)
+    {
+        var draftData = FromRequest(projectId, request);
+
+        var transaction = projectRepository.BeginTransaction();
+        try
+        {
+            await projectRepository.UpdateProjectAsync(draftData, transaction);
+
+            if (request.CategoryId != Guid.Empty)
+            {
+                var checkExist =
+                    await categoryRepository.CheckExistProjectCategoryLink(projectId, request.CategoryId, transaction);
+                if (!checkExist)
+                {
+                    await categoryRepository.AddProjectCategoryLink(projectId, request.CategoryId, transaction);
+                }
+            }
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteProjectAsync(Guid projectId)
+    {
+        await projectRepository.DeleteProjectAsync(projectId);
+    }
+
     /// <summary>
     /// Маппинг в ProjectDraftData
     /// </summary>
-    private static ProjectDraftData FromCreateProjectRequest(CreateProjectRequest request)
+    private static ProjectDraftData FromRequest<T>(Guid projectId, T request)
     {
-        return new ProjectDraftData
+        return request switch
         {
-            Title = request.Title,
-            ShortTitle = request.ShortTitle,
-            CityRegion = request.CityRegion,
-            Address = request.Address,
-            DesignYearPeriod = request.DesignYearPeriod,
-            RealizationYear = request.RealizationYear,
-            ProjectStatus = request.ProjectStatus,
-            ObjectType = request.ObjectType,
-            Customer = request.Customer,
-            InpadRole = request.InpadRole,
-            DesignStage = request.DesignStage,
-            ShortDescription = request.ShortDescription,
-            LongDescription = request.LongDescription,
-            Publisher = request.Publisher
+            CreateProjectRequest createProjectRequest => new ProjectDraftData
+            {
+                ProjectId = projectId,
+                Title = createProjectRequest.Title,
+                ShortTitle = createProjectRequest.ShortTitle,
+                CityRegion = createProjectRequest.CityRegion,
+                Address = createProjectRequest.Address,
+                DesignYearPeriod = createProjectRequest.DesignYearPeriod,
+                RealizationYear = createProjectRequest.RealizationYear,
+                ProjectStatus = createProjectRequest.ProjectStatus,
+                ObjectType = createProjectRequest.ObjectType,
+                Customer = createProjectRequest.Customer,
+                InpadRole = createProjectRequest.InpadRole,
+                DesignStage = createProjectRequest.DesignStage,
+                ShortDescription = createProjectRequest.ShortDescription,
+                LongDescription = createProjectRequest.LongDescription,
+                Publisher = createProjectRequest.Publisher,
+                CategoryId = createProjectRequest.CategoryId,
+            },
+            UpdateProjectRequest updateProjectRequest => new ProjectDraftData
+            {
+                ProjectId = projectId,
+                Title = updateProjectRequest.Title,
+                ShortTitle = updateProjectRequest.ShortTitle,
+                CityRegion = updateProjectRequest.CityRegion,
+                Address = updateProjectRequest.Address,
+                DesignYearPeriod = updateProjectRequest.DesignYearPeriod,
+                RealizationYear = updateProjectRequest.RealizationYear,
+                ProjectStatus = updateProjectRequest.ProjectStatus,
+                ObjectType = updateProjectRequest.ObjectType,
+                Customer = updateProjectRequest.Customer,
+                InpadRole = updateProjectRequest.InpadRole,
+                DesignStage = updateProjectRequest.DesignStage,
+                ShortDescription = updateProjectRequest.ShortDescription,
+                LongDescription = updateProjectRequest.LongDescription,
+                Publisher = updateProjectRequest.Publisher,
+                CategoryId = updateProjectRequest.CategoryId
+            },
+            _ => new ProjectDraftData()
         };
     }
-    
+
     /// <summary>
     /// Валидация черновика
     /// </summary>
@@ -135,11 +227,12 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository) : IPr
         if (string.IsNullOrWhiteSpace(draft.ObjectType)) missing.Add(nameof(draft.ObjectType));
         if (string.IsNullOrWhiteSpace(draft.InpadRole)) missing.Add(nameof(draft.InpadRole));
         if (string.IsNullOrWhiteSpace(draft.ShortDescription)) missing.Add(nameof(draft.ShortDescription));
-        // TODO: добавить категории объекта
+        if (string.IsNullOrWhiteSpace(draft.CategoryId.ToString())) missing.Add(nameof(draft.CategoryId));
 
         if (missing.Count > 0)
         {
-            throw new InvalidProjectCardException($"Нельзя опубликовать проект. Не заполнены поля: {string.Join(", ", missing)}");
+            throw new InvalidProjectCardException(
+                $"Нельзя опубликовать проект. Не заполнены поля: {string.Join(", ", missing)}");
         }
     }
 }

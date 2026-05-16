@@ -1,9 +1,6 @@
-namespace Domain.Entities.Project.Categories;
+namespace Application.UseCases.Categories.Dto.Response;
 
-/// <summary>
-/// Модель Категории проекта (объекта)
-/// </summary>
-public sealed record ProjectCategory
+public record GetCategoryResponse
 {
     /// <summary>
     /// Идентификатор категории

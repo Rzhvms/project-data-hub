@@ -2,6 +2,7 @@ using System.Data;
 using Application.Ports.Repositories;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
+using Infrastructure.Repositories.Categories;
 using Infrastructure.Repositories.Project;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -35,5 +36,6 @@ public static class InfrastructureStartUp
             .AddLogging(lb => lb.AddFluentMigratorConsole());
 
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
     }
 }
