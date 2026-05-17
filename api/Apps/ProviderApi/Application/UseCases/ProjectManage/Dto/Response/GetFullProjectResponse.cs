@@ -95,5 +95,5 @@ public record GetFullProjectResponse
     /// <summary>
     /// Идентификатор категории
     /// </summary>
-    public Guid CategoryId { get; init; }
+    public List<Guid> CategoryIdList { get; init; }
 }

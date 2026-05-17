@@ -26,7 +26,7 @@ public interface ICategoryRepository
     /// <summary>
     /// Получить идентификатор категории проекта
     /// </summary>
-    Task<Guid> GetCategoryIdByProjectIdAsync(Guid projectId, IDbTransaction? transaction = null);
+    Task<List<Guid>> GetCategoryIdListByProjectIdAsync(Guid projectId, IDbTransaction? transaction = null);
     
     /// <summary>
     /// Получить категорию по идентификатору
