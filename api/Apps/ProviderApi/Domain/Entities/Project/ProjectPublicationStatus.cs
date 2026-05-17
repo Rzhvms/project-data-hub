@@ -13,10 +13,10 @@ public enum ProjectPublicationStatus
     /// <summary>
     /// Опубликован
     /// </summary>
-    Published = 4,
+    Published = 2,
     
     /// <summary>
     /// Архивный
     /// </summary>
-    Archived = 5,
+    Archived = 3,
 }

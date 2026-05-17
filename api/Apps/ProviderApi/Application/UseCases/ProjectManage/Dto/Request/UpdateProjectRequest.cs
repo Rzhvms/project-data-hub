@@ -73,7 +73,12 @@ public record UpdateProjectRequest
     public string? Publisher { get; set; }
     
     /// <summary>
-    /// Идентификатор категории
+    /// Идентификаторы категории
     /// </summary>
     public List<Guid> CategoryIdList { get; set; }
+    
+    /// <summary>
+    /// Идентификаторы категории
+    /// </summary>
+    public List<Guid> ParticipantIdList { get; set; }
 }

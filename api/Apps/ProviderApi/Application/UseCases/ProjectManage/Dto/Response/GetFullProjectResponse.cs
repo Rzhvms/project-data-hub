@@ -93,7 +93,12 @@ public record GetFullProjectResponse
     public string? Publisher { get; init; }
     
     /// <summary>
-    /// Идентификатор категории
+    /// Идентификаторы категории
     /// </summary>
     public List<Guid> CategoryIdList { get; init; }
+    
+    /// <summary>
+    /// Идентификаторы участников
+    /// </summary>
+    public List<Guid> ParticipantIdList { get; init; }
 }
