@@ -10,7 +10,7 @@ using Domain.Entities.Project;
 namespace Application.UseCases.ProjectManage;
 
 /// <inheritdoc/>
-internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICategoryRepository categoryRepository)
+internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICategoryRepository categoryRepository, IParticipantRepository participantRepository)
     : IProjectUseCaseManager
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -44,6 +44,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     {
         var project = await projectRepository.GetFullProjectByIdAsync(projectId);
         var categoryIdList = await categoryRepository.GetCategoryIdListByProjectIdAsync(projectId);
+        var participantIdList = await participantRepository.GetParticipantIdListByProjectIdAsync(projectId);
 
         return new GetFullProjectResponse()
         {
@@ -65,7 +66,8 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
             CreatedAt = project.CreatedAt,
             UpdatedAt = project.UpdatedAt,
             Publisher = project.Publisher,
-            CategoryIdList = categoryIdList
+            CategoryIdList = categoryIdList,
+            ParticipantIdList = participantIdList
         };
     }
 
@@ -152,6 +154,19 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                     }
                 }
             }
+            
+            foreach (var participantId in request.ParticipantIdList)
+            {
+                if (participantId != Guid.Empty)
+                {
+                    var checkExist =
+                        await participantRepository.CheckExistProjectParticipantLink(projectId, participantId, transaction);
+                    if (!checkExist)
+                    {
+                        await participantRepository.AddProjectParticipantLink(projectId, participantId, transaction);
+                    }
+                }
+            }
 
             transaction.Commit();
         }
@@ -193,6 +208,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 LongDescription = createProjectRequest.LongDescription,
                 Publisher = createProjectRequest.Publisher,
                 CategoryIdList = createProjectRequest.CategoryIdList,
+                ParticipantIdList = createProjectRequest.ParticipantIdList,
             },
             UpdateProjectRequest updateProjectRequest => new ProjectDraftData
             {
@@ -211,14 +227,15 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 ShortDescription = updateProjectRequest.ShortDescription,
                 LongDescription = updateProjectRequest.LongDescription,
                 Publisher = updateProjectRequest.Publisher,
-                CategoryIdList = updateProjectRequest.CategoryIdList
+                CategoryIdList = updateProjectRequest.CategoryIdList,
+                ParticipantIdList = updateProjectRequest.ParticipantIdList,
             },
             _ => new ProjectDraftData()
         };
     }
 
     /// <summary>
-    /// Валидация черновика
+    /// Валидация черновика перед публикацией
     /// </summary>
     private static void ValidateDraft(ProjectDraftData draft)
     {

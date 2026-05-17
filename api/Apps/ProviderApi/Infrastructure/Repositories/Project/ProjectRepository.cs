@@ -7,6 +7,7 @@ using CoreLib.Exceptions;
 using Dapper;
 using Domain.Entities.Project;
 using Domain.Entities.Project.Categories;
+using Domain.Entities.Project.Roles;
 using Npgsql;
 
 namespace Infrastructure.Repositories.Project;
@@ -75,6 +76,21 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
                     }, transaction);
                 }
             }
+            
+            var projectParticipantLinkSql =
+                $@"INSERT INTO {EntityMapper.TbName<ProjectParticipantLink>()} VALUES (@Id, @ProjectId, @ParticipantId)";
+
+            // Поскольку на момент создания черновика идентификатор участника может отсутствовать, пропускаем этот шаг
+            foreach (var participantId in draftData.ParticipantIdList)
+            {
+                if (participantId != Guid.Empty)
+                {
+                    await dbConnection.ExecuteAsync(projectParticipantLinkSql, new
+                    {
+                        Id = Guid.NewGuid(), ProjectId = projectCard.Id, ParticipantId = participantId,
+                    }, transaction);
+                }
+            }
 
             transaction.Commit();
             return projectCard.Id;
@@ -84,7 +100,7 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
             transaction.Rollback();
             if (ex is PostgresException)
             {
-                throw new EntityNotFoundException("Передан некорректный идентификатор категории");
+                throw new EntityNotFoundException("Передан некорректный идентификатор категории/участника проекта");
             }
             throw;
         }
