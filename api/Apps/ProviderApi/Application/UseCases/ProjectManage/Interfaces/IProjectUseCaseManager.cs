@@ -37,4 +37,9 @@ public interface IProjectUseCaseManager
     /// Удалить проект
     /// </summary>
     Task DeleteProjectAsync(Guid projectId);
+
+    /// <summary>
+    /// Получить черновик
+    /// </summary>
+    Task<GetProjectDraftResponse> GetProjectDraftByIdAsync(Guid projectId);
 }

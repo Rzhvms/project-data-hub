@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+
 namespace Domain.Entities.Project;
 
 public sealed record ProjectDraftData
@@ -17,6 +19,7 @@ public sealed record ProjectDraftData
     public string? ShortDescription { get; init; }
     public string? LongDescription { get; init; }
     public string? Publisher { get; init; }
-    public List<Guid> CategoryIdList { get; init; }
-    public List<Guid> ParticipantIdList { get; init; }
+    public List<Guid>? CategoryIdList { get; init; }
+    public List<Guid>? ParticipantIdList { get; init; }
+    public JsonObject? ProjectMetrics { get; set; }
 }

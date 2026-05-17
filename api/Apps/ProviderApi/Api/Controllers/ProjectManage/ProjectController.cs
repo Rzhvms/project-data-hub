@@ -71,4 +71,13 @@ public class ProjectController(IProjectUseCaseManager useCaseManager) : Controll
     {
         await useCaseManager.DeleteProjectAsync(projectId);
     }
+
+    /// <summary>
+    /// Получить черновик проекта
+    /// </summary>
+    [HttpGet("draft/{projectId}")]
+    public async Task<GetProjectDraftResponse> GetProjectDraftAsync([FromRoute] Guid projectId)
+    {
+        return await useCaseManager.GetProjectDraftByIdAsync(projectId);
+    }
 }

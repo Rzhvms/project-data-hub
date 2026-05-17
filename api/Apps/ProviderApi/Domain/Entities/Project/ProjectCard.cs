@@ -1,6 +1,3 @@
-using Domain.Entities.Project.Categories;
-using Domain.Entities.Project.Roles;
-
 namespace Domain.Entities.Project;
 
 /// <summary>
@@ -99,19 +96,4 @@ public sealed record ProjectCard
     /// Автор, ответственный (ФИО)
     /// </summary>
     public string? Publisher { get; init; }
-
-    /// <summary>
-    /// Набор технико-экономических показателей объекта.
-    /// </summary>
-    public ProjectMetrics? Metrics { get; init; }
-
-    /// <summary>
-    /// Привязанные категории объекта.
-    /// </summary>
-    public List<ProjectCategoryLink> Categories { get; init; } = [];
-
-    /// <summary>
-    /// Участники проекта.
-    /// </summary>
-    public List<ProjectParticipant> Participants { get; init; } = [];
 }

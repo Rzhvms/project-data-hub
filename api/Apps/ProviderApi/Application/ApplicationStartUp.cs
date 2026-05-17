@@ -21,5 +21,6 @@ public static class ApplicationStartUp
         services.AddScoped<IProjectUseCaseManager, ProjectUseCaseManager>();
         services.AddScoped<ICategoryUseCaseManager, CategoryUseCaseManager>();
         services.AddScoped<IParticipantUseCaseManager, ParticipantUseCaseManager>();
+        services.AddScoped<IProjectMetricsUseCaseManager, ProjectMetricsUseCaseManager>();
     }
 }

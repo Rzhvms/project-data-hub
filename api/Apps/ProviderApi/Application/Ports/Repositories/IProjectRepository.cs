@@ -42,6 +42,11 @@ public interface IProjectRepository
     /// Обновить информацию о проекте
     /// </summary>
     Task UpdateProjectAsync(ProjectDraftData draftData, IDbTransaction? transaction = null);
+    
+    /// <summary>
+    /// Обновить черновик
+    /// </summary>
+    Task UpdateProjectDraftAsync(Guid projectId, ProjectDraftData draftData, IDbTransaction? transaction = null);
 
     /// <summary>
     /// Удалить черновик
