@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Application.UseCases.Participants.Dto.Response;
 
 public record GetParticipantResponse
@@ -5,35 +7,42 @@ public record GetParticipantResponse
     /// <summary>
     /// Идентификатор участника
     /// </summary>
-    public Guid Id { get; set; }
+    [JsonPropertyName("id")]
+    public Guid Id { get; init; }
 
     /// <summary>
     /// Отображаемое название участника
     /// </summary>
-    public string Name { get; set; } = null!;
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = null!;
 
     /// <summary>
     /// Описание участника
     /// </summary>
-    public string? Description { get; set; }
+    [JsonPropertyName("description")]
+    public string? Description { get; init; }
     
     /// <summary>
     /// Признак активности участника
     /// </summary>
-    public bool IsActive { get; set; }
+    [JsonPropertyName("isActive")]
+    public bool IsActive { get; init; }
     
     /// <summary>
     /// Признак системного участника
     /// </summary>
-    public bool IsSystem { get; set; }
+    [JsonPropertyName("isSystem")]
+    public bool IsSystem { get; init; }
 
     /// <summary>
     /// Дата создания
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; init; }
 
     /// <summary>
     /// Дата последнего обновления
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    [JsonPropertyName("updatedAt")]
+    public DateTime UpdatedAt { get; init; }
 }
