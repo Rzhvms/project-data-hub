@@ -75,5 +75,5 @@ public record UpdateProjectRequest
     /// <summary>
     /// Идентификатор категории
     /// </summary>
-    public Guid CategoryId { get; set; }
+    public List<Guid> CategoryIdList { get; set; }
 }

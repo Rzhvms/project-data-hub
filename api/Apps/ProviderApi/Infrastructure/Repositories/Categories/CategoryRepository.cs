@@ -55,13 +55,14 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
     }
 
     /// <inheritdoc />
-    public async Task<Guid> GetCategoryIdByProjectIdAsync(Guid projectId, IDbTransaction? transaction = null)
+    public async Task<List<Guid>> GetCategoryIdListByProjectIdAsync(Guid projectId, IDbTransaction? transaction = null)
     {
         var sql = $@"SELECT {EntityMapper.ColName<ProjectCategoryLink>(x => x.CategoryId)} 
                     FROM {EntityMapper.TbName<ProjectCategoryLink>()} 
                     WHERE {EntityMapper.ColName<ProjectCategoryLink>(x => x.ProjectId)} = @ProjectId";
 
-        return await dbConnection.QuerySingleOrDefaultAsync<Guid>(sql, new { ProjectId = projectId }, transaction);
+        var categories = await dbConnection.QueryAsync<Guid>(sql, new { ProjectId = projectId }, transaction);
+        return categories.AsList();
     }
 
     /// <inheritdoc />

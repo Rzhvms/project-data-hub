@@ -43,7 +43,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     public async Task<GetFullProjectResponse> GetFullProjectByIdAsync(Guid projectId)
     {
         var project = await projectRepository.GetFullProjectByIdAsync(projectId);
-        var categoryId = await categoryRepository.GetCategoryIdByProjectIdAsync(projectId);
+        var categoryIdList = await categoryRepository.GetCategoryIdListByProjectIdAsync(projectId);
 
         return new GetFullProjectResponse()
         {
@@ -65,7 +65,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
             CreatedAt = project.CreatedAt,
             UpdatedAt = project.UpdatedAt,
             Publisher = project.Publisher,
-            CategoryId = categoryId
+            CategoryIdList = categoryIdList
         };
     }
 
@@ -140,13 +140,16 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
         {
             await projectRepository.UpdateProjectAsync(draftData, transaction);
 
-            if (request.CategoryId != Guid.Empty)
+            foreach (var categoryId in request.CategoryIdList)
             {
-                var checkExist =
-                    await categoryRepository.CheckExistProjectCategoryLink(projectId, request.CategoryId, transaction);
-                if (!checkExist)
+                if (categoryId != Guid.Empty)
                 {
-                    await categoryRepository.AddProjectCategoryLink(projectId, request.CategoryId, transaction);
+                    var checkExist =
+                        await categoryRepository.CheckExistProjectCategoryLink(projectId, categoryId, transaction);
+                    if (!checkExist)
+                    {
+                        await categoryRepository.AddProjectCategoryLink(projectId, categoryId, transaction);
+                    }
                 }
             }
 
@@ -189,7 +192,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 ShortDescription = createProjectRequest.ShortDescription,
                 LongDescription = createProjectRequest.LongDescription,
                 Publisher = createProjectRequest.Publisher,
-                CategoryId = createProjectRequest.CategoryId,
+                CategoryIdList = createProjectRequest.CategoryIdList,
             },
             UpdateProjectRequest updateProjectRequest => new ProjectDraftData
             {
@@ -208,7 +211,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 ShortDescription = updateProjectRequest.ShortDescription,
                 LongDescription = updateProjectRequest.LongDescription,
                 Publisher = updateProjectRequest.Publisher,
-                CategoryId = updateProjectRequest.CategoryId
+                CategoryIdList = updateProjectRequest.CategoryIdList
             },
             _ => new ProjectDraftData()
         };
@@ -221,13 +224,13 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     {
         var missing = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(draft.Title)) missing.Add(nameof(draft.Title));
-        if (string.IsNullOrWhiteSpace(draft.CityRegion)) missing.Add(nameof(draft.CityRegion));
-        if (string.IsNullOrWhiteSpace(draft.ProjectStatus)) missing.Add(nameof(draft.ProjectStatus));
-        if (string.IsNullOrWhiteSpace(draft.ObjectType)) missing.Add(nameof(draft.ObjectType));
-        if (string.IsNullOrWhiteSpace(draft.InpadRole)) missing.Add(nameof(draft.InpadRole));
-        if (string.IsNullOrWhiteSpace(draft.ShortDescription)) missing.Add(nameof(draft.ShortDescription));
-        if (string.IsNullOrWhiteSpace(draft.CategoryId.ToString())) missing.Add(nameof(draft.CategoryId));
+        if (string.IsNullOrWhiteSpace(draft.Title)) missing.Add("Название объекта");
+        if (string.IsNullOrWhiteSpace(draft.CityRegion)) missing.Add("Город");
+        if (string.IsNullOrWhiteSpace(draft.ProjectStatus)) missing.Add("Статус проекта");
+        if (string.IsNullOrWhiteSpace(draft.ObjectType)) missing.Add("Тип объекта");
+        if (string.IsNullOrWhiteSpace(draft.InpadRole)) missing.Add("Роль компании ИНПАД");
+        if (string.IsNullOrWhiteSpace(draft.ShortDescription)) missing.Add("Краткое описание");
+        if (draft.CategoryIdList.Count == 0) missing.Add("Категория объекта");
 
         if (missing.Count > 0)
         {

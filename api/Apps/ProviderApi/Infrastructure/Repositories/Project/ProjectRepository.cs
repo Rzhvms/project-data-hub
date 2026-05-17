@@ -7,7 +7,6 @@ using CoreLib.Exceptions;
 using Dapper;
 using Domain.Entities.Project;
 using Domain.Entities.Project.Categories;
-using Microsoft.Data.SqlClient;
 using Npgsql;
 
 namespace Infrastructure.Repositories.Project;
@@ -66,12 +65,15 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
                 $@"INSERT INTO {EntityMapper.TbName<ProjectCategoryLink>()} VALUES (@Id, @ProjectId, @CategoryId)";
 
             // Поскольку на момент создания черновика идентификатор категории может отсутствовать, пропускаем этот шаг
-            if (draftData.CategoryId != Guid.Empty)
+            foreach (var categoryId in draftData.CategoryIdList)
             {
-                await dbConnection.ExecuteAsync(projectCategoryLinkSql, new
+                if (categoryId != Guid.Empty)
                 {
-                    Id = Guid.NewGuid(), ProjectId = projectCard.Id, CategoryId = draftData.CategoryId,
-                }, transaction);
+                    await dbConnection.ExecuteAsync(projectCategoryLinkSql, new
+                    {
+                        Id = Guid.NewGuid(), ProjectId = projectCard.Id, CategoryId = categoryId,
+                    }, transaction);
+                }
             }
 
             transaction.Commit();
@@ -214,7 +216,7 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
                 WHERE {EntityMapper.ColName<ProjectCardDraft>(x => x.ProjectId)} = @ProjectId";
 
             await dbConnection.ExecuteAsync(updateDraft, new
-                { ProjectId = draftData.ProjectId, ProjectData = projectData }, innerTransaction);
+                { draftData.ProjectId, ProjectData = projectData }, innerTransaction);
 
             if (transaction is null)
             {

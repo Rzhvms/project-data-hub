@@ -17,5 +17,5 @@ public sealed record ProjectDraftData
     public string? ShortDescription { get; set; }
     public string? LongDescription { get; set; }
     public string? Publisher { get; set; }
-    public Guid CategoryId { get; set; }
+    public List<Guid> CategoryIdList { get; set; }
 }
