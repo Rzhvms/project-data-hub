@@ -8,8 +8,10 @@ using Npgsql;
 
 namespace Infrastructure.Repositories.Categories;
 
+/// <inheritdoc />
 internal class CategoryRepository(IDbConnection dbConnection) : ICategoryRepository
 {
+    /// <inheritdoc />
     public async Task<List<ProjectCategory>> GetAllCategories()
     {
         var sql = $@"SELECT * FROM {EntityMapper.TbName<ProjectCategory>()}";
@@ -17,6 +19,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         return categories.AsList();
     }
 
+    /// <inheritdoc />
     public async Task AddProjectCategoryLink(Guid projectId, Guid categoryId, IDbTransaction? transaction = null)
     {
         try
@@ -35,6 +38,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         }
     }
 
+    /// <inheritdoc />
     public async Task<bool> CheckExistProjectCategoryLink(Guid projectId, Guid categoryId,
         IDbTransaction? transaction = null)
     {
@@ -50,6 +54,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         return res.Any();
     }
 
+    /// <inheritdoc />
     public async Task<Guid> GetCategoryIdByProjectIdAsync(Guid projectId, IDbTransaction? transaction = null)
     {
         var sql = $@"SELECT {EntityMapper.ColName<ProjectCategoryLink>(x => x.CategoryId)} 
@@ -59,6 +64,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         return await dbConnection.QuerySingleOrDefaultAsync<Guid>(sql, new { ProjectId = projectId }, transaction);
     }
 
+    /// <inheritdoc />
     public async Task<ProjectCategory> GetCategoryByIdAsync(Guid categoryId)
     {
         var query = $@"SELECT * FROM {EntityMapper.TbName<ProjectCategory>()} 
@@ -73,6 +79,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         return category;
     }
 
+    /// <inheritdoc />
     public async Task DeleteCategoryAsync(Guid categoryId)
     {
         var query = $@"DELETE FROM {EntityMapper.TbName<ProjectCategory>()} 
@@ -85,6 +92,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         }
     }
 
+    /// <inheritdoc />
     public async Task<Guid> AddCategoryAsync(string name, string description)
     {
         var query = $@"INSERT INTO {EntityMapper.TbName<ProjectCategory>()} 
@@ -105,6 +113,7 @@ internal class CategoryRepository(IDbConnection dbConnection) : ICategoryReposit
         return categoryId;
     }
 
+    /// <inheritdoc />
     public async Task<ProjectCategory> UpdateCategoryAsync(Guid categoryId, string? name, string? description, bool? isActive = true)
     {
         var updates = new List<string>();
