@@ -10,15 +10,15 @@ public record ProjectCardDraft
     /// <summary>
     /// Идентификатор записи
     /// </summary>
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     
     /// <summary>
     /// Идентификатор проекта
     /// </summary>
-    public Guid ProjectId { get; set; }
+    public Guid ProjectId { get; init; }
     
     /// <summary>
     /// Параметры полей в карточке проекта
     /// </summary>
-    public JsonObject? ProjectData { get; set; }
+    public JsonObject? ProjectData { get; init; }
 }

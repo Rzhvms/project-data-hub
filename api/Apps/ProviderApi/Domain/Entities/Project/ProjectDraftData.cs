@@ -1,22 +1,25 @@
+using System.Text.Json.Nodes;
+
 namespace Domain.Entities.Project;
 
 public sealed record ProjectDraftData
 {
-    public Guid? ProjectId { get; set; }
-    public string? Title { get; set; }
-    public string? ShortTitle { get; set; }
-    public string? CityRegion { get; set; }
-    public string? Address { get; set; }
-    public string? DesignYearPeriod { get; set; }
-    public int? RealizationYear { get; set; }
-    public string? ProjectStatus { get; set; }
-    public string? ObjectType { get; set; }
-    public string? Customer { get; set; }
-    public string? InpadRole { get; set; }
-    public string? DesignStage { get; set; }
-    public string? ShortDescription { get; set; }
-    public string? LongDescription { get; set; }
-    public string? Publisher { get; set; }
-    public List<Guid> CategoryIdList { get; set; }
-    public List<Guid> ParticipantIdList { get; set; }
+    public Guid? ProjectId { get; init; }
+    public string? Title { get; init; }
+    public string? ShortTitle { get; init; }
+    public string? CityRegion { get; init; }
+    public string? Address { get; init; }
+    public string? DesignYearPeriod { get; init; }
+    public int? RealizationYear { get; init; }
+    public string? ProjectStatus { get; init; }
+    public string? ObjectType { get; init; }
+    public string? Customer { get; init; }
+    public string? InpadRole { get; init; }
+    public string? DesignStage { get; init; }
+    public string? ShortDescription { get; init; }
+    public string? LongDescription { get; init; }
+    public string? Publisher { get; init; }
+    public List<Guid>? CategoryIdList { get; init; }
+    public List<Guid>? ParticipantIdList { get; init; }
+    public JsonObject? ProjectMetrics { get; set; }
 }

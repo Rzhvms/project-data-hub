@@ -1,6 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Application.UseCases.Participants.Dto.Response;
 
 public record GetParticipantListResponse
 {
-    public List<GetParticipantResponse> ParticipantList { get; init; }
+    [JsonPropertyName("participantList")]
+    public List<GetParticipantResponse>? ParticipantList { get; init; }
 }

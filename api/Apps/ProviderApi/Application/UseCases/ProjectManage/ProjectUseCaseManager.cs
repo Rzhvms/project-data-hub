@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Application.Ports.Repositories;
 using Application.UseCases.ProjectManage.Dto.Request;
@@ -106,6 +107,16 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     }
 
     /// <inheritdoc/>
+    public async Task<GetProjectDraftResponse> GetProjectDraftByIdAsync(Guid projectId)
+    {
+        var draft = await projectRepository.GetDraftByProjectIdAsync(projectId);
+        return new GetProjectDraftResponse()
+        {
+            ProjectDraft = draft?.ProjectData
+        };
+    }
+
+    /// <inheritdoc/>
     public async Task PublicateProjectAsync(PublicateProjectRequest request)
     {
         using var transaction = projectRepository.BeginTransaction();
@@ -135,7 +146,10 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     /// <inheritdoc/>
     public async Task UpdateProjectAsync(Guid projectId, UpdateProjectRequest request)
     {
-        var draftData = FromRequest(projectId, request);
+        var projectDraft = await projectRepository.GetDraftByProjectIdAsync(projectId);
+        var existingDraftData = projectDraft?.ProjectData.Deserialize<ProjectDraftData>(JsonOptions);
+        
+        var draftData = FromRequest(projectId, request, existingDraftData?.ProjectMetrics);
 
         var transaction = projectRepository.BeginTransaction();
         try
@@ -186,7 +200,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     /// <summary>
     /// Маппинг в ProjectDraftData
     /// </summary>
-    private static ProjectDraftData FromRequest<T>(Guid projectId, T request)
+    private static ProjectDraftData FromRequest<T>(Guid projectId, T request, JsonObject? projectMetrics = null)
     {
         return request switch
         {
@@ -209,6 +223,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 Publisher = createProjectRequest.Publisher,
                 CategoryIdList = createProjectRequest.CategoryIdList,
                 ParticipantIdList = createProjectRequest.ParticipantIdList,
+                ProjectMetrics = projectMetrics
             },
             UpdateProjectRequest updateProjectRequest => new ProjectDraftData
             {
@@ -229,6 +244,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
                 Publisher = updateProjectRequest.Publisher,
                 CategoryIdList = updateProjectRequest.CategoryIdList,
                 ParticipantIdList = updateProjectRequest.ParticipantIdList,
+                ProjectMetrics = projectMetrics
             },
             _ => new ProjectDraftData()
         };
@@ -247,7 +263,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
         if (string.IsNullOrWhiteSpace(draft.ObjectType)) missing.Add("Тип объекта");
         if (string.IsNullOrWhiteSpace(draft.InpadRole)) missing.Add("Роль компании ИНПАД");
         if (string.IsNullOrWhiteSpace(draft.ShortDescription)) missing.Add("Краткое описание");
-        if (draft.CategoryIdList.Count == 0) missing.Add("Категория объекта");
+        if (draft.CategoryIdList?.Count == 0) missing.Add("Категория объекта");
 
         if (missing.Count > 0)
         {

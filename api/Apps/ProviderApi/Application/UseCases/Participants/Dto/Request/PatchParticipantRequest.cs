@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Application.UseCases.Participants.Dto.Request;
 
 public record PatchParticipantRequest
@@ -5,15 +7,18 @@ public record PatchParticipantRequest
     /// <summary>
     /// Отображаемое название участника
     /// </summary>
-    public string? Name { get; set; } = null!;
+    [JsonPropertyName("name")]
+    public string? Name { get; init; } = null!;
 
     /// <summary>
     /// Описание участника
     /// </summary>
-    public string? Description { get; set; }
+    [JsonPropertyName("description")]
+    public string? Description { get; init; }
 
     /// <summary>
     /// Признак активности участника
     /// </summary>
-    public bool? IsActive { get; set; } = true;
+    [JsonPropertyName("isActive")]
+    public bool? IsActive { get; init; } = true;
 }

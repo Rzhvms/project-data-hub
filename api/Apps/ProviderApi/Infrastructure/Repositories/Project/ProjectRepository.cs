@@ -66,7 +66,7 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
                 $@"INSERT INTO {EntityMapper.TbName<ProjectCategoryLink>()} VALUES (@Id, @ProjectId, @CategoryId)";
 
             // Поскольку на момент создания черновика идентификатор категории может отсутствовать, пропускаем этот шаг
-            foreach (var categoryId in draftData.CategoryIdList)
+            foreach (var categoryId in draftData.CategoryIdList!)
             {
                 if (categoryId != Guid.Empty)
                 {
@@ -81,7 +81,7 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
                 $@"INSERT INTO {EntityMapper.TbName<ProjectParticipantLink>()} VALUES (@Id, @ProjectId, @ParticipantId)";
 
             // Поскольку на момент создания черновика идентификатор участника может отсутствовать, пропускаем этот шаг
-            foreach (var participantId in draftData.ParticipantIdList)
+            foreach (var participantId in draftData.ParticipantIdList!)
             {
                 if (participantId != Guid.Empty)
                 {
@@ -247,6 +247,21 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
             }
             throw;
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateProjectDraftAsync(Guid projectId, ProjectDraftData draftData,
+        IDbTransaction? transaction = null)
+    {
+        var sql = $@"UPDATE {EntityMapper.TbName<ProjectCardDraft>()}
+                     SET {EntityMapper.ColName<ProjectCardDraft>(x => x.ProjectData)} = @ProjectData::jsonb
+                     WHERE {EntityMapper.ColName<ProjectCardDraft>(x => x.ProjectId)} = @ProjectId";
+        
+        await dbConnection.ExecuteAsync(sql, new
+        {
+            ProjectId = projectId,
+            ProjectData = JsonSerializer.Serialize(draftData, JsonOptions)
+        }, transaction);
     }
 
     /// <inheritdoc/>

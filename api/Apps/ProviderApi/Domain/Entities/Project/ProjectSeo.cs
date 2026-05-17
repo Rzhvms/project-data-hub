@@ -3,6 +3,7 @@ namespace Domain.Entities.Project;
 /// <summary>
 /// SEO-параметры страницы объекта.
 /// </summary>
+[Obsolete("В данный момент не используется")]
 public sealed record ProjectSeo
 {
     /// <summary>

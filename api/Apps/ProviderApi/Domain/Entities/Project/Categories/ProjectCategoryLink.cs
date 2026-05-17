@@ -8,15 +8,15 @@ public sealed record ProjectCategoryLink
     /// <summary>
     /// Идентификатор записи.
     /// </summary>
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     
     /// <summary>
     /// Идентификатор проекта.
     /// </summary>
-    public Guid ProjectId { get; set; }
+    public Guid ProjectId { get; init; }
     
     /// <summary>
     /// Идентификатор категории.
     /// </summary>
-    public Guid CategoryId { get; set; }
+    public Guid CategoryId { get; init; }
 }
