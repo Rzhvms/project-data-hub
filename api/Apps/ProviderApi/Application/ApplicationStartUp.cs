@@ -1,3 +1,7 @@
+using Application.UseCases.Categories;
+using Application.UseCases.Categories.Interfaces;
+using Application.UseCases.Participants;
+using Application.UseCases.Participants.Interfaces;
 using Application.UseCases.ProjectManage;
 using Application.UseCases.ProjectManage.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,5 +19,8 @@ public static class ApplicationStartUp
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IProjectUseCaseManager, ProjectUseCaseManager>();
+        services.AddScoped<ICategoryUseCaseManager, CategoryUseCaseManager>();
+        services.AddScoped<IParticipantUseCaseManager, ParticipantUseCaseManager>();
+        services.AddScoped<IProjectMetricsUseCaseManager, ProjectMetricsUseCaseManager>();
     }
 }

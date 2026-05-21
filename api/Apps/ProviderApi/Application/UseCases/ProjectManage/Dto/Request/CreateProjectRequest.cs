@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.UseCases.ProjectManage.Dto.Request;
 
 public record CreateProjectRequest
@@ -5,6 +7,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Полное публичное название объекта.
     /// </summary>
+    [MaxLength(200)]
     public string? Title { get; set; }
 
     /// <summary>
@@ -71,4 +74,14 @@ public record CreateProjectRequest
     /// Автор, ответственный (ФИО)
     /// </summary>
     public string? Publisher { get; set; }
+    
+    /// <summary>
+    /// Идентификаторы категории
+    /// </summary>
+    public List<Guid> CategoryIdList { get; set; }
+    
+    /// <summary>
+    /// Идентификаторы участников
+    /// </summary>
+    public List<Guid> ParticipantIdList { get; set; }
 }

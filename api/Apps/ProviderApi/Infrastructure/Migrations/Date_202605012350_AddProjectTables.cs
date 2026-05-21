@@ -1,3 +1,4 @@
+using System.Data;
 using CoreLib.Database.DapperExtensions.EntityMapper;
 using Domain.Entities.Project;
 using Domain.Entities.Project.Categories;
@@ -66,7 +67,7 @@ public class Date_202605012350_AddProjectTables : Migration
         // Создание внешнего ключа с ProjectCardDraft.ProjectId на ProjectCard.Id
         Create.ForeignKey("fk_projectCard_id_draft")
             .FromTable(_projectCardDraftTb).ForeignColumn(EntityMapper.ColName<ProjectCardDraft>(x => x.ProjectId))
-            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id));
+            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id)).OnDelete(Rule.Cascade);
            
         // Создание таблицы ProjectMetrics
         Create.Table(_projectMetricsTb)
@@ -92,14 +93,13 @@ public class Date_202605012350_AddProjectTables : Migration
         // Создание внешнего ключа с ProjectMetrics.ProjectId на ProjectCard.Id
         Create.ForeignKey("fk_projectCard_id_metrics")
             .FromTable(_projectMetricsTb).ForeignColumn(EntityMapper.ColName<ProjectMetrics>(x => x.ProjectId))
-            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id));
+            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id)).OnDelete(Rule.Cascade);
         
         // Создание таблицы ProjectCategory
         Create.Table(_projectCategoryTb)
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.Id)).AsGuid().PrimaryKey().NotNullable()
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.Name)).AsString(255).NotNullable()
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.Description)).AsString().NotNullable()
-            .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.SortOrder)).AsInt32().Nullable()
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.IsActive)).AsBoolean().NotNullable().WithDefaultValue(true)
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.IsSystem)).AsBoolean().NotNullable().WithDefaultValue(false)
             .WithColumn(EntityMapper.ColName<ProjectCategory>(x => x.CreatedAt)).AsDateTime().NotNullable()
@@ -114,19 +114,18 @@ public class Date_202605012350_AddProjectTables : Migration
         // Создание внешнего ключа с ProjectCategoryLink.ProjectId на ProjectCard.Id
         Create.ForeignKey("fk_projectCardCategory_ProjectId")
             .FromTable(_projectCategoryLinkTb).ForeignColumn(EntityMapper.ColName<ProjectCategoryLink>(x => x.ProjectId))
-            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id));
+            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id)).OnDelete(Rule.Cascade);
         
         // Создание внешнего ключа с ProjectCategoryLink.ProjectId на ProjectCategory.Id
         Create.ForeignKey("fk_projectCardCategory_CategoryId")
             .FromTable(_projectCategoryLinkTb).ForeignColumn(EntityMapper.ColName<ProjectCategoryLink>(x => x.CategoryId))
-            .ToTable(_projectCategoryTb).PrimaryColumn(EntityMapper.ColName<ProjectCategory>(x => x.Id));
+            .ToTable(_projectCategoryTb).PrimaryColumn(EntityMapper.ColName<ProjectCategory>(x => x.Id)).OnDelete(Rule.Cascade);
         
         // Создание таблицы ProjectParticipant
         Create.Table(_projectParticipantTb)
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.Id)).AsGuid().PrimaryKey().NotNullable()
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.Name)).AsString(255).NotNullable()
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.Description)).AsString().NotNullable()
-            .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.SortOrder)).AsInt32().Nullable()
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.IsActive)).AsBoolean().NotNullable().WithDefaultValue(true)
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.IsSystem)).AsBoolean().NotNullable().WithDefaultValue(false)
             .WithColumn(EntityMapper.ColName<ProjectParticipant>(x => x.CreatedAt)).AsDateTime().NotNullable()
@@ -141,12 +140,12 @@ public class Date_202605012350_AddProjectTables : Migration
         // Создание внешнего ключа с ProjectParticipantLink.ProjectId на ProjectCard.Id
         Create.ForeignKey("fk_projectCardParticipant_ProjectId")
             .FromTable(_projectParticipantLinkTb).ForeignColumn(EntityMapper.ColName<ProjectParticipantLink>(x => x.ProjectId))
-            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id));
+            .ToTable(_projectCardTb).PrimaryColumn(EntityMapper.ColName<ProjectCard>(x => x.Id)).OnDelete(Rule.Cascade);
         
         // Создание внешнего ключа с ProjectParticipantLink.ParticipantId на ProjectParticipant.Id
         Create.ForeignKey("fk_projectCardParticipant_ParticipantId")
             .FromTable(_projectParticipantLinkTb).ForeignColumn(EntityMapper.ColName<ProjectParticipantLink>(x => x.ParticipantId))
-            .ToTable(_projectParticipantTb).PrimaryColumn(EntityMapper.ColName<ProjectParticipant>(x => x.Id));
+            .ToTable(_projectParticipantTb).PrimaryColumn(EntityMapper.ColName<ProjectParticipant>(x => x.Id)).OnDelete(Rule.Cascade);
     }
 
     public override void Down()
