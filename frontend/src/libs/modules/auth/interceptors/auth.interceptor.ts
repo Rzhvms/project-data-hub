@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 
-import { ApiRoute, AppRoute, LocalStorageKeys } from '../../enums';
+import { ApiRoute, AppRoute, LocalStorageKeys } from '../../../shared/enums';
 import { AuthService } from '../services/auth.service';
 
 let isRefreshing = false;

@@ -4,9 +4,9 @@ import { provideRouter } from '@angular/router';
 import { provideTaiga, TUI_VALIDATION_ERRORS } from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_RUSSIAN_LANGUAGE} from '@taiga-ui/i18n';
 
-import { authInterceptor } from '../libs/shared/auth';
+import { authInterceptor } from '../libs/modules/auth';
+import { UserService } from '../libs/modules/user';
 import { LocalStorageKeys } from '../libs/shared/enums';
-import { UserService } from '../libs/shared/user';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {

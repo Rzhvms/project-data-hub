@@ -4,10 +4,10 @@ import { TuiButton, TuiDropdown, TuiHint, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge, TuiButtonLoading } from '@taiga-ui/kit';
 import { finalize, take, tap } from 'rxjs';
 
-import { AuthService } from '../../../../../libs/shared/auth';
+import { AuthService } from '../../../../../libs/modules/auth';
+import { IUser, UserService } from '../../../../../libs/modules/user';
 import { AppRoute } from '../../../../../libs/shared/enums';
 import { ICON_RESOLVER_PROVIDER } from '../../../../../libs/shared/providers';
-import { IUser, UserService } from '../../../../../libs/shared/user';
 import { MainPageAsideItem } from './types/main-page-aside-item.type';
 
 @Component({

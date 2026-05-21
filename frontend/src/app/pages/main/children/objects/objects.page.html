@@ -1,3 +1,142 @@
 <div class="objects-page">
+    <header class="objects-page__header">
+        <div>
+            <h1 class="objects-page__title">Объекты</h1>
+            <span class="objects-page__description">Управление архитектурой объектов</span>
+        </div>
+        <button
+            tuiButton
+            size="m"
+            iconStart="@tui.plus"
+        >
+            Добавить
+        </button>
+    </header>
 
+    <div class="objects-page__toolbar">
+        <search tuiSearch>
+            <form [formGroup]="toolBarForm">
+                <fieldset tuiTextfieldSize="s">
+                    <tui-textfield iconStart="@tui.search">
+                        <input
+                            formControlName="search"
+                            placeholder="Поиск по объектам"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <button
+                        tuiButton
+                        tuiChevron
+                        type="button"
+                        size="s"
+                        appearance="outline"
+                        [style.color]="'white'"
+                        [tuiDropdown]="statusFilterDropdown"
+                        tuiDropdownAuto
+                    >
+                        Статус
+                        <ng-template #statusFilterDropdown>
+                            <tui-filter
+                                formControlName="statusFilter"
+                                size="s"
+                                [items]="statusFilterItems"
+                                [stringify]="stringify"
+                                [identityMatcher]="identityMatcher"
+                            />
+                        </ng-template>
+                    </button>
+                    <button
+                        tuiButton
+                        tuiChevron
+                        type="button"
+                        size="s"
+                        appearance="outline"
+                        [style.color]="'white'"
+                        [tuiDropdown]="typeFilterDropdown"
+                        tuiDropdownAuto
+                    >
+                        Тип
+                        <ng-template #typeFilterDropdown>
+                            <tui-filter
+                                formControlName="typeFilter"
+                                size="s"
+                                [items]="typeFilterItems"
+                                [stringify]="stringify"
+                                [identityMatcher]="identityMatcher"
+                            />
+                        </ng-template>
+                    </button>
+                </fieldset>
+            </form>
+        </search>
+    </div>
+
+    <div class="objects-page__table">
+        <table tuiTable>
+            <thead>
+                <th tuiTh>Название</th>
+                <th tuiTh>Город</th>
+                <th tuiTh>Тип</th>
+                <th tuiTh>Статус</th>
+                <th tuiTh>Дата</th>
+                <th tuiTh></th>
+            </thead>
+            <tbody tuiTbody>
+                @for (i of [1, 2, 3]; track i) {
+                    <tr>
+                        <td tuiTd>
+
+                        </td>
+                        <td tuiTd>
+
+                        </td>
+                        <td tuiTd>
+
+                        </td>
+                        <td tuiTd>
+
+                        </td>
+                        <td tuiTd>
+
+                        </td>
+                        <td tuiTd>
+                            <button
+                                tuiButton
+                                type="button"
+                                iconStart="@tui.ellipsis"
+                                appearance="flat"
+                                aria-label="context-menu-button"
+                                [tuiDropdown]="contextMenu"
+                                tuiDropdownAuto
+                            >
+                                <ng-template #contextMenu>
+                                    <button
+                                        tuiButton
+                                        type="button"
+                                        appearance="flat"
+                                    >
+                                        Редактировать
+                                    </button>
+                                    <button
+                                        tuiButton
+                                        type="button"
+                                        appearance="flat"
+                                    >
+                                        Дублировать
+                                    </button>
+                                    <button
+                                        tuiButton
+                                        type="button"
+                                        appearance="flat"
+                                    >
+                                        Удалить
+                                    </button>
+                                </ng-template>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

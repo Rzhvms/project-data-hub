@@ -1,0 +1,34 @@
+.objects-page {
+    height: 100%;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        padding: 1.5rem;
+        padding-top: 0.75rem;
+    }
+
+    &__title {
+        font: var(--tui-typography-heading-h4);
+        margin-bottom: 0.25rem;
+    }
+
+    &__toolbar {
+        width: 40%;
+        margin-bottom: 0.75rem;
+        padding: 0 1.5rem;
+    }
+
+    &__table {
+        [tuiTh],
+        [tuiTd] {
+            border-inline-start: none;
+            border-inline-end: none;
+        }
+
+        table {
+            width: 100%;
+        }
+    }
+}

@@ -8,7 +8,7 @@ import { TuiButtonLoading, TuiPassword } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import { catchError, debounceTime, finalize, take, tap, throwError } from 'rxjs';
 
-import { AuthService } from '../../../libs/shared/auth';
+import { AuthService } from '../../../libs/modules/auth';
 import { ApiErrorCode, AppRoute } from '../../../libs/shared/enums';
 import { ICON_RESOLVER_PROVIDER } from '../../../libs/shared/providers';
 

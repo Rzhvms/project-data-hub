@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { AppRoute, LocalStorageKeys } from '../../enums';
+import { AppRoute, LocalStorageKeys } from '../../../shared/enums';
 
 export const guestGuard: CanActivateFn = () => {
     const accessToken = localStorage.getItem(LocalStorageKeys.AccessToken);
