@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { UserService } from '@project-data-hub/modules/user';
+import { ApiRoute, getFullApiRoute, LocalStorageKeys } from '@project-data-hub/shared';
 import { Observable, tap } from 'rxjs';
 
-import { ApiRoute, LocalStorageKeys } from '../../../shared/enums';
-import { getFullApiRoute } from '../../../shared/utils';
-import { UserService } from '../../user';
 import { LoginDto } from '../dto/login.dto';
 import { LoginRdo } from '../rdo/login.rdo';
 

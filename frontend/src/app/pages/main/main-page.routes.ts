@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-
-import { AppRoute } from '../../../libs/shared/enums';
+import { AppRoute } from '@project-data-hub/shared';
 
 export const MAIN_PAGE_ROUTES: Routes = [
     {

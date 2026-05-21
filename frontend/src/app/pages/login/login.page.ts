@@ -3,14 +3,12 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '@project-data-hub/modules/auth';
+import { ApiErrorCode, AppRoute, ICON_RESOLVER_PROVIDER } from '@project-data-hub/shared';
 import { TuiButton, TuiError, TuiIcon, TuiInput } from '@taiga-ui/core';
 import { TuiButtonLoading, TuiPassword } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import { catchError, debounceTime, finalize, take, tap, throwError } from 'rxjs';
-
-import { AuthService } from '../../../libs/modules/auth';
-import { ApiErrorCode, AppRoute } from '../../../libs/shared/enums';
-import { ICON_RESOLVER_PROVIDER } from '../../../libs/shared/providers';
 
 type LoginForm = FormGroup<{
     email: FormControl<string>;

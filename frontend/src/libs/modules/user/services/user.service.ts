@@ -11,7 +11,7 @@ type AccessTokenPayload = {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     family_name: string;
     role: UserRole;
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -26,7 +26,7 @@ export class UserService {
         const user: IUser = {
             name: `${payload.given_name} ${payload.family_name}`,
             email: payload.email,
-            role: payload.role
+            role: payload.role,
         };
 
         this._user.set(user);

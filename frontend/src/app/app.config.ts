@@ -1,12 +1,12 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { authInterceptor } from '@project-data-hub/modules/auth';
+import { UserService } from '@project-data-hub/modules/user';
+import { LocalStorageKeys } from '@project-data-hub/shared';
 import { provideTaiga, TUI_VALIDATION_ERRORS } from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_RUSSIAN_LANGUAGE} from '@taiga-ui/i18n';
 
-import { authInterceptor } from '../libs/modules/auth';
-import { UserService } from '../libs/modules/user';
-import { LocalStorageKeys } from '../libs/shared/enums';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {

@@ -1,18 +1,18 @@
-import { IOption } from '../../../shared/interfaces';
+import { IOption } from '@project-data-hub/shared';
 
 export const OBJECT_STATUS_OPTIONS = [
     {
         value: 'draft',
-        label: 'Черновик'
+        label: 'Черновик',
     },
     {
         value: 'published',
-        label: 'Опубликовано'
+        label: 'Опубликовано',
     },
     {
         value: 'archived',
-        label: 'Архив'
-    }
+        label: 'Архив',
+    },
 ] as const satisfies readonly IOption[];
 
 export type ObjectStatus = (typeof OBJECT_STATUS_OPTIONS)[number]['value'];

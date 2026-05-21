@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-
-import { AppRoute, LocalStorageKeys } from '../../../shared/enums';
+import { AppRoute, LocalStorageKeys } from '@project-data-hub/shared';
 
 export const authGuard: CanActivateFn = () => {
     const router: Router = inject(Router);
@@ -9,5 +8,5 @@ export const authGuard: CanActivateFn = () => {
 
     return accessToken
         ? true
-        : router.createUrlTree([AppRoute.LoginPage])
+        : router.createUrlTree([AppRoute.LoginPage]);
 };

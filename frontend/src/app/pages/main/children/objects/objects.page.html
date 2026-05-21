@@ -40,8 +40,8 @@
                                 formControlName="statusFilter"
                                 size="s"
                                 [items]="statusFilterItems"
-                                [stringify]="stringify"
-                                [identityMatcher]="identityMatcher"
+                                [content]="filterDropdownItem"
+                                [identityMatcher]="filterItemMatcher"
                             />
                         </ng-template>
                     </button>
@@ -61,8 +61,8 @@
                                 formControlName="typeFilter"
                                 size="s"
                                 [items]="typeFilterItems"
-                                [stringify]="stringify"
-                                [identityMatcher]="identityMatcher"
+                                [content]="filterDropdownItem"
+                                [identityMatcher]="filterItemMatcher"
                             />
                         </ng-template>
                     </button>
@@ -140,3 +140,7 @@
         </table>
     </div>
 </div>
+
+<ng-template #filterDropdownItem let-item>
+    {{ item.label }}
+</ng-template>

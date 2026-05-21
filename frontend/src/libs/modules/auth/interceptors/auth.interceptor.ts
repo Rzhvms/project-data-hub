@@ -1,43 +1,45 @@
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import {
+    HttpErrorResponse,
+    HttpEvent,
+    HttpHandlerFn,
+    HttpInterceptorFn,
+    HttpRequest,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApiRoute, AppRoute, LocalStorageKeys } from '@project-data-hub/shared';
 import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 
-import { ApiRoute, AppRoute, LocalStorageKeys } from '../../../shared/enums';
 import { AuthService } from '../services/auth.service';
 
 let isRefreshing = false;
 const refreshSubject$ = new BehaviorSubject<string | null>(null);
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+export const authInterceptor: HttpInterceptorFn = (
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn,
+) => {
     const authService: AuthService = inject(AuthService);
     const router: Router = inject(Router);
 
-    return next(
-        addAuthorizationHeader(req, authService.accessToken)
-    ).pipe(
+    return next(addAuthorizationHeader(req, authService.accessToken)).pipe(
         catchError((error: HttpErrorResponse) => {
             if (shouldSkip401Handling(req, error)) {
-                return throwError(() => error)
+                return throwError(() => error);
             }
 
             if (!isRefreshing) {
-                return refreshTokens(
-                    req,
-                    next,
-                    authService,
-                    router
-                );
+                return refreshTokens(req, next, authService, router);
             }
 
             return waitForRefreshAndRepeat(req, next);
-        })
+        }),
     );
 };
 
 function addAuthorizationHeader(
     req: HttpRequest<unknown>,
-    token: string | null
+    token: string | null,
 ): HttpRequest<unknown> {
     if (!token) {
         return req;
@@ -45,15 +47,12 @@ function addAuthorizationHeader(
 
     return req.clone({
         setHeaders: {
-            Authorization: `Bearer ${token}`
-        }
+            Authorization: `Bearer ${token}`,
+        },
     });
 }
 
-function shouldSkip401Handling(
-    req: HttpRequest<unknown>,
-    error: HttpErrorResponse
-): boolean {
+function shouldSkip401Handling(req: HttpRequest<unknown>, error: HttpErrorResponse): boolean {
     return (
         error.status !== 401 ||
         req.url.endsWith(ApiRoute.Login) ||
@@ -65,7 +64,7 @@ function refreshTokens(
     req: HttpRequest<unknown>,
     next: HttpHandlerFn,
     authService: AuthService,
-    router: Router
+    router: Router,
 ): Observable<HttpEvent<unknown>> {
     isRefreshing = true;
     refreshSubject$.next(null);
@@ -75,9 +74,7 @@ function refreshTokens(
             isRefreshing = false;
             refreshSubject$.next(tokens.accessToken);
 
-            return next(
-                addAuthorizationHeader(req, tokens.accessToken)
-            );
+            return next(addAuthorizationHeader(req, tokens.accessToken));
         }),
         catchError((error) => {
             isRefreshing = false;
@@ -86,19 +83,17 @@ function refreshTokens(
             void router.navigate([AppRoute.LoginPage]);
 
             return throwError(() => error);
-        })
+        }),
     );
 }
 
 function waitForRefreshAndRepeat(
     req: HttpRequest<unknown>,
-    next: HttpHandlerFn
+    next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
     return refreshSubject$.pipe(
         filter((token): token is string => token !== null),
         take(1),
-        switchMap((token) => next(
-            addAuthorizationHeader(req, token)
-        ))
+        switchMap((token) => next(addAuthorizationHeader(req, token))),
     );
 }

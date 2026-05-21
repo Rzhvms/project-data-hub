@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
-
-import { authGuard, guestGuard } from '../libs/modules/auth';
-import { AppRoute } from '../libs/shared/enums';
+import { authGuard, guestGuard } from '@project-data-hub/modules/auth';
+import { AppRoute } from '@project-data-hub/shared';
 
 export const routes: Routes = [
     {

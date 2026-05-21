@@ -1,12 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+    OBJECT_STATUS_OPTIONS,
+    OBJECT_TYPE_OPTIONS,
+    ObjectStatus,
+    ObjectType,
+} from '@project-data-hub/modules/object';
+import { optionMatcher } from '@project-data-hub/shared/utils';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiButton, TuiDropdown, TuiInput } from '@taiga-ui/core';
 import { TuiChevron, TuiFilter } from '@taiga-ui/kit';
 import { TuiSearch } from '@taiga-ui/layout';
-
-import { OBJECT_STATUS_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStatus, ObjectType } from '../../../../../libs/modules/object';
-import { optionMatcher, optionStringify } from '../../../../../libs/shared/utils';
 
 type ToolBarForm = FormGroup<{
     search: FormControl<string>;
@@ -27,7 +31,7 @@ type ToolBarForm = FormGroup<{
         TuiChevron,
         TuiDropdown,
         TuiFilter,
-        TuiTable
+        TuiTable,
     ],
 })
 export class ObjectsPageComponent {
@@ -45,6 +49,5 @@ export class ObjectsPageComponent {
 
     protected readonly statusFilterItems: typeof OBJECT_STATUS_OPTIONS = OBJECT_STATUS_OPTIONS;
     protected readonly typeFilterItems: typeof OBJECT_TYPE_OPTIONS = OBJECT_TYPE_OPTIONS;
-    protected readonly stringify = optionStringify;
-    protected readonly identityMatcher = optionMatcher;
+    protected readonly filterItemMatcher = optionMatcher;
 }

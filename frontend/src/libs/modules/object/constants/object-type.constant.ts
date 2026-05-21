@@ -1,4 +1,4 @@
-import { IOption } from '../../../shared/interfaces';
+import { IOption } from '@project-data-hub/shared';
 
 export const OBJECT_TYPE_OPTIONS = [
     {

@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '@project-data-hub/modules/auth';
+import { IUser, UserService } from '@project-data-hub/modules/user';
+import { AppRoute, ICON_RESOLVER_PROVIDER } from '@project-data-hub/shared';
 import { TuiButton, TuiDropdown, TuiHint, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge, TuiButtonLoading } from '@taiga-ui/kit';
 import { finalize, take, tap } from 'rxjs';
 
-import { AuthService } from '../../../../../libs/modules/auth';
-import { IUser, UserService } from '../../../../../libs/modules/user';
-import { AppRoute } from '../../../../../libs/shared/enums';
-import { ICON_RESOLVER_PROVIDER } from '../../../../../libs/shared/providers';
 import { MainPageAsideItem } from './types/main-page-aside-item.type';
 
 @Component({
