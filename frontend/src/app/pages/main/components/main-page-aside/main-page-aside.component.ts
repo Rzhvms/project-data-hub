@@ -31,9 +31,7 @@ export class MainPageAsideComponent {
     protected readonly isLogoutButtonLoading = signal<boolean>(false);
     protected readonly buttonList: MainPageAsideItem[] = [
         { icon: '@tui.boxes', hint: 'Объекты', routerLink: AppRoute.ObjectsPage },
-        { icon: '@tui.layout-template', hint: 'Шаблоны', routerLink: AppRoute.TemplatesPage },
         { icon: '@tui.image', hint: 'Медиа', routerLink: AppRoute.MediaPage },
-        { icon: '@tui.folder', hint: 'Папки', routerLink: AppRoute.FoldersPage },
         { icon: 'wordpress-logo', hint: 'Конфигурация WordPress', routerLink: AppRoute.WPSettingsPage }
     ];
 
