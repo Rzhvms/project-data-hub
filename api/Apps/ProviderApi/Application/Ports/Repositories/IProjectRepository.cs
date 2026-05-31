@@ -16,7 +16,7 @@ public interface IProjectRepository
     /// <summary>
     /// Получить всю информацию о проекте по идентификатору
     /// </summary>
-    Task<ProjectCard> GetFullProjectByIdAsync(Guid projectId, IDbTransaction? transaction = null);
+    Task<ProjectCard?> GetFullProjectByIdAsync(Guid projectId, IDbTransaction? transaction = null);
     
     /// <summary>
     /// Создание проекта

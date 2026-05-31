@@ -10,7 +10,7 @@ public sealed record ProjectDraftData
     public string? CityRegion { get; init; }
     public string? Address { get; init; }
     public string? DesignYearPeriod { get; init; }
-    public int? RealizationYear { get; init; }
+    public string? RealizationYear { get; init; }
     public string? ProjectStatus { get; init; }
     public string? ObjectType { get; init; }
     public string? Customer { get; init; }

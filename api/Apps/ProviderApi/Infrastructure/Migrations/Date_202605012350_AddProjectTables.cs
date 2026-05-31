@@ -36,7 +36,7 @@ public class Date_202605012350_AddProjectTables : Migration
                 .WithColumnDescription("Точный или ориентировочный адрес")
             .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.DesignYearPeriod)).AsString().Nullable()
                 .WithColumnDescription("Год или период проектирования")
-            .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.RealizationYear)).AsInt32().Nullable()
+            .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.RealizationYear)).AsString().Nullable()
                 .WithColumnDescription("Год реализации")
             .WithColumn(EntityMapper.ColName<ProjectCard>(x => x.ProjectStatus)).AsString(255).NotNullable()
                 .WithColumnDescription("Статус проекта")

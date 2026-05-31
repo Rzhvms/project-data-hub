@@ -292,12 +292,12 @@ internal class ProjectRepository(IDbConnection dbConnection) : IProjectRepositor
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectCard> GetFullProjectByIdAsync(Guid projectId, IDbTransaction? transaction = null)
+    public async Task<ProjectCard?> GetFullProjectByIdAsync(Guid projectId, IDbTransaction? transaction = null)
     {
         var sql = $@"SELECT * FROM {EntityMapper.TbName<ProjectCard>()} 
                         WHERE {EntityMapper.ColName<ProjectCard>(x => x.Id)} = @ProjectId";
         
-        var project = await dbConnection.QuerySingleAsync<ProjectCard>(sql, new { ProjectId = projectId }, transaction);
+        var project = await dbConnection.QuerySingleOrDefaultAsync<ProjectCard>(sql, new { ProjectId = projectId }, transaction);
         return project;
     }
 

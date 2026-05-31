@@ -13,6 +13,7 @@
         <PackageReference Include="FluentMigrator.Runner.Core" Version="8.0.1" />
         <PackageReference Include="FluentMigrator.Runner.Postgres" Version="8.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0-preview.2.26159.112" />
+        <PackageReference Include="Minio" Version="7.0.0" />
         <PackageReference Include="Npgsql" Version="10.0.2" />
     </ItemGroup>
 

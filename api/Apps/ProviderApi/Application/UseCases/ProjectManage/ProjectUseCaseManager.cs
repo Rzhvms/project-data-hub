@@ -44,6 +44,9 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     public async Task<GetFullProjectResponse> GetFullProjectByIdAsync(Guid projectId)
     {
         var project = await projectRepository.GetFullProjectByIdAsync(projectId);
+        
+        if (project is null) throw new EntityNotFoundException("Project not found");
+        
         var categoryIdList = await categoryRepository.GetCategoryIdListByProjectIdAsync(projectId);
         var participantIdList = await participantRepository.GetParticipantIdListByProjectIdAsync(projectId);
 

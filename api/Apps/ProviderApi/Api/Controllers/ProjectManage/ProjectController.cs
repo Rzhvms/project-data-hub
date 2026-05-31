@@ -1,3 +1,6 @@
+using Application.UseCases.Images.Dto.Request;
+using Application.UseCases.Images.Dto.Response;
+using Application.UseCases.Images.Interfaces;
 using Application.UseCases.ProjectManage.Dto.Request;
 using Application.UseCases.ProjectManage.Dto.Response;
 using Application.UseCases.ProjectManage.Interfaces;
@@ -13,7 +16,7 @@ namespace Api.Controllers.ProjectManage;
 [Route("api/project")]
 [ApiController]
 [Authorize]
-public class ProjectController(IProjectUseCaseManager useCaseManager) : ControllerBase
+public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseCase imageUseCase) : ControllerBase
 {
     /// <summary>
     /// Получение списка объектов для главной страницы
@@ -79,5 +82,38 @@ public class ProjectController(IProjectUseCaseManager useCaseManager) : Controll
     public async Task<GetProjectDraftResponse> GetProjectDraftAsync([FromRoute] Guid projectId)
     {
         return await useCaseManager.GetProjectDraftByIdAsync(projectId);
+    }
+    
+    /// <summary>
+    /// Загрузить картинку проекта
+    /// </summary>
+    [HttpPost("{projectId}/image")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UploadProjectImageAsync([FromRoute] Guid projectId, [FromForm] UploadProjectImageRequest request)
+    {
+        await imageUseCase.AddProjectImageAsync(projectId, request);
+        return Ok();
+    }
+    
+    /// <summary>
+    /// Получить список картинок проекта
+    /// </summary>
+    [HttpGet("{projectId}/images")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ProjectImageResponse>>> GetProjectImagesAsync([FromRoute] Guid projectId)
+    {
+        var images = await imageUseCase.GetProjectImagesAsync(projectId);
+        return Ok(images);
+    }
+
+    /// <summary>
+    /// Удалить картинку проекта
+    /// </summary>
+    [HttpDelete("{projectId}/images/{imageId}")]
+    public async Task<IActionResult> DeleteProjectImageAsync([FromRoute] Guid projectId, [FromRoute] Guid imageId)
+    {
+        await imageUseCase.DeleteProjectImageAsync(projectId, imageId);
+        return Ok();
     }
 }

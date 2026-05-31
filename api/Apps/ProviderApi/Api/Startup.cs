@@ -8,6 +8,7 @@ using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Minio;
 
 namespace Api;
 
@@ -75,6 +76,17 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
                     .AllowAnyHeader()
                     .AllowCredentials();
             });
+        });
+        
+        services.AddSingleton<IMinioClient>(_ =>
+        {
+            var cfg = Configuration.GetSection("Minio");
+
+            return new MinioClient()
+                .WithEndpoint(cfg["Endpoint"]!.Replace("http://", ""))
+                .WithCredentials(cfg["AccessKey"], cfg["SecretKey"])
+                .WithSSL(false)
+                .Build();
         });
 
         services.AddEndpointsApiExplorer();
