@@ -1,0 +1,68 @@
+<div class="objects-page-table">
+    <table tuiTable>
+        <thead>
+            <th tuiTh>Название</th>
+            <th tuiTh>Город</th>
+            <th tuiTh>Тип</th>
+            <th tuiTh>Статус</th>
+            <th tuiTh>Дата</th>
+            <th tuiTh></th>
+        </thead>
+        <tbody tuiTbody>
+            @for (object of objectList(); track object.id) {
+                <tr>
+                    <td tuiTd>
+                        {{ object.title }}
+                    </td>
+                    <td tuiTd>
+
+                    </td>
+                    <td tuiTd>
+
+                    </td>
+                    <td tuiTd>
+
+                    </td>
+                    <td tuiTd>
+
+                    </td>
+                    <td tuiTd>
+                        <button
+                            tuiButton
+                            type="button"
+                            iconStart="@tui.ellipsis"
+                            appearance="flat"
+                            aria-label="context-menu-button"
+                            [tuiDropdown]="contextMenu"
+                            tuiDropdownAuto
+                        >
+                            <ng-template #contextMenu>
+                                <button
+                                    tuiButton
+                                    type="button"
+                                    appearance="flat"
+                                >
+                                    Редактировать
+                                </button>
+                                <button
+                                    tuiButton
+                                    type="button"
+                                    appearance="flat"
+                                >
+                                    Дублировать
+                                </button>
+                                <button
+                                    tuiButton
+                                    type="button"
+                                    appearance="flat"
+                                >
+                                    Удалить
+                                </button>
+                            </ng-template>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

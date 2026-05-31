@@ -40,6 +40,7 @@ testem.log
 __screenshots__/
 .env
 /src/environments/environment.ts
+/public/mocks/
 
 # System files
 .DS_Store

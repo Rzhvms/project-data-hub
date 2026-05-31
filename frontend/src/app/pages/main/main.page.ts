@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ObjectsRequestService } from '@project-data-hub/modules/objects';
 
 import { MainPageAsideComponent } from './components/main-page-aside/main-page-aside.component';
 
@@ -11,6 +12,9 @@ import { MainPageAsideComponent } from './components/main-page-aside/main-page-a
     imports: [
         MainPageAsideComponent,
         RouterOutlet
+    ],
+    providers: [
+        ObjectsRequestService
     ]
 })
 export class MainPageComponent {}

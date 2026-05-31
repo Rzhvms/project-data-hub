@@ -1,22 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import {
-    OBJECT_STATUS_OPTIONS,
-    OBJECT_TYPE_OPTIONS,
-    ObjectStatus,
-    ObjectType,
-} from '@project-data-hub/modules/object';
-import { optionMatcher } from '@project-data-hub/shared/utils';
-import { TuiTable } from '@taiga-ui/addon-table';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { IObjectPreview, ObjectsRequestService } from '@project-data-hub/modules/objects';
 import { TuiButton, TuiDropdown, TuiInput } from '@taiga-ui/core';
-import { TuiChevron, TuiFilter } from '@taiga-ui/kit';
-import { TuiSearch } from '@taiga-ui/layout';
+import { take } from 'rxjs';
 
-type ToolBarForm = FormGroup<{
-    search: FormControl<string>;
-    statusFilter: FormControl<ObjectStatus[]>;
-    typeFilter: FormControl<ObjectType[]>;
-}>;
+import { ObjectsPageTableComponent } from './components/objects-page-table/objects-page-table.component';
+import { ObjectsPageToolBarComponent } from './components/objects-page-tool-bar/objects-page-tool-bar.component';
+import { ObjectsPageToolBarViewModel } from './components/objects-page-tool-bar/view-models/objects-page-tool-bar.view-model';
 
 @Component({
     selector: 'objects-page',
@@ -24,30 +13,22 @@ type ToolBarForm = FormGroup<{
     styleUrl: './styles/objects.page.master.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        ReactiveFormsModule,
         TuiButton,
-        TuiSearch,
         TuiInput,
-        TuiChevron,
         TuiDropdown,
-        TuiFilter,
-        TuiTable,
-    ],
+        ObjectsPageToolBarComponent,
+        ObjectsPageTableComponent
+    ]
 })
 export class ObjectsPageComponent {
-    protected readonly toolBarForm: ToolBarForm = new FormGroup({
-        search: new FormControl<string>('', {
-            nonNullable: true,
-        }),
-        statusFilter: new FormControl<ObjectStatus[]>([], {
-            nonNullable: true,
-        }),
-        typeFilter: new FormControl<ObjectType[]>([], {
-            nonNullable: true,
-        }),
-    });
+    protected readonly objectList: WritableSignal<IObjectPreview[]> = signal([]);
+    protected readonly toolBarViewModel: ObjectsPageToolBarViewModel = new ObjectsPageToolBarViewModel();
 
-    protected readonly statusFilterItems: typeof OBJECT_STATUS_OPTIONS = OBJECT_STATUS_OPTIONS;
-    protected readonly typeFilterItems: typeof OBJECT_TYPE_OPTIONS = OBJECT_TYPE_OPTIONS;
-    protected readonly filterItemMatcher = optionMatcher;
+    private readonly _requestService: ObjectsRequestService = inject(ObjectsRequestService);
+
+    constructor() {
+        this._requestService.getObjectList()
+            .pipe(take(1))
+            .subscribe((objectList) => this.objectList.set(objectList));
+    }
 }

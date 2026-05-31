@@ -14,21 +14,10 @@
         margin-bottom: 0.25rem;
     }
 
-    &__toolbar {
+    &__tool-bar {
+        display: block;
         width: 40%;
         margin-bottom: 0.75rem;
         padding: 0 1.5rem;
-    }
-
-    &__table {
-        [tuiTh],
-        [tuiTd] {
-            border-inline-start: none;
-            border-inline-end: none;
-        }
-
-        table {
-            width: 100%;
-        }
     }
 }

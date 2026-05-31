@@ -1,0 +1,59 @@
+<search tuiSearch>
+    <form [formGroup]="model().form">
+        <fieldset tuiTextfieldSize="s">
+            <tui-textfield iconStart="@tui.search">
+                <input
+                    formControlName="search"
+                    placeholder="Поиск по объектам"
+                    tuiInput
+                />
+            </tui-textfield>
+            <button
+                tuiButton
+                tuiChevron
+                type="button"
+                size="s"
+                appearance="outline"
+                [style.color]="'white'"
+                [tuiDropdown]="statusFilterDropdown"
+                tuiDropdownAuto
+            >
+                Статус
+                <ng-template #statusFilterDropdown>
+                    <tui-filter
+                        formControlName="statusFilter"
+                        size="s"
+                        [items]="model().statusFilterItems"
+                        [content]="filterDropdownItem"
+                        [identityMatcher]="model().filterItemMatcher"
+                    />
+                </ng-template>
+            </button>
+            <button
+                tuiButton
+                tuiChevron
+                type="button"
+                size="s"
+                appearance="outline"
+                [style.color]="'white'"
+                [tuiDropdown]="typeFilterDropdown"
+                tuiDropdownAuto
+            >
+                Тип
+                <ng-template #typeFilterDropdown>
+                    <tui-filter
+                        formControlName="typeFilter"
+                        size="s"
+                        [items]="model().typeFilterItems"
+                        [content]="filterDropdownItem"
+                        [identityMatcher]="model().filterItemMatcher"
+                    />
+                </ng-template>
+            </button>
+        </fieldset>
+    </form>
+</search>
+
+<ng-template #filterDropdownItem let-item>
+    {{ item.label }}
+</ng-template>

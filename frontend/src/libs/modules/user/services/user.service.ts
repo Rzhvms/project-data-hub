@@ -2,16 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 
 import { IUser } from '../interfaces/user.interface';
-import { UserRole } from '../types/user-role.type';
-
-type AccessTokenPayload = {
-    email: string;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    given_name: string;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    family_name: string;
-    role: UserRole;
-};
+import { AccessTokenPayload } from '../types/access-token-payload.type';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -24,6 +15,7 @@ export class UserService {
     public setUserFromToken(token: string): void {
         const payload = jwtDecode<AccessTokenPayload>(token);
         const user: IUser = {
+            id: payload.nameid,
             name: `${payload.given_name} ${payload.family_name}`,
             email: payload.email,
             role: payload.role,

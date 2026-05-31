@@ -1,0 +1,11 @@
+.objects-page-table {
+    [tuiTh],
+    [tuiTd] {
+        border-inline-start: none;
+        border-inline-end: none;
+    }
+
+    table {
+        width: 100%;
+    }
+}

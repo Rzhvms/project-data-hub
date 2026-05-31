@@ -13,6 +13,6 @@ export const OBJECT_STATUS_OPTIONS = [
         value: 'archived',
         label: 'Архив',
     },
-] as const satisfies readonly IOption[];
+] as const satisfies IOption[];
 
 export type ObjectStatus = (typeof OBJECT_STATUS_OPTIONS)[number]['value'];
