@@ -1,30 +1,41 @@
-<div class="objects-page-table">
+<div
+    #tableWrapper
+    class="objects-page-table"
+>
     <table tuiTable>
-        <thead>
+        <thead #tableHeader>
             <th tuiTh>Название</th>
             <th tuiTh>Город</th>
             <th tuiTh>Тип</th>
             <th tuiTh>Статус</th>
-            <th tuiTh>Дата</th>
+            <th tuiTh>Дата создания</th>
+            <th tuiTh>Дата редактирования</th>
+            <th tuiTh>Руководитель проекта</th>
             <th tuiTh></th>
         </thead>
         <tbody tuiTbody>
-            @for (object of objectList(); track object.id) {
-                <tr>
+            @for (object of paginatedObjectList(); track object.id) {
+                <tr #tableRow>
                     <td tuiTd>
                         {{ object.title }}
                     </td>
                     <td tuiTd>
-
+                        {{ object.city }}
                     </td>
                     <td tuiTd>
-
+                        {{ objectTypeLabels[object.type] || 'Другое' }}
                     </td>
                     <td tuiTd>
-
+                        {{ objectStatusLabels[object.status] || 'Другое' }}
                     </td>
                     <td tuiTd>
-
+                        {{ object.createdAt | date: 'dd.MM.yyyy' }}
+                    </td>
+                    <td tuiTd>
+                        {{ object.updatedAt | date: 'dd.MM.yyyy' }}
+                    </td>
+                    <td tuiTd>
+                        {{ object.projectManager }}
                     </td>
                     <td tuiTd>
                         <button
@@ -35,34 +46,54 @@
                             aria-label="context-menu-button"
                             [tuiDropdown]="contextMenu"
                             tuiDropdownAuto
-                        >
-                            <ng-template #contextMenu>
-                                <button
-                                    tuiButton
-                                    type="button"
-                                    appearance="flat"
-                                >
-                                    Редактировать
-                                </button>
-                                <button
-                                    tuiButton
-                                    type="button"
-                                    appearance="flat"
-                                >
-                                    Дублировать
-                                </button>
-                                <button
-                                    tuiButton
-                                    type="button"
-                                    appearance="flat"
-                                >
-                                    Удалить
-                                </button>
-                            </ng-template>
-                        </button>
+                        ></button>
+                        <button
+                            tuiButton
+                            type="button"
+                            iconStart="@tui.download"
+                            aria-label="download-button"
+                            [tuiDropdown]="downloadMenu"
+                            tuiDropdownAuto
+                        ></button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <tui-pagination
+        class="objects-page-table__pagination"
+        [index]="paginationIndex()"
+        [length]="pagesCount()"
+        [activePadding]="2"
+        [sidePadding]="1"
+        (indexChange)="paginationIndex.set($event)"
+    />
 </div>
+
+<ng-template #contextMenu>
+    <button
+        tuiButton
+        type="button"
+        appearance="flat"
+    >
+        Редактировать
+    </button>
+    <button
+        tuiButton
+        type="button"
+        appearance="flat"
+    >
+        Дублировать
+    </button>
+    <button
+        tuiButton
+        type="button"
+        appearance="flat"
+    >
+        Удалить
+    </button>
+</ng-template>
+
+<ng-template #downloadMenu>
+
+</ng-template>

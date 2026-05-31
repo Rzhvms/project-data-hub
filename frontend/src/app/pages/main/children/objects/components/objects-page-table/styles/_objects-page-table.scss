@@ -1,11 +1,24 @@
 .objects-page-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    gap: 1rem;
+
     [tuiTh],
     [tuiTd] {
         border-inline-start: none;
         border-inline-end: none;
+        padding: 0 1.75rem;
     }
 
     table {
         width: 100%;
+    }
+
+    &__pagination {
+        margin-left: auto;
+        margin-right: 1.75rem;
+        margin-bottom: 1rem;
     }
 }
