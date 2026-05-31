@@ -18,6 +18,34 @@ services:
       retries: 10
     restart: unless-stopped
 
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "${MINIO_PORT_EXTERNAL}:9000"
+      - "${MINIO_CONSOLE_PORT_EXTERNAL}:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
+      mc mb --ignore-existing myminio/${MINIO_BUCKET} &&
+      mc anonymous set download myminio/${MINIO_BUCKET}
+      "
   apigateway:
     build:
       context: ./api
@@ -78,6 +106,11 @@ services:
       Jwt__Authority: http://apigateway:8080/identity
       Jwt__Issuer: http://apigateway:8080/identity
       Jwt__Audience: IdentityClient
+
+      Minio__Endpoint: ${MINIO_ENDPOINT}
+      Minio__AccessKey: ${MINIO_ROOT_USER}
+      Minio__SecretKey: ${MINIO_ROOT_PASSWORD}
+      Minio__Bucket: ${MINIO_BUCKET}
     ports:
       - "${PROVIDER_API_PORT_EXTERNAL}:8080"
     depends_on:
@@ -87,3 +120,4 @@ services:
 
 volumes:
   pgdata:
+  minio-data:

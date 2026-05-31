@@ -1,0 +1,52 @@
+namespace Domain.Entities.Project;
+
+/// <summary>
+/// Изображение проекта
+/// </summary>
+public record ProjectImage
+{
+    /// <summary>
+    /// Идентификатор изображения
+    /// </summary>
+    public Guid Id { get; init; }
+    
+    /// <summary>
+    /// Идентификатор проекта
+    /// </summary>
+    public Guid ProjectId { get; init; }
+    
+    /// <summary>
+    /// Путь в MinIO
+    /// </summary>
+    public string? ObjectPath { get; init; }
+    
+    /// <summary>
+    /// Заголовок
+    /// </summary>
+    public string? Title { get; init; }
+    
+    /// <summary>
+    /// Описание
+    /// </summary>
+    public string? Description { get; init; }
+    
+    /// <summary>
+    /// Альтернативное описание
+    /// </summary>
+    public string? AlternativeText { get; init; }
+    
+    /// <summary>
+    /// Использовать на сайте
+    /// </summary>
+    public bool UseInSite { get; init; }
+    
+    /// <summary>
+    /// Использовать в презентации
+    /// </summary>
+    public bool UseInPresentation { get; init; }
+    
+    /// <summary>
+    /// Использовать в портфолио
+    /// </summary>
+    public bool UseInPortfolio { get; init; }
+}

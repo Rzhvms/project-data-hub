@@ -40,5 +40,6 @@ public static class InfrastructureStartUp
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IProjectMetricsRepository, ProjectMetricsRepository>();
+        services.AddScoped<IImageRepository, ProjectImageRepository>();
     }
 }

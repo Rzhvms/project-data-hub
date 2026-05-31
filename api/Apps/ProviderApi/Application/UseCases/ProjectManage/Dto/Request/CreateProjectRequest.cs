@@ -33,7 +33,7 @@ public record CreateProjectRequest
     /// <summary>
     /// Год реализации объекта.
     /// </summary>
-    public int? RealizationYear { get; set; }
+    public string? RealizationYear { get; set; }
 
     /// <summary>
     /// Статус проекта, например: концепция, проектная документация, реализован, в строительстве.

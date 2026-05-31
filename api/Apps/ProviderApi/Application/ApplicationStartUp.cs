@@ -1,5 +1,7 @@
 using Application.UseCases.Categories;
 using Application.UseCases.Categories.Interfaces;
+using Application.UseCases.Images;
+using Application.UseCases.Images.Interfaces;
 using Application.UseCases.Participants;
 using Application.UseCases.Participants.Interfaces;
 using Application.UseCases.ProjectManage;
@@ -22,5 +24,6 @@ public static class ApplicationStartUp
         services.AddScoped<ICategoryUseCaseManager, CategoryUseCaseManager>();
         services.AddScoped<IParticipantUseCaseManager, ParticipantUseCaseManager>();
         services.AddScoped<IProjectMetricsUseCaseManager, ProjectMetricsUseCaseManager>();
+        services.AddScoped<IImageUseCase, ImageUseCase>();
     }
 }

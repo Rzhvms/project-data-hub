@@ -40,7 +40,7 @@ public sealed record ProjectCard
     /// <summary>
     /// Год реализации объекта.
     /// </summary>
-    public int? RealizationYear { get; init; }
+    public string? RealizationYear { get; init; }
 
     /// <summary>
     /// Статус проекта, например: концепция, проектная документация, реализован, в строительстве.
