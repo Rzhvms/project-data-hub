@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { IObjectPreview, ObjectsRequestService } from '@project-data-hub/modules/objects';
-import { IOption } from '@project-data-hub/shared';
+import { AppRoute, IOption } from '@project-data-hub/shared';
 import { TuiButton, TuiDropdown, TuiInput } from '@taiga-ui/core';
 import { debounceTime, take } from 'rxjs';
 
@@ -27,12 +28,20 @@ export class ObjectsPageComponent {
     protected readonly filteredObjectList: WritableSignal<IObjectPreview[]> = signal([]);
     protected readonly toolBarViewModel: ObjectsPageToolBarViewModel = new ObjectsPageToolBarViewModel();
 
+    private readonly _router: Router = inject(Router);
     private readonly _requestService: ObjectsRequestService = inject(ObjectsRequestService);
     private readonly _destroyRef: DestroyRef = inject(DestroyRef);
 
     constructor() {
         this.setObjectList();
         this.initFilters();
+    }
+
+    protected redirectToCreate(): void {
+        this._router.navigate([
+            AppRoute.ObjectsPage,
+            'create'
+        ]);
     }
 
     private setObjectList(): void {
