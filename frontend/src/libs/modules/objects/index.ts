@@ -4,3 +4,4 @@ export * from './constants/object-type.constant';
 export * from './interfaces/object.interface';
 export * from './interfaces/object-preview.interface';
 export * from './services/objects-request.service';
+export * from './utils/get-object-ui-status.util';

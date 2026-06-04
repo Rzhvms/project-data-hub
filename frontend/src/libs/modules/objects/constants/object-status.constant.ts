@@ -2,12 +2,12 @@ import { IOption } from '@project-data-hub/shared';
 
 export const OBJECT_STATUS_OPTIONS = [
     {
-        value: 'draft',
-        label: 'Черновик',
-    },
-    {
         value: 'published',
         label: 'Опубликовано',
+    },
+    {
+        value: 'draft',
+        label: 'Черновик',
     },
     {
         value: 'archived',

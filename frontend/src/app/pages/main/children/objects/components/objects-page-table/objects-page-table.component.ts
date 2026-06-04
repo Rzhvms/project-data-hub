@@ -1,16 +1,34 @@
 import { DatePipe } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, InputSignal, Signal, signal, viewChild, WritableSignal } from '@angular/core';
-import { IObjectPreview, OBJECT_STATUS_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
+import {
+    afterNextRender,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    effect,
+    ElementRef,
+    inject,
+    input,
+    InputSignal,
+    Signal,
+    signal,
+    viewChild,
+    WritableSignal,
+} from '@angular/core';
+import {
+    getObjectUiStatus,
+    IObjectPreview,
+    OBJECT_STATUS_OPTIONS,
+    OBJECT_TYPE_OPTIONS,
+    ObjectStatus,
+    ObjectType,
+} from '@project-data-hub/modules/objects';
 import { createOptionLabelMap } from '@project-data-hub/shared';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiButton, TuiDropdown } from '@taiga-ui/core';
-import { TuiPagination } from '@taiga-ui/kit';
+import { TuiHintOverflow } from '@taiga-ui/core';
+import { TuiBadge, TuiPagination, TuiStatus } from '@taiga-ui/kit';
 
-type HeightMeasurments = {
-    wrapperHeightPx: number,
-    headerHeightPx: number,
-    rowHeightPx: number
-}
+import { ObjectPreviewActionsComponent } from '../object-preview-actions/object-preview-actions.component';
 
 const PAGINATION_BLOCK_HEIGHT_PX = 64;
 
@@ -21,15 +39,17 @@ const PAGINATION_BLOCK_HEIGHT_PX = 64;
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TuiTable,
+        TuiBadge,
+        TuiStatus,
         TuiPagination,
-        TuiDropdown,
-        TuiButton,
+        TuiHintOverflow,
         DatePipe,
-    ]
+        ObjectPreviewActionsComponent
+    ],
 })
 export class ObjectsPageTableComponent {
     /** object lists */
-    public readonly objectList: InputSignal<IObjectPreview[]> = input.required();
+    public readonly objectList: InputSignal<IObjectPreview[]> = input.required<IObjectPreview[]>();
     protected readonly paginatedObjectList: Signal<IObjectPreview[]> = computed(() => {
         const startIndex: number = this.paginationIndex() * this.rowsPerPageCount();
 
@@ -42,39 +62,38 @@ export class ObjectsPageTableComponent {
     /** labels */
     protected readonly objectTypeLabels: Record<ObjectType, string> = createOptionLabelMap(OBJECT_TYPE_OPTIONS);
     protected readonly objectStatusLabels: Record<ObjectStatus, string> = createOptionLabelMap(OBJECT_STATUS_OPTIONS);
+    protected getUiStatus = getObjectUiStatus;
 
     /** pagination */
-    protected readonly pagesCount: Signal<number> = computed(() => Math.ceil(
+    protected readonly pagesCount: Signal<number> = computed(() =>
         Math.max(
-            this.objectList().length / this.rowsPerPageCount(),
-            1
-        )
-    ));
+            Math.ceil(this.objectList().length / this.rowsPerPageCount()),
+            1,
+        ),
+    );
     protected readonly rowsPerPageCount: WritableSignal<number> = signal(1);
     protected readonly paginationIndex: WritableSignal<number> = signal(0);
 
     /** element refs */
-    private readonly _tableWrapper: Signal<ElementRef<HTMLElement> | undefined> = viewChild('tableWrapper', { read: ElementRef });
-    private readonly _tableHeader: Signal<ElementRef<HTMLElement> | undefined> = viewChild('tableHeader', { read: ElementRef });
-    private readonly _tableRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild('tableRow', { read: ElementRef });
+    private readonly _tableWrapper: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('tableWrapper')
+    private readonly _tableHeader: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('tableHeader');
+    private readonly _tableRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('tableRow');
 
-    /** last height values */
-    private _lastMeasurments: HeightMeasurments = {
-        wrapperHeightPx: 0,
-        headerHeightPx: 0,
-        rowHeightPx: 0
-    }
+    private _lastLayoutKey: string = '';
+    private _resizeFrameId: number | null = null;
 
     private readonly _destroyRef: DestroyRef = inject(DestroyRef);
 
     constructor() {
         afterNextRender(() => this.initResizeObserver());
         effect(() => {
-            const maxIndex = Math.max(this.pagesCount() - 1, 0);
-            if (this.paginationIndex() > maxIndex) {
-                this.paginationIndex.set(maxIndex);
+            if (this._tableRow()) {
+                this.scheduleRowsPerPageUpdate();
             }
         });
+        effect(() => this.clampPaginationIndex());
+
+        this._destroyRef.onDestroy(() => this.cancelRowsPerPageUpdate());
     }
 
     private initResizeObserver(): void {
@@ -83,43 +102,63 @@ export class ObjectsPageTableComponent {
             return;
         }
 
-        const resizeObserver = new ResizeObserver(() => this.updateRowsPerPageCount());
+        const resizeObserver = new ResizeObserver(() => {
+            this.scheduleRowsPerPageUpdate();
+        });
         resizeObserver.observe(wrapperElement);
 
-        requestAnimationFrame(() => this.updateRowsPerPageCount());
+        this.scheduleRowsPerPageUpdate();
         this._destroyRef.onDestroy(() => resizeObserver.disconnect());
     }
 
-    private updateRowsPerPageCount(): void {
-        const wrapperHeightPx = this._tableWrapper()?.nativeElement.clientHeight;
-        const headerHeightPx = this._tableHeader()?.nativeElement.offsetHeight;
-        const rowHeightPx = this._tableRow()?.nativeElement.offsetHeight;
+    private scheduleRowsPerPageUpdate(): void {
+        if (this._resizeFrameId !== null) {
+            return;
+        }
 
+        this._resizeFrameId = requestAnimationFrame(() => {
+            this._resizeFrameId = null;
+            this.updateRowsPerPageCount();
+        });
+    }
+
+    private cancelRowsPerPageUpdate(): void {
+        if (this._resizeFrameId === null) {
+            return;
+        }
+
+        cancelAnimationFrame(this._resizeFrameId);
+        this._resizeFrameId = null;
+    }
+
+    private updateRowsPerPageCount(): void {
+        const wrapperHeightPx: number = this._tableWrapper()?.nativeElement.clientHeight ?? 0;
+        const headerHeightPx: number = this._tableHeader()?.nativeElement.offsetHeight ?? 0;
+        const rowHeightPx: number = this._tableRow()?.nativeElement.offsetHeight ?? 0;
         if (!wrapperHeightPx || !headerHeightPx || !rowHeightPx) {
             return;
         }
-        if (
-            wrapperHeightPx === this._lastMeasurments.wrapperHeightPx &&
-            headerHeightPx === this._lastMeasurments.headerHeightPx &&
-            rowHeightPx === this._lastMeasurments.rowHeightPx
-        ) {
+
+        const layoutKey = `${wrapperHeightPx}:${headerHeightPx}:${rowHeightPx}`;
+        if (layoutKey === this._lastLayoutKey) {
             return;
         }
+        this._lastLayoutKey = layoutKey;
 
-        this._lastMeasurments = {
-            wrapperHeightPx,
-            headerHeightPx,
-            rowHeightPx
-        };
-
-        const rowsCount = Math.max(
-            Math.floor(
-                (wrapperHeightPx - PAGINATION_BLOCK_HEIGHT_PX - headerHeightPx) / rowHeightPx
-            ),
-            1
+        const availableTableHeightPx: number = wrapperHeightPx - PAGINATION_BLOCK_HEIGHT_PX - headerHeightPx;
+        const rowsPerPageCount: number = Math.max(
+            Math.floor(availableTableHeightPx / rowHeightPx),
+            1,
         );
-        if (rowsCount !== this.rowsPerPageCount()) {
-            this.rowsPerPageCount.set(rowsCount);
+        if (rowsPerPageCount !== this.rowsPerPageCount()) {
+            this.rowsPerPageCount.set(rowsPerPageCount);
+        }
+    }
+
+    private clampPaginationIndex(): void {
+        const maxIndex: number = this.pagesCount() - 1;
+        if (this.paginationIndex() > maxIndex) {
+            this.paginationIndex.set(maxIndex);
         }
     }
 }

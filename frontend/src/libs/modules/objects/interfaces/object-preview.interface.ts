@@ -8,6 +8,6 @@ export interface IObjectPreview {
     type: ObjectType;
     status: ObjectStatus;
     projectManager: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }

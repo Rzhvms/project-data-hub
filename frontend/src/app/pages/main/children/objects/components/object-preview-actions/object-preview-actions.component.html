@@ -1,0 +1,99 @@
+<div class="object-preview-actions">
+    <button
+        tuiButton
+        type="button"
+        iconStart="@tui.ellipsis"
+        appearance="flat"
+        aria-label="context-menu-button"
+        [tuiDropdown]="contextMenu"
+        tuiDropdownAuto
+    >
+        <ng-template #contextMenu>
+            <div class="object-preview-actions__menu">
+                <button
+                    tuiButton
+                    iconStart="@tui.eye"
+                    type="button"
+                    appearance="secondary-grayscale"
+                >
+                    Просмотреть
+                </button>
+                <button
+                    tuiButton
+                    iconStart="@tui.pen"
+                    type="button"
+                    appearance="secondary-grayscale"
+                >
+                    Редактировать
+                </button>
+                <button
+                    tuiButton
+                    iconStart="@tui.layers-2"
+                    type="button"
+                    appearance="secondary-grayscale"
+                >
+                    Дублировать
+                </button>
+                @if (object().status !== 'archived') {
+                    @if (object().status === 'draft') {
+                        <button
+                            tuiButton
+                            iconStart="@tui.cloud-upload"
+                            type="button"
+                            appearance="primary"
+                        >
+                            Опубликовать
+                        </button>
+                    }
+                    <button
+                        tuiButton
+                        iconStart="@tui.archive"
+                        type="button"
+                        appearance="primary-destructive"
+                    >
+                        Архивировать
+                    </button>
+                } @else {
+                    <button
+                        tuiButton
+                        iconStart="@tui.archive-restore"
+                        type="button"
+                        appearance="primary"
+                    >
+                        Вернуть из архива
+                    </button>
+                }
+            </div>
+        </ng-template>
+    </button>
+    <button
+        tuiButton
+        type="button"
+        iconStart="@tui.download"
+        aria-label="download-button"
+        [tuiDropdown]="downloadMenu"
+        tuiDropdownAuto
+    >
+        <ng-template #downloadMenu>
+            <div class="object-preview-actions__menu">
+                <button
+                    tuiButton
+                    iconStart="@tui.file-chart-pie"
+                    type="button"
+                    appearance="primary"
+                >
+                    Выгрузить в PPTX
+                </button>
+                <button
+                    tuiButton
+                    iconStart="@tui.file-text"
+                    type="button"
+                    appearance="primary"
+                >
+                    Выгрузить в PDF
+                </button>
+            </div>
+        </ng-template>
+    </button>
+</div>
+

@@ -3,30 +3,48 @@
     class="objects-page-table"
 >
     <table tuiTable>
-        <thead #tableHeader>
-            <th tuiTh>Название</th>
-            <th tuiTh>Город</th>
-            <th tuiTh>Тип</th>
-            <th tuiTh>Статус</th>
-            <th tuiTh>Дата создания</th>
-            <th tuiTh>Дата редактирования</th>
-            <th tuiTh>Руководитель проекта</th>
-            <th tuiTh></th>
+        <colgroup>
+            <col style="width: 14%" /> <!-- Название -->
+            <col style="width: 12%" /> <!-- Город -->
+            <col style="width: 14%" /> <!-- Тип -->
+            <col style="width: 12%" /> <!-- Статус -->
+            <col style="width: 12%" /> <!-- Дата создания -->
+            <col style="width: 12%" /> <!-- Дата редактирования -->
+            <col style="width: 16%" /> <!-- Руководитель -->
+            <col style="width: 8%" />  <!-- Действия -->
+        </colgroup>
+        <thead>
+            <tr #tableHeader>
+                <th tuiTh>Название</th>
+                <th tuiTh>Город</th>
+                <th tuiTh>Тип</th>
+                <th tuiTh>Статус</th>
+                <th tuiTh>Дата создания</th>
+                <th tuiTh>Дата редактирования</th>
+                <th tuiTh>Руководитель проекта</th>
+                <th tuiTh></th>
+            </tr>
         </thead>
         <tbody tuiTbody>
             @for (object of paginatedObjectList(); track object.id) {
                 <tr #tableRow>
-                    <td tuiTd>
+                    <td class="objects-page-table__cell_with-text" tuiTd [tuiHintOverflow]="object.title">
                         {{ object.title }}
                     </td>
-                    <td tuiTd>
+                    <td class="objects-page-table__cell_with-text" tuiTd [tuiHintOverflow]="object.city">
                         {{ object.city }}
                     </td>
-                    <td tuiTd>
+                    <td class="objects-page-table__cell_with-text" tuiTd [tuiHintOverflow]="objectTypeLabels[object.type]">
                         {{ objectTypeLabels[object.type] || 'Другое' }}
                     </td>
                     <td tuiTd>
-                        {{ objectStatusLabels[object.status] || 'Другое' }}
+                        <div
+                            [appearance]="getUiStatus(object.status)"
+                            tuiBadge
+                            tuiStatus
+                        >
+                            {{ objectStatusLabels[object.status] || 'Другое' }}
+                        </div>
                     </td>
                     <td tuiTd>
                         {{ object.createdAt | date: 'dd.MM.yyyy' }}
@@ -34,27 +52,11 @@
                     <td tuiTd>
                         {{ object.updatedAt | date: 'dd.MM.yyyy' }}
                     </td>
-                    <td tuiTd>
+                    <td class="objects-page-table__cell_with-text" tuiTd [tuiHintOverflow]="object.projectManager">
                         {{ object.projectManager }}
                     </td>
-                    <td tuiTd>
-                        <button
-                            tuiButton
-                            type="button"
-                            iconStart="@tui.ellipsis"
-                            appearance="flat"
-                            aria-label="context-menu-button"
-                            [tuiDropdown]="contextMenu"
-                            tuiDropdownAuto
-                        ></button>
-                        <button
-                            tuiButton
-                            type="button"
-                            iconStart="@tui.download"
-                            aria-label="download-button"
-                            [tuiDropdown]="downloadMenu"
-                            tuiDropdownAuto
-                        ></button>
+                    <td class="objects-page-table__cell_with-buttons" tuiTd>
+                        <object-preview-actions [object]="object" />
                     </td>
                 </tr>
             }
@@ -69,31 +71,3 @@
         (indexChange)="paginationIndex.set($event)"
     />
 </div>
-
-<ng-template #contextMenu>
-    <button
-        tuiButton
-        type="button"
-        appearance="flat"
-    >
-        Редактировать
-    </button>
-    <button
-        tuiButton
-        type="button"
-        appearance="flat"
-    >
-        Дублировать
-    </button>
-    <button
-        tuiButton
-        type="button"
-        appearance="flat"
-    >
-        Удалить
-    </button>
-</ng-template>
-
-<ng-template #downloadMenu>
-
-</ng-template>

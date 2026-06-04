@@ -1,0 +1,13 @@
+.object-preview-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 0.25rem;
+    }
+}

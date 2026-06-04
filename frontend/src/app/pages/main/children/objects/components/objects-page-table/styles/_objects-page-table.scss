@@ -14,11 +14,20 @@
 
     table {
         width: 100%;
+        table-layout: fixed;
     }
 
     &__pagination {
         margin-left: auto;
         margin-right: 1.75rem;
         margin-bottom: 1rem;
+    }
+
+    &__cell {
+        &_with-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 }

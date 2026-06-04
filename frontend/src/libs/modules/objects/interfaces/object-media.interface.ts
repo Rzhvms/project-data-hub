@@ -6,6 +6,6 @@ export interface IObjectMedia {
     schemas?: MediaImage[];
     renders?: MediaImage[];
     photos?: MediaImage[];
-    presentationCover?: MediaImage[];
+    presentationCover?: MediaImage;
     portfolioImages?: MediaImage[];
 }

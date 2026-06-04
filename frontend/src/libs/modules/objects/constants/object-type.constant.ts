@@ -2,18 +2,6 @@ import { IOption } from '@project-data-hub/shared';
 
 export const OBJECT_TYPE_OPTIONS = [
     {
-        value: 'housingComplex',
-        label: 'Жилые комплексы',
-    },
-    {
-        value: 'publicBuilding',
-        label: 'Общественные здания',
-    },
-    {
-        value: 'commercialRealEstate',
-        label: 'Коммерческая недвижимость',
-    },
-    {
         value: 'landscaping',
         label: 'Благоустройство',
     },
@@ -22,12 +10,24 @@ export const OBJECT_TYPE_OPTIONS = [
         label: 'Градостроительство',
     },
     {
+        value: 'housingComplex',
+        label: 'Жилые комплексы',
+    },
+    {
         value: 'interior',
         label: 'Интерьер',
     },
     {
         value: 'concept',
         label: 'Концепция',
+    },
+    {
+        value: 'commercialRealEstate',
+        label: 'Коммерческая недвижимость',
+    },
+    {
+        value: 'publicBuilding',
+        label: 'Общественные здания',
     },
     {
         value: 'designDocumentation',

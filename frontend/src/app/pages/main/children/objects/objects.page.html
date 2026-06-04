@@ -2,7 +2,7 @@
     <header class="objects-page__header">
         <div>
             <h1 class="objects-page__title">Объекты</h1>
-            <span class="objects-page__description">Управление архитектурой объектов</span>
+            <span>Управление архитектурой объектов</span>
         </div>
         <button
             tuiButton
@@ -15,5 +15,12 @@
 
     <objects-page-tool-bar class="objects-page__tool-bar" [model]="toolBarViewModel" />
 
-    <objects-page-table class="objects-page__table" [objectList]="objectList()" />
+    @if (filteredObjectList().length) {
+        <objects-page-table class="objects-page__table" [objectList]="filteredObjectList()" />
+    } @else {
+        <div class="objects-page__empty">
+            <h2 class="objects-page__empty-title">Не найдено подходящих объектов :(</h2>
+            <span>Попробуйте изменить фильтры или поисковый запрос</span>
+        </div>
+    }
 </div>
