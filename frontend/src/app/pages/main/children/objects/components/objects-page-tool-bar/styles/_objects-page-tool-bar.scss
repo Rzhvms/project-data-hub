@@ -1,0 +1,18 @@
+.objects-page-tool-bar {
+    &__filter {
+        display: flex;
+        flex-direction: column;
+
+        ::ng-deep {
+            .t-item {
+                padding: 0.5rem;
+                width: fit-content;
+                min-block-size: 0;
+            }
+        }
+    }
+
+    &__filter-dropdown {
+        padding: 0.5rem;
+    }
+}

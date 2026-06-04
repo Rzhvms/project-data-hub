@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { UserService } from '@project-data-hub/modules/user';
+import { ApiRoute, getFullApiRoute, LocalStorageKeys } from '@project-data-hub/shared';
 import { Observable, tap } from 'rxjs';
 
-import { ApiRoute, LocalStorageKeys } from '../../enums';
-import { getFullApiRoute } from '../../utils';
 import { LoginDto } from '../dto/login.dto';
 import { LoginRdo } from '../rdo/login.rdo';
 
@@ -14,11 +14,15 @@ export class AuthService {
     }
 
     private readonly _http: HttpClient = inject(HttpClient);
+    private readonly _userService: UserService = inject(UserService);
 
     public authorize(credits: LoginDto): Observable<LoginRdo> {
         return this._http.post<LoginRdo>(getFullApiRoute(ApiRoute.Login), credits)
             .pipe(
-                tap((tokens) => this.saveTokens(tokens))
+                tap((tokens) => {
+                    this.saveTokens(tokens);
+                    this._userService.setUserFromToken(tokens.accessToken);
+                })
             )
     }
 
@@ -36,13 +40,25 @@ export class AuthService {
         )
     }
 
-    public unauthorize(): void {
-        localStorage.removeItem(LocalStorageKeys.AccessToken);
-        localStorage.removeItem(LocalStorageKeys.RefreshToken);
+    public unauthorize(): Observable<void> {
+        return this._http.post<void>(
+            getFullApiRoute(ApiRoute.RevokeTokens),
+            {}
+        ).pipe(
+            tap(() => {
+                this.removeTokens();
+                this._userService.removeUser();
+            })
+        )
     }
 
     private saveTokens(tokens: LoginRdo): void {
         localStorage.setItem(LocalStorageKeys.AccessToken, tokens.accessToken);
         localStorage.setItem(LocalStorageKeys.RefreshToken, tokens.refreshToken);
+    }
+
+    private removeTokens(): void {
+        localStorage.removeItem(LocalStorageKeys.AccessToken);
+        localStorage.removeItem(LocalStorageKeys.RefreshToken);
     }
 }

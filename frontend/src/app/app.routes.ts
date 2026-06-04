@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
-
-import { AppRoute } from '../libs/shared/enums';
-import { authGuard, guestGuard } from '../libs/shared/auth';
+import { authGuard, guestGuard } from '@project-data-hub/modules/auth';
+import { AppRoute } from '@project-data-hub/shared';
 
 export const routes: Routes = [
     {
@@ -12,6 +11,8 @@ export const routes: Routes = [
     {
         path: AppRoute.MainPage,
         loadComponent: () => import('./pages/main/main.page').then(m => m.MainPageComponent),
-        canActivate: [authGuard]
+        loadChildren: () => import('./pages/main/main-page.routes').then(m => m.MAIN_PAGE_ROUTES),
+        canActivate: [authGuard],
+        canActivateChild: [authGuard]
     }
 ];

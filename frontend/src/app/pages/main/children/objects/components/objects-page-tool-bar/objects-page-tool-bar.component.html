@@ -1,0 +1,87 @@
+<search class="objects-page-tool-bar" tuiSearch>
+    <form [formGroup]="model().form">
+        <fieldset tuiTextfieldSize="s">
+            <tui-textfield iconStart="@tui.search">
+                <input
+                    formControlName="search"
+                    placeholder="Поиск по названию, городу, датам или руководителю"
+                    tuiInput
+                />
+            </tui-textfield>
+            <button
+                tuiButton
+                tuiChevron
+                type="button"
+                size="s"
+                appearance="outline"
+                [style.color]="'white'"
+                [tuiDropdown]="statusFilterDropdown"
+                tuiDropdownAuto
+            >
+                Статус
+                <div
+                    [appearance]="!!model().form.controls.statusFilter.value.length ? 'primary' : 'neutral'"
+                    tuiBadge
+                    size="s"
+                >
+                    {{ model().form.controls.statusFilter.value.length }}
+                </div>
+                <ng-template #statusFilterDropdown>
+                    <div class="objects-page-tool-bar__filter-dropdown">
+                        <tui-filter
+                            class="objects-page-tool-bar__filter"
+                            formControlName="statusFilter"
+                            size="s"
+                            [items]="model().statusFilterItems"
+                            [content]="statusFilterDropdownItem"
+                            [identityMatcher]="model().filterItemMatcher"
+                        />
+                        <ng-template #statusFilterDropdownItem let-item>
+                            <div
+                                [appearance]="getUiStatus(item.value)"
+                                tuiBadge
+                                tuiStatus
+                            >
+                                {{ item.label }}
+                            </div>
+                        </ng-template>
+                    </div>
+                </ng-template>
+            </button>
+            <button
+                tuiButton
+                tuiChevron
+                type="button"
+                size="s"
+                appearance="outline"
+                [style.color]="'white'"
+                [tuiDropdown]="typeFilterDropdown"
+                tuiDropdownAuto
+            >
+                Тип
+                <div
+                    [appearance]="!!model().form.controls.typeFilter.value.length ? 'primary' : 'neutral'"
+                    tuiBadge
+                    size="s"
+                >
+                    {{ model().form.controls.typeFilter.value.length }}
+                </div>
+                <ng-template #typeFilterDropdown>
+                    <div class="objects-page-tool-bar__filter-dropdown">
+                        <tui-filter
+                            class="objects-page-tool-bar__filter"
+                            formControlName="typeFilter"
+                            size="s"
+                            [items]="model().typeFilterItems"
+                            [content]="typeFilterDropdownItem"
+                            [identityMatcher]="model().filterItemMatcher"
+                        />
+                        <ng-template #typeFilterDropdownItem let-item>
+                            {{ item.label }}
+                        </ng-template>
+                    </div>
+                </ng-template>
+            </button>
+        </fieldset>
+    </form>
+</search>

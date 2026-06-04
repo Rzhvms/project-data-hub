@@ -15,7 +15,7 @@ export const environment = {
 const targetPath = path.join(
     process.cwd(),
     'src/environments/environment.ts'
-)
+);
 
 fs.writeFileSync(targetPath, envFileContent);
 console.log(chalk.green('environment.ts generated'));

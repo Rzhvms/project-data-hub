@@ -1,4 +1,7 @@
 export enum AppRoute {
     LoginPage = 'login',
-    MainPage = ''
+    MainPage = '',
+    ObjectsPage = 'objects',
+    MediaPage = 'media',
+    WPSettingsPage = 'wp-settings'
 }

@@ -62,6 +62,7 @@ module.exports = defineConfig([
                     style: 'kebab-case',
                 },
             ],
+            "@typescript-eslint/consistent-type-definitions": "off",
             '@typescript-eslint/member-ordering': [
                 'error',
                 {
@@ -114,14 +115,6 @@ module.exports = defineConfig([
                     },
                 },
                 {
-                    selector: 'default',
-                    format: ['camelCase'],
-                    custom: {
-                        regex: '^[^А-ЯЁа-яё]*$',
-                        match: true,
-                    },
-                },
-                {
                     selector: ['classProperty', 'parameterProperty'],
                     format: ['camelCase'],
                     modifiers: ['private'],
@@ -166,8 +159,16 @@ module.exports = defineConfig([
                 },
                 {
                     selector: ['variable'],
-                    modifiers: ['const', 'exported'],
+                    modifiers: ['const'],
                     format: ['camelCase', 'UPPER_CASE'],
+                    custom: {
+                        regex: '^[^А-ЯЁа-яё]*$',
+                        match: true,
+                    },
+                },
+                {
+                    selector: 'default',
+                    format: ['camelCase'],
                     custom: {
                         regex: '^[^А-ЯЁа-яё]*$',
                         match: true,

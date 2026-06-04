@@ -2,12 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '@project-data-hub/modules/auth';
+import { ApiErrorCode, AppRoute, ICON_RESOLVER_PROVIDER } from '@project-data-hub/shared';
 import { TuiButton, TuiError, TuiIcon, TuiInput } from '@taiga-ui/core';
 import { TuiButtonLoading, TuiPassword } from '@taiga-ui/kit';
-import { catchError, debounceTime, finalize, take, throwError } from 'rxjs';
-
-import { AuthService } from '../../../libs/shared/auth';
-import { ApiErrorCode } from '../../../libs/shared/enums';
+import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
+import { catchError, debounceTime, finalize, take, tap, throwError } from 'rxjs';
 
 type LoginForm = FormGroup<{
     email: FormControl<string>;
@@ -27,7 +28,11 @@ type LoginForm = FormGroup<{
         TuiButton,
         TuiButtonLoading,
         TuiError,
-    ]
+        TuiForm,
+        TuiCardLarge,
+        TuiIcon
+    ],
+    providers: [ICON_RESOLVER_PROVIDER]
 })
 export class LoginPageComponent {
     protected readonly isLoading = signal(false);
@@ -46,6 +51,7 @@ export class LoginPageComponent {
         })
     })
 
+    private readonly _router: Router = inject(Router);
     private readonly _authService: AuthService = inject(AuthService);
     private readonly _destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -65,6 +71,7 @@ export class LoginPageComponent {
         this._authService.authorize(this.loginForm.getRawValue())
             .pipe(
                 take(1),
+                tap(() => this._router.navigate([AppRoute.MainPage])),
                 catchError((error: HttpErrorResponse) => {
                     const errorCode = error?.error?.code;
                     if (

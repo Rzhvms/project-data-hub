@@ -1,0 +1,9 @@
+.main-page {
+    display: flex;
+    height: 100vh;
+
+    &__content {
+        height: 100%;
+        width: 100%;
+    }
+}
