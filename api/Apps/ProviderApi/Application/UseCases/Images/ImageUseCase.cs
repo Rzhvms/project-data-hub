@@ -20,7 +20,9 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
     private static readonly string[] AllowedContentTypes =
     [
         "image/jpeg",
+        "image/jpg",
         "image/png",
+        "image/svg",
         "image/webp"
     ];
     
@@ -45,16 +47,16 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
                     .WithObjectSize(request.File.Length)
                     .WithContentType(request.File.ContentType));
             
-            // if (isMain)
-            // {
-            //     var existingMain = await imageRepository.GetMainImageAsync(projectId);
-            //     
-            //     if (existingMain is not null)
-            //     {
-            //         existingMain.IsMain = false;
-            //         await imageRepository.UpdateAsync(existingMain);
-            //     }
-            // }
+            if (request.IsMain)
+            {
+                var existingMain = await imageRepository.GetMainImageAsync(projectId);
+                
+                if (existingMain is not null)
+                {
+                    existingMain.IsMain = false;
+                    await imageRepository.UpdateAsync(existingMain);
+                }
+            }
 
             var image = new ProjectImage
             {
@@ -66,6 +68,8 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
                 AlternativeText = request.AlternativeText,
                 UseInSite = request.UseInSite,
                 UseInPortfolio = request.UseInPortfolio,
+                UseInPresentation = request.UseInPresentation,
+                IsMain = request.IsMain,
             };
 
             await imageRepository.CreateAsync(image);
@@ -78,19 +82,19 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
     }
 
     /// <inheritdoc />
-    public async Task DeleteProjectImageAsync(Guid productId, Guid imageId)
+    public async Task DeleteProjectImageAsync(Guid projectId, Guid imageId)
     {
         var image = await imageRepository.GetByIdAsync(imageId);
 
         // Удаление файла из MinIO
         await minio.RemoveObjectAsync(new RemoveObjectArgs().WithBucket(_bucket).WithObject(image.ObjectPath));
-        await imageRepository.DeleteAsync(imageId);
+        await imageRepository.DeleteAsync(projectId, imageId);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<ProjectImageResponse>> GetProjectImagesAsync(Guid productId)
+    public async Task<IEnumerable<ProjectImageResponse>> GetProjectImagesAsync(Guid projectId)
     {
-        var images = await imageRepository.GetAllByProjectIdAsync(productId);
+        var images = await imageRepository.GetAllByProjectIdAsync(projectId);
         
         var response = images.Select(image => new ProjectImageResponse {
             Id = image.Id,
@@ -101,7 +105,8 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
             AlternativeText = image.AlternativeText,
             UseInSite = image.UseInSite,
             UseInPortfolio = image.UseInPortfolio,
-            UseInPresentation = image.UseInPresentation
+            UseInPresentation = image.UseInPresentation,
+            IsMain = image.IsMain
         });
         
         return response;

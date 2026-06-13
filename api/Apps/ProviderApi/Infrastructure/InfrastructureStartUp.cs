@@ -1,10 +1,12 @@
 using System.Data;
 using Application.Ports.Repositories;
+using Application.Ports.Storages;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
 using Infrastructure.Repositories.Categories;
 using Infrastructure.Repositories.Participants;
 using Infrastructure.Repositories.Project;
+using Infrastructure.Storages;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -41,5 +43,7 @@ public static class InfrastructureStartUp
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IProjectMetricsRepository, ProjectMetricsRepository>();
         services.AddScoped<IImageRepository, ProjectImageRepository>();
+        
+        services.AddScoped<IMinioFileReader, MinioFileReader>(); 
     }
 }

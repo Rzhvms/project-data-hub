@@ -1,5 +1,9 @@
+using Application.Services.Generators;
+using Application.Services.Generators.Interfaces;
 using Application.UseCases.Categories;
 using Application.UseCases.Categories.Interfaces;
+using Application.UseCases.ExportFiles;
+using Application.UseCases.ExportFiles.Interfaces;
 using Application.UseCases.Images;
 using Application.UseCases.Images.Interfaces;
 using Application.UseCases.Participants;
@@ -25,5 +29,9 @@ public static class ApplicationStartUp
         services.AddScoped<IParticipantUseCaseManager, ParticipantUseCaseManager>();
         services.AddScoped<IProjectMetricsUseCaseManager, ProjectMetricsUseCaseManager>();
         services.AddScoped<IImageUseCase, ImageUseCase>();
+        services.AddScoped<IExportFilesUseCaseManager, ExportFilesUseCaseManager>();
+        
+        services.AddScoped<IPortfolioDocumentGenerator, PortfolioDocumentGenerator>();
+        services.AddScoped<IPresentationDocumentGenerator, PresentationDocumentGenerator>();
     }
 }

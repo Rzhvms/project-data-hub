@@ -22,10 +22,10 @@ public interface IImageRepository
     /// </summary>
     Task<IEnumerable<ProjectImage>> GetAllByProjectIdAsync(Guid projectId);
     
-    // /// <summary>
-    // /// Получить главное изображение проекта
-    // /// </summary>
-    // Task<ProjectImage?> GetMainImageAsync(Guid projectId);
+    /// <summary>
+    /// Получить главное изображение проекта
+    /// </summary>
+    Task<ProjectImage?> GetMainImageAsync(Guid projectId);
     
     /// <summary>
     /// Обновить изображение 
@@ -35,5 +35,5 @@ public interface IImageRepository
     /// <summary>
     /// Удалить изображение по его Id
     /// </summary>
-    Task DeleteAsync(Guid imageId);
+    Task DeleteAsync(Guid projectId, Guid imageId);
 }
