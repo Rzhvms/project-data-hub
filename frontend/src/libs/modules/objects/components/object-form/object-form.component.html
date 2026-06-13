@@ -1,0 +1,184 @@
+<div class="object-form">
+    <header class="object-form__header">
+        <tui-stepper
+            [activeItemIndex]="activeStepIndex()"
+            (activeItemIndexChange)="activeStepIndex.set($event)"
+        >
+            @for (step of model().stepList; track step) {
+                <button tuiStep>
+                    {{ step }}
+                </button>
+            }
+        </tui-stepper>
+        <div class="object-form__header-buttons-container">
+            <button
+                size="m"
+                appearance="flat-grayscale"
+                [disabled]="activeStepIndex() <= 0"
+                tuiIconButton
+                iconStart="@tui.chevron-left"
+                (click)="activeStepIndex.update((value) => value -= 1)"
+            >
+                Назад
+            </button>
+            <button
+                size="m"
+                appearance="flat-grayscale"
+                [disabled]="activeStepIndex() >= model().stepList.length - 1"
+                tuiIconButton
+                iconEnd="@tui.chevron-right"
+                (click)="activeStepIndex.update((value) => value += 1)"
+            >
+                Далее
+            </button>
+        </div>
+    </header>
+    <main>
+        @switch (model().stepList[activeStepIndex()]) {
+            @case ('Основные') {
+                <ng-container *ngTemplateOutlet="main"></ng-container>
+            }
+            @case ('Медиа') {
+                <h1>Медиа</h1>
+            }
+            @case('Размеры'){
+                <h1>Размеры</h1>
+            }
+            @case ('Команда') {
+                <h1>Команда</h1>
+            }
+        }
+    </main>
+</div>
+
+<ng-template #main>
+    <form class="object-form__section" [formGroup]="model().mainForm">
+        <div class="object-form__group">
+            <h2>Основная информация</h2>
+            <div class="object-form__row">
+                <label class="object-form__control" for="objectTitleControl" tuiLabel>
+                    Название*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.title"
+                            id="objectTitleControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.title" />
+                </label>
+                <label class="object-form__control" for="objectShortTitleControl" tuiLabel>
+                    Краткое название
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.shortTitle"
+                            id="objectShortTitleControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.shortTitle" />
+                </label>
+            </div>
+            <div class="object-form__row">
+                <label class="object-form__control" for="objectTypeControl" tuiLabel>
+                    Тип*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.type"
+                            id="objectTypeControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.type" />
+                </label>
+                <label class="object-form__control" for="objectCityControl" tuiLabel>
+                    Город*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.city"
+                            id="objectCityControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.city" />
+                </label>
+            </div>
+            <div class="object-form__row">
+                <label class="object-form__control" for="objectFullDescriptionControl" tuiLabel>
+                    Описание
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.fullDescription"
+                            id="objectFullDescriptionControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.fullDescription" />
+                </label>
+                <label class="object-form__control" for="objectShortDescriptionControl" tuiLabel>
+                    Краткое описание
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.shortDescription"
+                            id="objectShortDescriptionControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.shortDescription" />
+                </label>
+            </div>
+        </div>
+        <div class="object-form__subsection">
+            <div class="object-form__group">
+                <h2>Состояние объекта</h2>
+                <label class="object-form__control" for="objectStatusControl" tuiLabel>
+                    Статус*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.status"
+                            id="objectStatusControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.status" />
+                </label>
+                <label class="object-form__control" for="objectStageControl" tuiLabel>
+                    Стадия*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.stage"
+                            id="objectStageControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.stage" />
+                </label>
+            </div>
+            <div class="object-form__group">
+                <h2>Даты</h2>
+                <label class="object-form__control" for="objectDesignYearControl" tuiLabel>
+                    Год дизайна
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.designYear"
+                            id="objectDesignYearControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.designYear" />
+                </label>
+                <label class="object-form__control" for="objectImplementationYearControl" tuiLabel>
+                    Год реализации
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.implementationYear"
+                            id="objectImplementationYearControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.implementationYear" />
+                </label>
+            </div>
+        </div>
+    </form>
+</ng-template>

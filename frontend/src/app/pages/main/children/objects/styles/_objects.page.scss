@@ -6,14 +6,9 @@
     &__header {
         display: flex;
         justify-content: space-between;
-        align-items: end;
+        align-items: center;
         padding: 1.5rem;
-        padding-top: 0.75rem;
-    }
-
-    &__title {
-        font: var(--tui-typography-heading-h4);
-        margin-bottom: 0.25rem;
+        padding-top: 1rem;
     }
 
     &__tool-bar {

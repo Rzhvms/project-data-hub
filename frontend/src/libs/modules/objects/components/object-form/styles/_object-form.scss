@@ -1,0 +1,42 @@
+.object-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    &__subsection {
+        display: flex;
+        gap: 1rem;
+    }
+
+    &__group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        background-color: var(--tui-background-base-alt);
+    }
+
+    &__row {
+        display: flex;
+        gap: 1rem;
+    }
+
+    &__control {
+        width: 100%;
+    }
+}

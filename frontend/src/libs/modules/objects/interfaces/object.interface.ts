@@ -8,7 +8,6 @@ export interface IObject extends IObjectPreview {
     shortTitle?: string;
     shortDescription: string;
     fullDescription?: string;
-    address?: string;
     designYear?: string;
     implementationYear?: string;
     stage: ObjectStage;

@@ -1,3 +1,5 @@
+export * from './components/object-form/object-form.component';
+export * from './components/object-form/view-models/object-form.view-model';
 export * from './constants/object-stage.constant';
 export * from './constants/object-status.constant';
 export * from './constants/object-type.constant';
