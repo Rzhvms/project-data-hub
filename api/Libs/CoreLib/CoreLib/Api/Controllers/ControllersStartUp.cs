@@ -16,12 +16,12 @@ public static class ControllersStartUp
         services.AddScoped<PublicRequestFilter>();
         services.AddScoped<ClientRequestFilter>();
         services.AddScoped<InternalRequestFilter>();
-        
+
         services.Configure<MvcOptions>(options =>
         {
             options.Conventions.Add(new ControllerRouteConvention());
         });
-        
+
         services.AddAuthorization(options =>
         {
             options.AddPolicy(ControllerPolicies.Client, policy =>

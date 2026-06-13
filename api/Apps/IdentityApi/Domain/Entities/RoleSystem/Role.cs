@@ -27,7 +27,7 @@ public record Role
     /// <summary>
     /// Битовая маска прав.
     /// </summary>
-    public PermissionList PermissionsMask { get; set; }
+    public int PermissionsMask { get; set; }
 
     /// <summary>
     /// Системная роль или пользовательская.

@@ -2,7 +2,9 @@ using Application.Ports.Repositories;
 using Application.UseCases.Images.Dto.Request;
 using Application.UseCases.Images.Dto.Response;
 using Application.UseCases.Images.Interfaces;
+using CoreLib.Audit;
 using CoreLib.Exceptions;
+using CoreLib.User;
 using Domain.Entities.Project;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +14,13 @@ using Minio.DataModel.Args;
 namespace Application.UseCases.Images;
 
 /// <inheritdoc />
-internal class ImageUseCase(IProjectRepository projectRepository, IImageRepository imageRepository, IMinioClient minio, IConfiguration configuration) : IImageUseCase
+internal class ImageUseCase(
+    IProjectRepository projectRepository,
+    IImageRepository imageRepository,
+    IMinioClient minio,
+    IConfiguration configuration,
+    IAuditService auditService,
+    ICurrentUserService currentUser) : IImageUseCase
 {
     private readonly string _bucket = configuration["Minio:Bucket"]!;
     private readonly string _publicUrl = configuration["Minio:PublicUrl"]!;
@@ -73,6 +81,7 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
             };
 
             await imageRepository.CreateAsync(image);
+            await auditService.LogAsync("UploadImage", "ProjectImage", image.Id, currentUser.UserId, currentUser.UserName, $"Загружено изображение для проекта {projectId}");
         }
         catch (Exception)
         {
@@ -89,6 +98,7 @@ internal class ImageUseCase(IProjectRepository projectRepository, IImageReposito
         // Удаление файла из MinIO
         await minio.RemoveObjectAsync(new RemoveObjectArgs().WithBucket(_bucket).WithObject(image.ObjectPath));
         await imageRepository.DeleteAsync(projectId, imageId);
+        await auditService.LogAsync("DeleteImage", "ProjectImage", imageId, currentUser.UserId, currentUser.UserName, $"Удалено изображение {imageId} проекта {projectId}");
     }
 
     /// <inheritdoc/>

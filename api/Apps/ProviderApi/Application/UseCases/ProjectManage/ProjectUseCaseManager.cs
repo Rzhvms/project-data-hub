@@ -5,13 +5,20 @@ using Application.Ports.Repositories;
 using Application.UseCases.ProjectManage.Dto.Request;
 using Application.UseCases.ProjectManage.Dto.Response;
 using Application.UseCases.ProjectManage.Interfaces;
+using CoreLib.Audit;
 using CoreLib.Exceptions;
+using CoreLib.User;
 using Domain.Entities.Project;
 
 namespace Application.UseCases.ProjectManage;
 
 /// <inheritdoc/>
-internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICategoryRepository categoryRepository, IParticipantRepository participantRepository)
+internal class ProjectUseCaseManager(
+    IProjectRepository projectRepository,
+    ICategoryRepository categoryRepository,
+    IParticipantRepository participantRepository,
+    IAuditService auditService,
+    ICurrentUserService currentUser)
     : IProjectUseCaseManager
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -103,6 +110,8 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
         var draftData = FromRequest(projectId, request);
         var response = await projectRepository.CreateProjectAsync(project, draftData);
 
+        await auditService.LogAsync("CreateProject", "Project", projectId, currentUser.UserId, currentUser.UserName, $"Создан проект «{project.Title}»");
+
         return new CreateProjectResponse
         {
             ProjectId = response
@@ -138,6 +147,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
             await projectRepository.RemoveDraftByProjectIdAsync(request.ProjectId, transaction);
 
             transaction.Commit();
+            await auditService.LogAsync("PublishProject", "Project", request.ProjectId, currentUser.UserId, currentUser.UserName, $"Опубликован проект {request.ProjectId}");
         }
         catch
         {
@@ -186,6 +196,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
             }
 
             transaction.Commit();
+            await auditService.LogAsync("UpdateProject", "Project", projectId, currentUser.UserId, currentUser.UserName, $"Обновлен проект {projectId}");
         }
         catch
         {
@@ -198,6 +209,7 @@ internal class ProjectUseCaseManager(IProjectRepository projectRepository, ICate
     public async Task DeleteProjectAsync(Guid projectId)
     {
         await projectRepository.DeleteProjectAsync(projectId);
+        await auditService.LogAsync("DeleteProject", "Project", projectId, currentUser.UserId, currentUser.UserName, $"Удален проект {projectId}");
     }
 
     /// <summary>
