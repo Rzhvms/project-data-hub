@@ -27,7 +27,7 @@
                 [disabled]="activeStepIndex() >= model().stepList.length - 1"
                 tuiIconButton
                 iconEnd="@tui.chevron-right"
-                (click)="activeStepIndex.update((value) => value += 1)"
+                (click)="goToNextStep()"
             >
                 Далее
             </button>
@@ -42,7 +42,7 @@
                 <h1>Медиа</h1>
             }
             @case('Размеры'){
-                <h1>Размеры</h1>
+                <ng-container *ngTemplateOutlet="indicators"></ng-container>
             }
             @case ('Команда') {
                 <h1>Команда</h1>
@@ -54,7 +54,6 @@
 <ng-template #main>
     <form class="object-form__section" [formGroup]="model().mainForm">
         <div class="object-form__group">
-            <h2>Основная информация</h2>
             <div class="object-form__row">
                 <label class="object-form__control" for="objectTitleControl" tuiLabel>
                     Название*
@@ -82,15 +81,36 @@
             <div class="object-form__row">
                 <label class="object-form__control" for="objectTypeControl" tuiLabel>
                     Тип*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="s" tuiChevron>
                         <input
                             [formControl]="model().mainForm.controls.type"
                             id="objectTypeControl"
-                            tuiInput
+                            tuiSelect
+                        />
+                        <tui-data-list-wrapper
+                            *tuiDropdown
+                            [items]="model().objectTypeList"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.type" />
                 </label>
+                <label class="object-form__control" for="objectStageControl" tuiLabel>
+                    Стадия*
+                    <tui-textfield tuiTextfieldSize="s" tuiChevron>
+                        <input
+                            [formControl]="model().mainForm.controls.stage"
+                            id="objectStageControl"
+                            tuiSelect
+                        />
+                        <tui-data-list-wrapper
+                            *tuiDropdown
+                            [items]="model().objectStageList"
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.stage" />
+                </label>
+            </div>
+            <div class="object-form__row">
                 <label class="object-form__control" for="objectCityControl" tuiLabel>
                     Город*
                     <tui-textfield tuiTextfieldSize="s">
@@ -102,16 +122,32 @@
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.city" />
                 </label>
+                <label class="object-form__control" for="objectCustomerControl" tuiLabel>
+                    Заказчик
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().mainForm.controls.customer"
+                            id="objectCustomerControl"
+                            tuiInput
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.customer" />
+                </label>
             </div>
-            <div class="object-form__row">
+        </div>
+        <div class="object-form__subsection">
+            <div class="object-form__group">
                 <label class="object-form__control" for="objectFullDescriptionControl" tuiLabel>
                     Описание
                     <tui-textfield tuiTextfieldSize="s">
-                        <input
+                        <textarea
                             [formControl]="model().mainForm.controls.fullDescription"
                             id="objectFullDescriptionControl"
-                            tuiInput
-                        />
+                            tuiTextarea
+                            [limit]="300"
+                            [min]="2"
+                            [max]="6"
+                        ></textarea>
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.fullDescription" />
                 </label>
@@ -127,43 +163,16 @@
                     <tui-error [formControl]="model().mainForm.controls.shortDescription" />
                 </label>
             </div>
-        </div>
-        <div class="object-form__subsection">
             <div class="object-form__group">
-                <h2>Состояние объекта</h2>
-                <label class="object-form__control" for="objectStatusControl" tuiLabel>
-                    Статус*
-                    <tui-textfield tuiTextfieldSize="s">
-                        <input
-                            [formControl]="model().mainForm.controls.status"
-                            id="objectStatusControl"
-                            tuiInput
-                        />
-                    </tui-textfield>
-                    <tui-error [formControl]="model().mainForm.controls.status" />
-                </label>
-                <label class="object-form__control" for="objectStageControl" tuiLabel>
-                    Стадия*
-                    <tui-textfield tuiTextfieldSize="s">
-                        <input
-                            [formControl]="model().mainForm.controls.stage"
-                            id="objectStageControl"
-                            tuiInput
-                        />
-                    </tui-textfield>
-                    <tui-error [formControl]="model().mainForm.controls.stage" />
-                </label>
-            </div>
-            <div class="object-form__group">
-                <h2>Даты</h2>
                 <label class="object-form__control" for="objectDesignYearControl" tuiLabel>
                     Год дизайна
                     <tui-textfield tuiTextfieldSize="s">
                         <input
                             [formControl]="model().mainForm.controls.designYear"
                             id="objectDesignYearControl"
-                            tuiInput
+                            tuiInputYear
                         />
+                        <tui-calendar-year *tuiDropdown />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.designYear" />
                 </label>
@@ -173,10 +182,99 @@
                         <input
                             [formControl]="model().mainForm.controls.implementationYear"
                             id="objectImplementationYearControl"
-                            tuiInput
+                            tuiInputYear
                         />
+                        <tui-calendar-year *tuiDropdown />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.implementationYear" />
+                </label>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #indicators>
+    <form class="object-form__section" [formGroup]="model().indicatorsForm">
+        <div class="object-form__subsection">
+            <div class="object-form__group">
+                <label class="object-form__control" for="objectTotalAreaControl" tuiLabel>
+                    Общая площадь объекта, м2*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.totalArea"
+                            id="objectTotalAreaControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.totalArea" />
+                </label>
+                <label class="object-form__control" for="objectPlotAreaControl" tuiLabel>
+                    Площадь участка, м2*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.plotArea"
+                            id="objectPlotAreaControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.plotArea" />
+                </label>
+                <label class="object-form__control" for="objectBuildingAreaControl" tuiLabel>
+                    Площадь застройки, м2*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.buildingArea"
+                            id="objectBuildingAreaControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.buildingArea" />
+                </label>
+                <label class="object-form__control" for="objectSectionsCountControl" tuiLabel>
+                    Количество корпусов/секций*
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.sectionsCount"
+                            id="objectSectionsCountControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.sectionsCount" />
+                </label>
+            </div>
+            <div class="object-form__group">
+                <label class="object-form__control" for="objectFloorsCountControl" tuiLabel>
+                    Количество этажей
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.floorsCount"
+                            id="objectFloorsCountControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.floorsCount" />
+                </label>
+                <label class="object-form__control" for="objectRoomsCountControl" tuiLabel>
+                    Количество квартир/помещений
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.roomsCount"
+                            id="objectRoomsCountControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.roomsCount" />
+                </label>
+                <label class="object-form__control" for="objectParkingSpacesCountControl" tuiLabel>
+                    Количество парковочных мест
+                    <tui-textfield tuiTextfieldSize="s">
+                        <input
+                            [formControl]="model().indicatorsForm.controls.parkingSpacesCount"
+                            id="objectParkingSpacesControl"
+                            tuiInputNumber
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().indicatorsForm.controls.parkingSpacesCount" />
                 </label>
             </div>
         </div>

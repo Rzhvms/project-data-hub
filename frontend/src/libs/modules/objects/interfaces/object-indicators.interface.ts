@@ -3,7 +3,7 @@ export interface IObjectIndicators {
     plotArea: number;
     buildingArea: number;
     sectionsCount: number;
-    floorsCount: number;
+    floorsCount?: number;
     roomsCount?: number;
     parkingSpacesCount?: number;
 }
