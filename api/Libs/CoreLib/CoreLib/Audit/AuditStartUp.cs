@@ -1,17 +1,17 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreLib.Audit;
 
 /// <summary>
-/// Регистрация сервисов аудита в DI-контейнере
+/// Регистрация сервисов аудита в DI
 /// </summary>
 public static class AuditStartUp
 {
-    /// <summary>
-    /// Регистрирует <see cref="IAuditService"/> как scoped-сервис
-    /// </summary>
-    public static void AddCoreAudit(this IServiceCollection services)
+    public static void AddCoreAudit(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IAuditService, DapperAuditService>();
+        services.Configure<AuditLogCleanupOptions>(configuration.GetSection("AuditLogCleanup"));
+        services.AddHostedService<AuditLogCleanupHostedService>();
     }
 }

@@ -38,7 +38,7 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         
         services.AddCoreControllers();
         services.AddCoreUser();
-        services.AddCoreAudit();
+        services.AddCoreAudit(Configuration);
         
         services.AddIdentityLib(Configuration);
         
