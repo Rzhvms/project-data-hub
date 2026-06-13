@@ -31,4 +31,8 @@ public record UploadProjectImageRequest
     [Required]
     [JsonPropertyName("useInPortfolio")]
     public required bool UseInPortfolio { get; init; }
+
+    [Required]
+    [JsonPropertyName("isMain")] 
+    public required bool IsMain { get; init; } = false;
 }

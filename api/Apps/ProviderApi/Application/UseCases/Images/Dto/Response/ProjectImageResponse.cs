@@ -46,4 +46,9 @@ public record ProjectImageResponse
     /// Использовать в портфолио
     /// </summary>
     public bool UseInPortfolio { get; init; }
+    
+    /// <summary>
+    /// Является ли изображение главным
+    /// </summary>
+    public bool IsMain { get; init; }
 }

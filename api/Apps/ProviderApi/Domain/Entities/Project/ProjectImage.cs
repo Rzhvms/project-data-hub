@@ -49,4 +49,9 @@ public record ProjectImage
     /// Использовать в портфолио
     /// </summary>
     public bool UseInPortfolio { get; init; }
+    
+    /// <summary>
+    /// Обозначение главного изображения
+    /// </summary>
+    public bool IsMain { get; set; }
 }
