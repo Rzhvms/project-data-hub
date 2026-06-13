@@ -1,0 +1,108 @@
+<form
+    class="object-image-modal"
+    [formGroup]="model.form"
+    (ngSubmit)="save()"
+>
+    <div class="object-image-modal__form">
+        @if (!model.form.controls.file.value) {
+            <label tuiInputFiles>
+                <input
+                    tuiInputFiles
+                    [accept]="context.data.fileType"
+                    [formControl]="model.form.controls.file"
+                />
+            </label>
+        }
+        <tui-files>
+            @if (model.form.controls.file.value; as file) {
+                <tui-file
+                    size="l"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+            }
+        </tui-files>
+        <label class="object-image-modal__control" for="titleControl" tuiLabel>
+            Название*
+            <tui-textfield tuiTextfieldSize="m">
+                <input
+                    [formControl]="model.form.controls.title"
+                    id="titleControl"
+                    tuiInput
+                    placeholder="Укажите название"
+                />
+            </tui-textfield>
+            <tui-error [formControl]="model.form.controls.title" />
+        </label>
+        <label for="descriptionControl" tuiLabel>
+            Описание*
+            <tui-textfield tuiTextfieldSize="m">
+                <textarea
+                    [formControl]="model.form.controls.description"
+                    id="descriptionControl"
+                    placeholder="Укажите описание"
+                    tuiTextarea
+                    [limit]="300"
+                    [min]="2"
+                    [max]="6"
+                ></textarea>
+            </tui-textfield>
+            <tui-error [formControl]="model.form.controls.description" />
+        </label>
+        <label for="alternativeTextControl" tuiLabel>
+            Альтернативный текст
+            <tui-textfield tuiTextfieldSize="m">
+                <input
+                    [formControl]="model.form.controls.alternativeText"
+                    id="alternativeTextControl"
+                    tuiInput
+                    placeholder="Укажите альтернативный текст"
+                />
+            </tui-textfield>
+            <tui-error [formControl]="model.form.controls.alternativeText" />
+        </label>
+        <label for="useInSiteControl" tuiLabel>
+            <input
+                id="useInSiteControl"
+                tuiSwitch
+                type="checkbox"
+                [formControl]="model.form.controls.useInSite"
+            />
+            Использовать на сайте
+        </label>
+        <label for="useInPresentationControl" tuiLabel>
+            <input
+                id="useInPresentationControl"
+                tuiSwitch
+                type="checkbox"
+                [formControl]="model.form.controls.useInPresentation"
+            />
+            Использовать в презентации
+        </label>
+        <label for="useInPortfolioControl" tuiLabel>
+            <input
+                id="useInPortfolioControl"
+                tuiSwitch
+                type="checkbox"
+                [formControl]="model.form.controls.useInPortfolio"
+            />
+            Использовать в портфолио
+        </label>
+    </div>
+    <footer class="object-image-modal__footer">
+        <button
+            tuiButton
+            appearance="secondary"
+            type="button"
+            (click)="context.$implicit.complete()"
+        >
+            Отменить
+        </button>
+        <button
+            tuiButton
+            type="submit"
+        >
+            Сохранить
+        </button>
+    </footer>
+</form>

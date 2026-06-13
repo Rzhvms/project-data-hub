@@ -39,13 +39,13 @@
                 <ng-container *ngTemplateOutlet="main"></ng-container>
             }
             @case ('Медиа') {
-                <h1>Медиа</h1>
+                <ng-container *ngTemplateOutlet="media"></ng-container>
             }
             @case('Размеры'){
                 <ng-container *ngTemplateOutlet="indicators"></ng-container>
             }
             @case ('Команда') {
-                <h1>Команда</h1>
+                <ng-container *ngTemplateOutlet="team"></ng-container>
             }
         }
     </main>
@@ -57,22 +57,24 @@
             <div class="object-form__row">
                 <label class="object-form__control" for="objectTitleControl" tuiLabel>
                     Название*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.title"
                             id="objectTitleControl"
                             tuiInput
+                            placeholder="Укажите название"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.title" />
                 </label>
                 <label class="object-form__control" for="objectShortTitleControl" tuiLabel>
                     Краткое название
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.shortTitle"
                             id="objectShortTitleControl"
                             tuiInput
+                            placeholder="Укажите краткое название"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.shortTitle" />
@@ -81,11 +83,17 @@
             <div class="object-form__row">
                 <label class="object-form__control" for="objectTypeControl" tuiLabel>
                     Тип*
-                    <tui-textfield tuiTextfieldSize="s" tuiChevron>
+                    <tui-textfield
+                        tuiTextfieldSize="m"
+                        tuiChevron
+                        [stringify]="optionStringify"
+                        [identityMatcher]="optionMatcher"
+                    >
                         <input
                             [formControl]="model().mainForm.controls.type"
                             id="objectTypeControl"
                             tuiSelect
+                            placeholder="Выберите тип"
                         />
                         <tui-data-list-wrapper
                             *tuiDropdown
@@ -96,11 +104,17 @@
                 </label>
                 <label class="object-form__control" for="objectStageControl" tuiLabel>
                     Стадия*
-                    <tui-textfield tuiTextfieldSize="s" tuiChevron>
+                    <tui-textfield
+                        tuiTextfieldSize="m"
+                        tuiChevron
+                        [stringify]="optionStringify"
+                        [identityMatcher]="optionMatcher"
+                    >
                         <input
                             [formControl]="model().mainForm.controls.stage"
                             id="objectStageControl"
                             tuiSelect
+                            placeholder="Выберите стадию"
                         />
                         <tui-data-list-wrapper
                             *tuiDropdown
@@ -113,22 +127,24 @@
             <div class="object-form__row">
                 <label class="object-form__control" for="objectCityControl" tuiLabel>
                     Город*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.city"
                             id="objectCityControl"
                             tuiInput
+                            placeholder="Укажите город"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.city" />
                 </label>
                 <label class="object-form__control" for="objectCustomerControl" tuiLabel>
                     Заказчик
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.customer"
                             id="objectCustomerControl"
                             tuiInput
+                            placeholder="Укажите заказчика"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.customer" />
@@ -137,12 +153,25 @@
         </div>
         <div class="object-form__subsection">
             <div class="object-form__group">
+                <label class="object-form__control" for="objectShortDescriptionControl" tuiLabel>
+                    Краткое описание*
+                    <tui-textfield tuiTextfieldSize="m">
+                        <input
+                            [formControl]="model().mainForm.controls.shortDescription"
+                            id="objectShortDescriptionControl"
+                            tuiInput
+                            placeholder="Укажите краткое описание"
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().mainForm.controls.shortDescription" />
+                </label>
                 <label class="object-form__control" for="objectFullDescriptionControl" tuiLabel>
-                    Описание
-                    <tui-textfield tuiTextfieldSize="s">
+                    Полное описание
+                    <tui-textfield tuiTextfieldSize="m">
                         <textarea
                             [formControl]="model().mainForm.controls.fullDescription"
                             id="objectFullDescriptionControl"
+                            placeholder="Укажите полное описание"
                             tuiTextarea
                             [limit]="300"
                             [min]="2"
@@ -151,26 +180,16 @@
                     </tui-textfield>
                     <tui-error [formControl]="model().mainForm.controls.fullDescription" />
                 </label>
-                <label class="object-form__control" for="objectShortDescriptionControl" tuiLabel>
-                    Краткое описание
-                    <tui-textfield tuiTextfieldSize="s">
-                        <input
-                            [formControl]="model().mainForm.controls.shortDescription"
-                            id="objectShortDescriptionControl"
-                            tuiInput
-                        />
-                    </tui-textfield>
-                    <tui-error [formControl]="model().mainForm.controls.shortDescription" />
-                </label>
             </div>
             <div class="object-form__group">
                 <label class="object-form__control" for="objectDesignYearControl" tuiLabel>
                     Год дизайна
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.designYear"
                             id="objectDesignYearControl"
                             tuiInputYear
+                            placeholder="Укажите год"
                         />
                         <tui-calendar-year *tuiDropdown />
                     </tui-textfield>
@@ -178,11 +197,12 @@
                 </label>
                 <label class="object-form__control" for="objectImplementationYearControl" tuiLabel>
                     Год реализации
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().mainForm.controls.implementationYear"
                             id="objectImplementationYearControl"
                             tuiInputYear
+                            placeholder="Укажите год"
                         />
                         <tui-calendar-year *tuiDropdown />
                     </tui-textfield>
@@ -193,50 +213,95 @@
     </form>
 </ng-template>
 
+<ng-template #media>
+    <form class="object-form__section">
+        <div class="object-form__group">
+            <div class="object-form__row">
+                <div>
+                    <h3>Основное изображение*</h3>
+                </div>
+                <div>
+                    <h3>Обложка для презентации</h3>
+                </div>
+            </div>
+        </div>
+        <div class="object-form__group">
+            <tui-accordion>
+                <button tuiAccordion>Изображения</button>
+                <tui-expand>
+                    <button tuiButton type="button" (click)="openImageModal('image/*')">
+                        Изображения
+                    </button>
+                </tui-expand>
+                <button tuiAccordion>Схемы</button>
+                <tui-expand>
+                    Схемы
+                </tui-expand>
+                <button tuiAccordion>Рендеры</button>
+                <tui-expand>
+                    Рендеры
+                </tui-expand>
+                <button tuiAccordion>Фото</button>
+                <tui-expand>
+                    Фото
+                </tui-expand>
+                <button tuiAccordion>Портфолио</button>
+                <tui-expand>
+                    Портфолио
+                </tui-expand>
+            </tui-accordion>
+        </div>
+    </form>
+</ng-template>
+
 <ng-template #indicators>
     <form class="object-form__section" [formGroup]="model().indicatorsForm">
         <div class="object-form__subsection">
             <div class="object-form__group">
                 <label class="object-form__control" for="objectTotalAreaControl" tuiLabel>
                     Общая площадь объекта, м2*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.totalArea"
                             id="objectTotalAreaControl"
                             tuiInputNumber
+                            placeholder="Укажите площадь"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.totalArea" />
                 </label>
                 <label class="object-form__control" for="objectPlotAreaControl" tuiLabel>
                     Площадь участка, м2*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.plotArea"
                             id="objectPlotAreaControl"
                             tuiInputNumber
+                            placeholder="Укажите площадь"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.plotArea" />
                 </label>
                 <label class="object-form__control" for="objectBuildingAreaControl" tuiLabel>
                     Площадь застройки, м2*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.buildingArea"
                             id="objectBuildingAreaControl"
                             tuiInputNumber
+                            placeholder="Укажите площадь"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.buildingArea" />
                 </label>
                 <label class="object-form__control" for="objectSectionsCountControl" tuiLabel>
                     Количество корпусов/секций*
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.sectionsCount"
                             id="objectSectionsCountControl"
                             tuiInputNumber
+                            placeholder="Укажите количество"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.sectionsCount" />
@@ -245,36 +310,151 @@
             <div class="object-form__group">
                 <label class="object-form__control" for="objectFloorsCountControl" tuiLabel>
                     Количество этажей
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.floorsCount"
                             id="objectFloorsCountControl"
                             tuiInputNumber
+                            placeholder="Укажите количество"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.floorsCount" />
                 </label>
                 <label class="object-form__control" for="objectRoomsCountControl" tuiLabel>
                     Количество квартир/помещений
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.roomsCount"
                             id="objectRoomsCountControl"
                             tuiInputNumber
+                            placeholder="Укажите количество"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.roomsCount" />
                 </label>
                 <label class="object-form__control" for="objectParkingSpacesCountControl" tuiLabel>
                     Количество парковочных мест
-                    <tui-textfield tuiTextfieldSize="s">
+                    <tui-textfield tuiTextfieldSize="m">
                         <input
                             [formControl]="model().indicatorsForm.controls.parkingSpacesCount"
                             id="objectParkingSpacesControl"
                             tuiInputNumber
+                            placeholder="Укажите количество"
                         />
                     </tui-textfield>
                     <tui-error [formControl]="model().indicatorsForm.controls.parkingSpacesCount" />
+                </label>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #team>
+    <form class="object-form__section" [formGroup]="model().teamForm">
+        <div class="object-form__subsection">
+            <div class="object-form__group">
+                <label class="object-form__control" for="objectProjectManagerControl" tuiLabel>
+                    Руководитель проекта*
+                    <tui-textfield tuiTextfieldSize="m">
+                        <input
+                            [formControl]="model().teamForm.controls.projectManager"
+                            id="objectProjectManagerControl"
+                            tuiInput
+                            placeholder="Укажите ФИО"
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.projectManager" />
+                </label>
+                <label class="object-form__control" for="objectChiefArchitectControl" tuiLabel>
+                    Главный архитектор
+                    <tui-textfield tuiTextfieldSize="m">
+                        <input
+                            [formControl]="model().teamForm.controls.chiefArchitect"
+                            id="objectChiefArchitectControl"
+                            tuiInput
+                            placeholder="Укажите ФИО"
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.chiefArchitect" />
+                </label>
+                <label class="object-form__control" for="objectChiefEngineerControl" tuiLabel>
+                    Главный инженер
+                    <tui-textfield tuiTextfieldSize="m">
+                        <input
+                            [formControl]="model().teamForm.controls.chiefEngineer"
+                            id="objectChiefEngineerControl"
+                            tuiInput
+                            placeholder="Укажите ФИО"
+                        />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.chiefEngineer" />
+                </label>
+            </div>
+            <div class="object-form__group">
+                <label class="object-form__control" for="objectArchitectsControl" tuiLabel>
+                    Архитекторы
+                    <tui-textfield multi tuiTextfieldSize="m">
+                        <input
+                            id="objectArchitectsControl"
+                            tuiInputChip
+                            [formControl]="model().teamForm.controls.architects"
+                            placeholder="Укажите список ФИО"
+                        />
+                        <tui-input-chip *tuiItem />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.architects" />
+                </label>
+                <label class="object-form__control" for="objectEngineersControl" tuiLabel>
+                    Инженеры
+                    <tui-textfield multi tuiTextfieldSize="m">
+                        <input
+                            id="objectEngineersControl"
+                            tuiInputChip
+                            [formControl]="model().teamForm.controls.engineers"
+                            placeholder="Укажите список ФИО"
+                        />
+                        <tui-input-chip *tuiItem />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.engineers" />
+                </label>
+                <label class="object-form__control" for="objectBimSpecialistsControl" tuiLabel>
+                    BIM-специалисты
+                    <tui-textfield multi tuiTextfieldSize="m">
+                        <input
+                            id="objectBimSpecialistsControl"
+                            tuiInputChip
+                            [formControl]="model().teamForm.controls.bimSpecialists"
+                            placeholder="Укажите список ФИО"
+                        />
+                        <tui-input-chip *tuiItem />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.bimSpecialists" />
+                </label>
+                <label class="object-form__control" for="objectVisualizersControl" tuiLabel>
+                    Визуализаторы
+                    <tui-textfield multi tuiTextfieldSize="m">
+                        <input
+                            id="objectVisualizersControl"
+                            tuiInputChip
+                            [formControl]="model().teamForm.controls.visualizers"
+                            placeholder="Укажите список ФИО"
+                        />
+                        <tui-input-chip *tuiItem />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.visualizers" />
+                </label>
+                <label class="object-form__control" for="objectPartnersControl" tuiLabel>
+                    Партнеры
+                    <tui-textfield multi tuiTextfieldSize="m">
+                        <input
+                            id="objectPartnersControl"
+                            tuiInputChip
+                            [formControl]="model().teamForm.controls.partners"
+                            placeholder="Укажите список ФИО"
+                        />
+                        <tui-input-chip *tuiItem />
+                    </tui-textfield>
+                    <tui-error [formControl]="model().teamForm.controls.partners" />
                 </label>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { OBJECT_TYPE_OPTIONS, OBJECT_STATUS_OPTIONS, OBJECT_STAGE_OPTIONS, ObjectType, ObjectStatus, ObjectStage, IObject } from '@project-data-hub/modules/objects';
+import { IObject, IObjectMedia,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
 import { IOption } from '@project-data-hub/shared';
 
 type ValidationState = {
@@ -30,19 +30,33 @@ type IndicatorsForm = {
     parkingSpacesCount: FormControl<number | null>;
 };
 
+type TeamForm = {
+    projectManager: FormControl<string>;
+    chiefArchitect: FormControl<string>;
+    chiefEngineer: FormControl<string>;
+    architects: FormControl<string[]>;
+    engineers: FormControl<string[]>;
+    bimSpecialists: FormControl<string[]>;
+    visualizers: FormControl<string[]>;
+    partners: FormControl<string[]>;
+};
+
 export class ObjectFormViewModel {
     public get isValid(): boolean {
         return this._validationState.isValid;
     }
 
     private get _validationState(): ValidationState {
-        const invalidForms: FormGroup[] = [this.mainForm, this.indicatorsForm]
-            .filter((form) => form.invalid)
+        const invalidForms: FormGroup[] = [
+            this.mainForm,
+            this.indicatorsForm,
+            this.teamForm
+        ].filter((form) => form.invalid);
 
         return {
             isValid: invalidForms.length === 0,
             invalidForms
-        }
+        };
     }
 
     public readonly stepList: string[] = [
@@ -77,6 +91,7 @@ export class ObjectFormViewModel {
             validators: [Validators.maxLength(300)]
         }),
         shortDescription: new FormControl('', {
+            validators: [Validators.required],
             nonNullable: true
         }),
         stage: new FormControl<ObjectStage | null>(null, {
@@ -85,7 +100,6 @@ export class ObjectFormViewModel {
         designYear: new FormControl<number | null>(null),
         implementationYear: new FormControl<number | null>(null)
     });
-
     public readonly indicatorsForm: FormGroup<IndicatorsForm> = new FormGroup<IndicatorsForm>({
         totalArea: new FormControl<number | null>(null, {
             validators: [Validators.required]
@@ -103,10 +117,33 @@ export class ObjectFormViewModel {
         roomsCount: new FormControl<number | null>(null),
         parkingSpacesCount: new FormControl<number | null>(null),
     });
-
-    public markInvalidAsTouched(): void {
-        this._validationState.invalidForms.forEach((form) => form.markAllAsTouched());
-    }
+    public readonly teamForm: FormGroup<TeamForm> = new FormGroup<TeamForm>({
+        projectManager: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required]
+        }),
+        chiefArchitect: new FormControl('', {
+            nonNullable: true
+        }),
+        chiefEngineer: new FormControl('', {
+            nonNullable: true
+        }),
+        architects: new FormControl<string[]>([], {
+            nonNullable: true
+        }),
+        engineers: new FormControl<string[]>([], {
+            nonNullable: true
+        }),
+        bimSpecialists: new FormControl<string[]>([], {
+            nonNullable: true
+        }),
+        visualizers: new FormControl<string[]>([], {
+            nonNullable: true
+        }),
+        partners: new FormControl<string[]>([], {
+            nonNullable: true
+        }),
+    });
 
     public updateModel(value: IObject): void {
         this.mainForm.patchValue({
@@ -121,5 +158,72 @@ export class ObjectFormViewModel {
             designYear: value.designYear,
             implementationYear: value.implementationYear
         }, { emitEvent: false });
+
+        this.indicatorsForm.patchValue({
+            totalArea: value.indicators.totalArea,
+            plotArea: value.indicators.buildingArea,
+            buildingArea: value.indicators.buildingArea,
+            floorsCount: value.indicators.floorsCount,
+            roomsCount: value.indicators.roomsCount,
+            parkingSpacesCount: value.indicators.parkingSpacesCount,
+            sectionsCount: value.indicators.sectionsCount
+        }, { emitEvent: false });
+
+        this.teamForm.patchValue({
+            projectManager: value.projectManager,
+            chiefEngineer: value.team.chiefArchitect,
+            chiefArchitect: value.team.chiefArchitect,
+            architects: value.team.architects,
+            engineers: value.team.engineers,
+            bimSpecialists: value.team.bimSpecialists,
+            visualizers: value.team.visualizers,
+            partners: value.team.partners
+        }, { emitEvent: false });
+    }
+
+    public fromModel(status: ObjectStatus): Omit<IObject, 'id' | 'createdAt' | 'updatedAt'> {
+        const mainFormValue = this.mainForm.getRawValue();
+        const indicatorsFormValue = this.indicatorsForm.getRawValue();
+        const teamFormValue = this.teamForm.getRawValue();
+
+        return {
+            title: mainFormValue.title,
+            shortTitle: mainFormValue.shortTitle || undefined,
+            city: mainFormValue.city,
+            status,
+            type: mainFormValue.type!,
+            stage: mainFormValue.stage!,
+            shortDescription: mainFormValue.shortDescription,
+            customer: mainFormValue.customer || undefined,
+            fullDescription: mainFormValue.fullDescription || undefined,
+            projectManager: teamFormValue.projectManager,
+            designYear: mainFormValue.designYear || undefined,
+            implementationYear: mainFormValue.implementationYear || undefined,
+            media: {
+
+            } as unknown as IObjectMedia,
+            indicators: {
+                totalArea: indicatorsFormValue.totalArea!,
+                plotArea: indicatorsFormValue.plotArea!,
+                buildingArea: indicatorsFormValue.buildingArea!,
+                sectionsCount: indicatorsFormValue.sectionsCount!,
+                floorsCount: indicatorsFormValue.floorsCount ?? undefined,
+                roomsCount: indicatorsFormValue.roomsCount ?? undefined,
+                parkingSpacesCount: indicatorsFormValue.parkingSpacesCount ?? undefined
+            },
+            team: {
+                chiefArchitect: teamFormValue.chiefArchitect || undefined,
+                chiefEngineer: teamFormValue.chiefEngineer || undefined,
+                architects: teamFormValue.architects.length ? teamFormValue.architects : undefined,
+                engineers: teamFormValue.engineers.length ? teamFormValue.engineers : undefined,
+                bimSpecialists: teamFormValue.bimSpecialists.length ? teamFormValue.bimSpecialists : undefined,
+                visualizers: teamFormValue.visualizers.length ? teamFormValue.visualizers : undefined,
+                partners: teamFormValue.partners.length ? teamFormValue.partners : undefined
+            }
+        };
+    }
+
+    public markInvalidAsTouched(): void {
+        this._validationState.invalidForms.forEach((form) => form.markAllAsTouched());
     }
 }

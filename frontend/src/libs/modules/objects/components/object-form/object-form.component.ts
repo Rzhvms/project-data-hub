@@ -1,11 +1,35 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, InputSignal, signal, WritableSignal } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TuiButton, TuiError, TuiInput, tuiItemsHandlersProvider } from '@taiga-ui/core';
-import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiInputYear, TuiSelect, TuiStepper, TuiTextarea } from '@taiga-ui/kit';
-
-import { ObjectFormViewModel } from './view-models/object-form.view-model';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    input,
+    InputSignal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MediaImage } from '@project-data-hub/modules/media';
 import { IOption } from '@project-data-hub/shared';
+import { TuiIdentityMatcher, TuiStringHandler } from '@taiga-ui/cdk';
+import { TuiButton, TuiDialogService, TuiError, TuiInput } from '@taiga-ui/core';
+import {
+    TuiAccordion,
+    TuiChevron,
+    TuiDataListWrapper,
+    TuiInputChip,
+    TuiInputNumber,
+    TuiInputYear,
+    TuiSelect,
+    TuiStepper,
+    TuiTextarea,
+} from '@taiga-ui/kit';
+import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
+
+import { ObjectImageModalComponent } from '../object-image-modal/object-image-modal.component';
+import { ObjectFormViewModel } from './view-models/object-form.view-model';
 
 @Component({
     selector: 'object-form',
@@ -24,13 +48,9 @@ import { IOption } from '@project-data-hub/shared';
         NgTemplateOutlet,
         ReactiveFormsModule,
         TuiError,
-        TuiInputNumber
-    ],
-    providers: [
-        tuiItemsHandlersProvider({
-            stringify: signal((item: IOption) => item.label),
-            identityMatcher: signal((a: IOption, b: IOption) => a.value === b.value)
-        })
+        TuiInputNumber,
+        TuiInputChip,
+        TuiAccordion,
     ]
 })
 export class ObjectFormComponent {
@@ -39,11 +59,31 @@ export class ObjectFormComponent {
 
     protected readonly activeStepIndex: WritableSignal<number> = signal(0);
 
+    private readonly _dialogService: TuiDialogService = inject(TuiDialogService);
+    private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+
+    protected readonly optionStringify: TuiStringHandler<IOption> = (option) => option.label;
+    protected readonly optionMatcher: TuiIdentityMatcher<IOption> = (a, b) => a.value === b.value;
+
     protected goToNextStep(): void {
         if (!this.model().isValid) {
             this.model().markInvalidAsTouched();
         } else {
-            this.activeStepIndex.update((value) => value += 1);
+            this.activeStepIndex.update((value) => value + 1);
         }
+    }
+
+    protected openImageModal(fileType: string): void {
+        this._dialogService.open<MediaImage>(new PolymorpheusComponent(ObjectImageModalComponent), {
+            label: 'Добавить изображение',
+            size: 'l',
+            data: {
+                fileType
+            }
+        })
+        .pipe(
+            takeUntilDestroyed(this._destroyRef)
+        )
+        .subscribe();
     }
 }
