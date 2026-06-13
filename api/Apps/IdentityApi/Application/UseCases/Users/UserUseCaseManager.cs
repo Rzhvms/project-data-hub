@@ -2,13 +2,19 @@ using Application.Ports.Repositories;
 using Application.UseCases.Users.Dto.Request;
 using Application.UseCases.Users.Dto.Response;
 using Application.UseCases.Users.Interfaces;
+using CoreLib.Audit;
 using CoreLib.Exceptions;
+using CoreLib.User;
 using IdentityLib.Encryption.Interfaces;
 
 namespace Application.UseCases.Users;
 
 /// <inheritdoc />
-internal class UserUseCaseManager(IUserRepository userRepository, IPasswordEncryptionService encryptionService) : IUserUseCaseManager
+internal class UserUseCaseManager(
+    IUserRepository userRepository,
+    IPasswordEncryptionService encryptionService,
+    IAuditService auditService,
+    ICurrentUserService currentUser) : IUserUseCaseManager
 {
     /// <inheritdoc />
     public async Task<GetUserListResponse> GetUserListAsync()
@@ -50,6 +56,7 @@ internal class UserUseCaseManager(IUserRepository userRepository, IPasswordEncry
     public async Task DeleteUserByIdAsync(Guid userId)
     {
         await userRepository.DeleteUserByIdAsync(userId);
+        await auditService.LogAsync("DeleteUser", "User", userId, currentUser.UserId, currentUser.UserName, $"Удален пользователь {userId}");
     }
     
     /// <inheritdoc />
@@ -63,6 +70,7 @@ internal class UserUseCaseManager(IUserRepository userRepository, IPasswordEncry
         
         var newPasswordHash = encryptionService.HashPassword(request.NewPassword, Convert.FromBase64String(user.HashSalt));
         await userRepository.ChangeUserPasswordAsync(user.Id, newPasswordHash, user.HashSalt);
+        await auditService.LogAsync("ChangePassword", "User", user.Id, currentUser.UserId, currentUser.UserName, $"Смена пароля пользователем");
 
         return new ChangeUserPasswordResponse { IsSuccess = true, Message = "Пароль успешно изменен" };
     }

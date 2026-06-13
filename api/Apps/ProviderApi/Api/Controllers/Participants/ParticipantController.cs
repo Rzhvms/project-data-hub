@@ -15,6 +15,7 @@ public class ParticipantController(IParticipantUseCaseManager useCaseManager) : 
     /// Получить список доступных участников
     /// </summary>
     [HttpGet("list")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(typeof(GetParticipantListResponse), 200)]
     [ProducesResponseType(typeof(GetParticipantListResponse), 400)]
     public async Task<GetParticipantListResponse> GetParticipantsAsync()
@@ -26,6 +27,7 @@ public class ParticipantController(IParticipantUseCaseManager useCaseManager) : 
     /// Получить участника по идентификатору
     /// </summary>
     [HttpGet("{participantId}")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(typeof(GetParticipantResponse), 200)]
     [ProducesResponseType(typeof(GetParticipantResponse), 400)]
     public async Task<GetParticipantResponse> GetParticipantAsync([FromRoute] Guid participantId)
@@ -37,6 +39,7 @@ public class ParticipantController(IParticipantUseCaseManager useCaseManager) : 
     /// Добавить нового участника
     /// </summary>
     [HttpPost("create")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(typeof(AddParticipantResponse), 200)]
     [ProducesResponseType(typeof(AddParticipantResponse), 400)]
     public async Task<AddParticipantResponse> AddParticipantAsync(AddParticipantRequest request)
@@ -48,6 +51,7 @@ public class ParticipantController(IParticipantUseCaseManager useCaseManager) : 
     /// Обновить данные участника
     /// </summary>
     [HttpPatch("{participantId}")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(typeof(PatchParticipantResponse), 200)]
     [ProducesResponseType(typeof(PatchParticipantResponse), 400)]
     public async Task<PatchParticipantResponse> UpdateParticipantAsync([FromRoute] Guid participantId, PatchParticipantRequest request)
@@ -59,6 +63,7 @@ public class ParticipantController(IParticipantUseCaseManager useCaseManager) : 
     /// Удалить участника по идентификатору
     /// </summary>
     [HttpDelete("delete/{participantId}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task DeleteParticipantAsync([FromRoute] Guid participantId)

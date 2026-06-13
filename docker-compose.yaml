@@ -85,6 +85,9 @@ services:
       Jwt__RefreshTokenSettings__LifeTimeInMinutes: 10080
 
       JwtKeys__DirectoryPath: identity-keys
+
+      AuditLogCleanup__RetentionDays: ${AUDIT_LOG_RETENTION_DAYS}
+      AuditLogCleanup__CheckIntervalHours: ${AUDIT_LOG_CHECK_INTERVAL_HOURS}
     ports:
       - "${IDENTITY_API_PORT_EXTERNAL}:8080"
     depends_on:
@@ -111,6 +114,9 @@ services:
       Minio__AccessKey: ${MINIO_ROOT_USER}
       Minio__SecretKey: ${MINIO_ROOT_PASSWORD}
       Minio__Bucket: ${MINIO_BUCKET}
+
+      AuditLogCleanup__RetentionDays: ${AUDIT_LOG_RETENTION_DAYS}
+      AuditLogCleanup__CheckIntervalHours: ${AUDIT_LOG_CHECK_INTERVAL_HOURS}
     ports:
       - "${PROVIDER_API_PORT_EXTERNAL}:8080"
     depends_on:

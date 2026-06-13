@@ -1,10 +1,12 @@
 using Application;
 using CoreLib.Api.Controllers;
-using CoreLib.Api.Handlers;
+using CoreLib.Audit;
 using CoreLib.Database.Migrations;
+using CoreLib.User;
 using CoreLib.Middlewares;
 using IdentityLib;
 using Infrastructure;
+using IdentityLib.Jwt.RsaKeys.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -35,6 +37,8 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         services.AddInfrastructure(connectionString!);
         
         services.AddCoreControllers();
+        services.AddCoreUser();
+        services.AddCoreAudit(Configuration);
         
         services.AddIdentityLib(Configuration);
         
@@ -43,12 +47,7 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
-
-                options.Authority = Configuration["Jwt:Authority"];
-                options.RefreshOnIssuerKeyNotFound = true;
                 options.SaveToken = true;
-                options.BackchannelHttpHandler = new SystemRequestHttpHandler();
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -61,6 +60,12 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
 
                     ClockSkew = TimeSpan.Zero
                 };
+            });
+
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IRsaKeyProvider>((options, rsaKeyProvider) =>
+            {
+                options.TokenValidationParameters.IssuerSigningKey = rsaKeyProvider.ValidationKey;
             });
     
         services.AddAuthorization();

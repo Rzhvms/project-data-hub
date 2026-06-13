@@ -18,6 +18,7 @@ public class AuthController(IAuthUseCaseManager authUseCaseManager) : Controller
     /// Создание пользователя / регистрация
     /// </summary>
     [HttpPost("register")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<CreateUserResponse> RegisterAsync(CreateUserRequest request)
     {

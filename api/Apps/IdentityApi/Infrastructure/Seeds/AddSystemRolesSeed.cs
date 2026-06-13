@@ -19,7 +19,7 @@ public class AddSystemRolesSeed : Migration
             Id = Guid.NewGuid(),
             RoleCode = "Viewer",
             Name = "Просмотрщик",
-            PermissionsMask = (int)DefaultRolePermissions.Viewer,
+            PermissionsMask = 0,
             IsSystem = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = (DateTime?)null
@@ -30,7 +30,7 @@ public class AddSystemRolesSeed : Migration
             Id = Guid.NewGuid(),
             RoleCode = "Editor",
             Name = "Редактор",
-            PermissionsMask = (int)DefaultRolePermissions.Editor,
+            PermissionsMask = 0,
             IsSystem = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = (DateTime?)null
@@ -41,7 +41,7 @@ public class AddSystemRolesSeed : Migration
             Id = Guid.NewGuid(),
             RoleCode = "Administrator",
             Name = "Администратор",
-            PermissionsMask = (int)DefaultRolePermissions.Administrator,
+            PermissionsMask = 0,
             IsSystem = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = (DateTime?)null

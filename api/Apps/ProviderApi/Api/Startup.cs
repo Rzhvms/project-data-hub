@@ -1,7 +1,9 @@
 using Application;
 using CoreLib.Api.Controllers;
 using CoreLib.Api.Handlers;
+using CoreLib.Audit;
 using CoreLib.Database;
+using CoreLib.User;
 using CoreLib.Database.Migrations;
 using CoreLib.Middlewares;
 using Infrastructure;
@@ -36,6 +38,8 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         services.AddInfrastructure(connectionString!);
         
         services.AddCoreControllers();
+        services.AddCoreUser();
+        services.AddCoreAudit(Configuration);
         services.AddCoreDatabases();
         
         services

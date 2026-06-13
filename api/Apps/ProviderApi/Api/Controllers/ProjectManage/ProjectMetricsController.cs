@@ -15,6 +15,7 @@ public class ProjectMetricsController(IProjectMetricsUseCaseManager useCaseManag
     /// Получить метрики проекта
     /// </summary>
     [HttpGet("{projectId}")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(typeof(GetProjectMetricsResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(GetProjectMetricsResponse),StatusCodes.Status400BadRequest)]
     public async Task<GetProjectMetricsResponse> GetMetricsByProjectIdAsync([FromRoute] Guid projectId)
@@ -26,6 +27,7 @@ public class ProjectMetricsController(IProjectMetricsUseCaseManager useCaseManag
     /// Добавить метрики для проекта
     /// </summary>
     [HttpPost("{projectId}")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(typeof(AddProjectMetricsResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(AddProjectMetricsResponse),StatusCodes.Status400BadRequest)]
     public async Task<AddProjectMetricsResponse> AddProjectMetricsAsync([FromRoute] Guid projectId, AddProjectMetricsRequest metrics)
@@ -37,6 +39,7 @@ public class ProjectMetricsController(IProjectMetricsUseCaseManager useCaseManag
     /// Удалить метрики для проекта
     /// </summary>
     [HttpDelete("{projectId}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task DeleteMetricsByProjectIdAsync([FromRoute] Guid projectId)
@@ -48,6 +51,7 @@ public class ProjectMetricsController(IProjectMetricsUseCaseManager useCaseManag
     /// Обновить метрики проекта
     /// </summary>
     [HttpPut("{projectId}")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<PutProjectMetricsResponse> PutProjectMetricsByProjectId([FromRoute] Guid projectId, PutProjectMetricsRequest request)

@@ -3,7 +3,9 @@ using Application.Services.Generators.Interfaces;
 using Application.UseCases.ExportFiles.Dto.Request;
 using Application.UseCases.ExportFiles.Dto.Response;
 using Application.UseCases.ExportFiles.Interfaces;
+using CoreLib.Audit;
 using CoreLib.Exceptions;
+using CoreLib.User;
 using Domain.Entities.Files;
 
 namespace Application.UseCases.ExportFiles;
@@ -14,7 +16,9 @@ public class ExportFilesUseCaseManager(
     IProjectMetricsRepository projectMetricsRepository,
     IImageRepository imageRepository,
     IPresentationDocumentGenerator presentationGenerator,
-    IPortfolioDocumentGenerator portfolioGenerator) : IExportFilesUseCaseManager
+    IPortfolioDocumentGenerator portfolioGenerator,
+    IAuditService auditService,
+    ICurrentUserService currentUser) : IExportFilesUseCaseManager
 {
     /// <inheritdoc />
     public async Task<FileExportResponse> ExportPresentationAsync(ExportPresentationRequest request)
@@ -32,6 +36,8 @@ public class ExportFilesUseCaseManager(
         };
 
         var content = await presentationGenerator.GenerateAsync(model);
+
+        await auditService.LogAsync("ExportPresentation", "Project", request.ProjectId, currentUser.UserId, currentUser.UserName, $"Выгружена презентация проекта {request.ProjectId}");
 
         return new FileExportResponse
         {
@@ -57,6 +63,8 @@ public class ExportFilesUseCaseManager(
         };
 
         var content = await portfolioGenerator.GenerateAsync(model);
+
+        await auditService.LogAsync("ExportPortfolio", "Project", request.ProjectId, currentUser.UserId, currentUser.UserName, $"Выгружено портфолио проекта {request.ProjectId}");
 
         return new FileExportResponse
         {

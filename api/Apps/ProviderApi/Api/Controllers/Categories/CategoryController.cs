@@ -15,6 +15,7 @@ public class CategoryController(ICategoryUseCaseManager useCaseManager) : Contro
     /// Получить список доступных категорий
     /// </summary>
     [HttpGet("list")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(typeof(GetCategoryListResponse), 200)]
     [ProducesResponseType(typeof(GetCategoryListResponse), 400)]
     public async Task<GetCategoryListResponse> GetCategoriesAsync()
@@ -26,6 +27,7 @@ public class CategoryController(ICategoryUseCaseManager useCaseManager) : Contro
     /// Получить категорию по идентификатору
     /// </summary>
     [HttpGet("{categoryId}")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(typeof(GetCategoryResponse), 200)]
     [ProducesResponseType(typeof(GetCategoryResponse), 400)]
     public async Task<GetCategoryResponse> GetCategoryAsync([FromRoute] Guid categoryId)
@@ -37,6 +39,7 @@ public class CategoryController(ICategoryUseCaseManager useCaseManager) : Contro
     /// Добавить новую категорию
     /// </summary>
     [HttpPost("create")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(typeof(AddCategoryResponse), 200)]
     [ProducesResponseType(typeof(AddCategoryResponse), 400)]
     public async Task<AddCategoryResponse> AddCategoryAsync(AddCategoryRequest request)
@@ -48,6 +51,7 @@ public class CategoryController(ICategoryUseCaseManager useCaseManager) : Contro
     /// Обновить данные категорий
     /// </summary>
     [HttpPatch("{categoryId}")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(typeof(PatchCategoryResponse), 200)]
     [ProducesResponseType(typeof(PatchCategoryResponse), 400)]
     public async Task<PatchCategoryResponse> UpdateCategoryAsync([FromRoute] Guid categoryId, PatchCategoryRequest request)
@@ -59,6 +63,7 @@ public class CategoryController(ICategoryUseCaseManager useCaseManager) : Contro
     /// Удалить категорию по идентификатору
     /// </summary>
     [HttpDelete("delete/{categoryId}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task DeleteCategoryAsync([FromRoute] Guid categoryId)

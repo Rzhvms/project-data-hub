@@ -22,6 +22,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Получение списка объектов для главной страницы
     /// </summary>
     [HttpGet("list")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<GetSimpleProjectListResponse> GetSimpleProjectListAsync()
     {
@@ -32,6 +33,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Получить полную информацию о проекте по идентификатору
     /// </summary>
     [HttpGet("{projectId}")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     public async Task<GetFullProjectResponse> GetFullProjectByIdAsync([FromRoute] Guid projectId)
     {
         return await useCaseManager.GetFullProjectByIdAsync(projectId);
@@ -41,6 +43,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Создание проекта
     /// </summary>
     [HttpPost("create")]
+    [Authorize(Roles = "Editor,Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<CreateProjectResponse> CreateProjectAsync(CreateProjectRequest request)
     {
@@ -52,6 +55,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Опубликовать проект
     /// </summary>
     [HttpPost("publish")]
+    [Authorize(Roles = "Editor,Administrator")]
     public async Task PublicateProjectAsync(PublicateProjectRequest request)
     {
         await useCaseManager.PublicateProjectAsync(request);
@@ -61,6 +65,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Обновить информацию о проекте
     /// </summary>
     [HttpPatch("update/{projectId}")]
+    [Authorize(Roles = "Editor,Administrator")]
     public async Task UpdateProjectAsync([FromRoute] Guid projectId, UpdateProjectRequest request)
     {
         await useCaseManager.UpdateProjectAsync(projectId, request);
@@ -70,6 +75,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Удалить проект
     /// </summary>
     [HttpDelete("delete/{projectId}")]
+    [Authorize(Roles = "Administrator")]
     public async Task DeleteProjectById([FromRoute] Guid projectId)
     {
         await useCaseManager.DeleteProjectAsync(projectId);
@@ -79,6 +85,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Получить черновик проекта
     /// </summary>
     [HttpGet("draft/{projectId}")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     public async Task<GetProjectDraftResponse> GetProjectDraftAsync([FromRoute] Guid projectId)
     {
         return await useCaseManager.GetProjectDraftByIdAsync(projectId);
@@ -88,6 +95,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Загрузить картинку проекта
     /// </summary>
     [HttpPost("{projectId}/image")]
+    [Authorize(Roles = "Editor,Administrator")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> UploadProjectImageAsync([FromRoute] Guid projectId, [FromForm] UploadProjectImageRequest request)
@@ -100,6 +108,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Получить список картинок проекта
     /// </summary>
     [HttpGet("{projectId}/images")]
+    [Authorize(Roles = "Viewer,Editor,Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ProjectImageResponse>>> GetProjectImagesAsync([FromRoute] Guid projectId)
     {
@@ -111,6 +120,7 @@ public class ProjectController(IProjectUseCaseManager useCaseManager, IImageUseC
     /// Удалить картинку проекта
     /// </summary>
     [HttpDelete("{projectId}/images/{imageId}")]
+    [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> DeleteProjectImageAsync([FromRoute] Guid projectId, [FromRoute] Guid imageId)
     {
         await imageUseCase.DeleteProjectImageAsync(projectId, imageId);

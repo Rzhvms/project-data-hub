@@ -7,6 +7,8 @@ using Application.UseCases.Auth.Dto.Response.CreateUser;
 using Application.UseCases.Auth.Dto.Response.RefreshToken;
 using Application.UseCases.Auth.Dto.Response.RevocateToken;
 using Application.UseCases.Auth.interfaces;
+using CoreLib.Audit;
+using CoreLib.User;
 using Domain.Entities.IdentityUser;
 using IdentityLib.Encryption.Interfaces;
 using IdentityLib.ErrorCodes;
@@ -22,7 +24,9 @@ public class AuthUseCaseManager(
     ILogger<AuthUseCaseManager> logger,
     IUserRepository userRepository,
     IRoleRepository roleRepository,
-    IJwtGenerationService jwtGenerationService)
+    IJwtGenerationService jwtGenerationService,
+    IAuditService auditService,
+    ICurrentUserService currentUser)
     : IAuthUseCaseManager
 {
     /// <inheritdoc />
@@ -58,6 +62,7 @@ public class AuthUseCaseManager(
         await userRepository.CreateUserAsync(user);
         
         logger.LogInformation("Пользователь {Email} успешно создан", user.Email);
+        await auditService.LogAsync("CreateUser", "User", user.Id, currentUser.UserId, currentUser.UserName, $"Создан пользователь {user.Email}");
 
         return new CreateUserSuccessResponse
         {
@@ -87,7 +92,9 @@ public class AuthUseCaseManager(
         var jwtUserData = await CreateJwtUserDataAsync(user);
         
         var accessToken = jwtGenerationService.GenerateAccessToken(jwtUserData);
-        
+
+        await auditService.LogAsync("Login", "User", user.Id, user.Id, $"{user.LastName} {user.FirstName}", $"Вход пользователя {user.Email}");
+
         return new ConnectTokenSuccessResponse
         {
             AccessToken = accessToken,
@@ -108,7 +115,8 @@ public class AuthUseCaseManager(
         }
 
         logger.LogInformation("Пользователь {UserId} успешно вышел из системы.", user.Id);
-        
+        await auditService.LogAsync("Logout", "User", user.Id, user.Id, $"{user.LastName} {user.FirstName}", $"Выход пользователя из системы");
+
         return new RevocateTokenSuccessResponse()
         {
             Message = $"Пользователь вышел из системы в {DateTime.UtcNow:O} (UTC)."
@@ -144,7 +152,8 @@ public class AuthUseCaseManager(
 
         await userRepository.UpdateUserAsync(user);
 
-        logger.LogInformation("Refresh-токен обновлён для пользователя {UserId}", user.Id);
+        logger.LogInformation("Refresh-токен обновлен для пользователя {UserId}", user.Id);
+        await auditService.LogAsync("RefreshToken", "User", user.Id, user.Id, $"{user.LastName} {user.FirstName}", $"Обновление токенов");
 
         return new RefreshTokenSuccessResponse
         {
@@ -163,6 +172,7 @@ public class AuthUseCaseManager(
         var newPasswordHash = encryptionService.HashPassword(request.Password, Convert.FromBase64String(user.HashSalt));
 
         await userRepository.ChangeUserPasswordAsync(user.Id, newPasswordHash, user.HashSalt);
+        await auditService.LogAsync("ChangePassword", "User", user.Id, user.Id, $"{user.LastName} {user.FirstName}", $"Смена пароля");
     }
     
     /// <summary>
@@ -175,8 +185,7 @@ public class AuthUseCaseManager(
         // Добавляем информацию о роли и правах в клеймы
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Role, role.RoleCode),
-            new("permissions", ((int)role.PermissionsMask).ToString())
+            new(ClaimTypes.Role, role.RoleCode)
         };
 
         var jwtUserData = new JwtUserData

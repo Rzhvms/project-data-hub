@@ -16,6 +16,7 @@ public class UserController(IUserUseCaseManager useCaseManager) : ControllerBase
     /// Получить список пользователей
     /// </summary>
     [HttpGet("list")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<GetUserListResponse> GetUserListAsync()
     {
@@ -26,6 +27,7 @@ public class UserController(IUserUseCaseManager useCaseManager) : ControllerBase
     /// Получить пользователя по идентификатору
     /// </summary>
     [HttpGet("{userId}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<GetUserResponse> GetUserByIdAsync([FromRoute] Guid userId)
     {
@@ -36,6 +38,7 @@ public class UserController(IUserUseCaseManager useCaseManager) : ControllerBase
     /// Удалить пользователя по идентификатору
     /// </summary>
     [HttpDelete("{userId}")]
+    [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task DeleteUserByIdAsync([FromRoute] Guid userId)
     {
