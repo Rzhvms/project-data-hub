@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ObjectFormComponent, ObjectFormViewModel, ObjectsRequestService } from '@project-data-hub/modules/objects';
+import { IObjectFormValue, ObjectFormComponent, ObjectFormViewModel, ObjectsRequestService } from '@project-data-hub/modules/objects';
 import { AppRoute } from '@project-data-hub/shared';
 import { TuiButton } from '@taiga-ui/core';
 
@@ -21,5 +21,21 @@ export class ObjectCreatePageComponent {
 
     protected navigateBack(): void {
         this._router.navigate([AppRoute.ObjectsPage]);
+    }
+
+    protected saveAsDraft(): void {
+        const value: Partial<IObjectFormValue> = this.formViewModel.fromModelToDraft();
+        console.log(value);
+    }
+
+    protected publish(): void {
+        const invalidStep: number | null = this.formViewModel.validateAllAndGetFirstInvalidStep();
+        if (invalidStep !== null) {
+            this.formViewModel.activeStepIndex.set(invalidStep);
+
+            return;
+        }
+        const value: IObjectFormValue = this.formViewModel.fromModel();
+        console.log(value);
     }
 }

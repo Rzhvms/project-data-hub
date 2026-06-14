@@ -61,8 +61,6 @@ export class ObjectFormComponent {
     public readonly model: InputSignal<ObjectFormViewModel> = input.required();
     public readonly isReadonly: InputSignal<boolean> = input(false);
 
-    protected readonly activeStepIndex: WritableSignal<number> = signal(0);
-
     private readonly _isRemovingImage: WritableSignal<boolean> = signal(false);
 
     private readonly _dialogService: TuiDialogService = inject(TuiDialogService);
@@ -73,14 +71,14 @@ export class ObjectFormComponent {
     protected readonly optionMatcher: TuiIdentityMatcher<IOption> = (a, b) => a.value === b.value;
 
     protected goToNextStep(): void {
-        const step = this.activeStepIndex();
+        const step = this.model().activeStepIndex();
         if (!this.model().isStepValid(step)) {
             this.model().markStepAsTouched(step);
 
             return;
         }
 
-        this.activeStepIndex.update((value) => value + 1);
+        this.model().activeStepIndex.update((value) => value + 1);
     }
 
     protected openSingleImageModal(control: FormControl<MediaImage | null>): void {

@@ -1,6 +1,7 @@
+import { signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MediaImage } from '@project-data-hub/modules/media';
-import { IObject,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
+import { IObject,IObjectFormValue,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectType } from '@project-data-hub/modules/objects';
 import { IOption } from '@project-data-hub/shared';
 
 type MainForm = {
@@ -155,6 +156,8 @@ export class ObjectFormViewModel {
         }),
     });
 
+    public readonly activeStepIndex: WritableSignal<number> = signal(0);
+
     private readonly _forms: FormGroup[] = [
         this.mainForm,
         this.mediaForm,
@@ -208,7 +211,7 @@ export class ObjectFormViewModel {
         }, { emitEvent: false });
     }
 
-    public fromModel(status: ObjectStatus): Omit<IObject, 'id' | 'createdAt' | 'updatedAt'> {
+    public fromModel(): IObjectFormValue {
         const mainFormValue = this.mainForm.getRawValue();
         const mediaFormValue = this.mediaForm.getRawValue();
         const indicatorsFormValue = this.indicatorsForm.getRawValue();
@@ -216,45 +219,92 @@ export class ObjectFormViewModel {
 
         return {
             title: mainFormValue.title,
-            shortTitle: mainFormValue.shortTitle || undefined,
             city: mainFormValue.city,
-            status,
             type: mainFormValue.type!,
             stage: mainFormValue.stage!,
             shortDescription: mainFormValue.shortDescription,
-            customer: mainFormValue.customer || undefined,
-            fullDescription: mainFormValue.fullDescription || undefined,
             projectManager: teamFormValue.projectManager,
-            designYear: mainFormValue.designYear || undefined,
-            implementationYear: mainFormValue.implementationYear || undefined,
+            ...(mainFormValue.shortTitle && { shortTitle: mainFormValue.shortTitle }),
+            ...(mainFormValue.customer && { customer: mainFormValue.customer }),
+            ...(mainFormValue.fullDescription && { fullDescription: mainFormValue.fullDescription }),
+            ...(mainFormValue.designYear !== null && { designYear: mainFormValue.designYear }),
+            ...(mainFormValue.implementationYear !== null && { implementationYear: mainFormValue.implementationYear }),
             media: {
-                mainImage: mediaFormValue.mainImage!,
-                images: mediaFormValue.images.length ? mediaFormValue.images : undefined,
-                photos: mediaFormValue.photos.length ? mediaFormValue.photos : undefined,
-                portfolioImages: mediaFormValue.portfolioImages.length ? mediaFormValue.portfolioImages : undefined,
-                presentationCover: mediaFormValue.presentationCover ?? undefined,
-                renders: mediaFormValue.renders.length ? mediaFormValue.renders : undefined,
-                schemas: mediaFormValue.schemas.length ? mediaFormValue.schemas : undefined
+                ...(mediaFormValue.mainImage && { mainImage: mediaFormValue.mainImage }),
+                ...(mediaFormValue.presentationCover && { presentationCover: mediaFormValue.presentationCover }),
+                ...(mediaFormValue.images.length && { images: mediaFormValue.images }),
+                ...(mediaFormValue.schemas.length && { schemas: mediaFormValue.schemas }),
+                ...(mediaFormValue.renders.length && { renders: mediaFormValue.renders }),
+                ...(mediaFormValue.photos.length && { photos: mediaFormValue.photos }),
+                ...(mediaFormValue.portfolioImages.length && { portfolioImages: mediaFormValue.portfolioImages }),
             },
             indicators: {
-                totalArea: indicatorsFormValue.totalArea!,
-                plotArea: indicatorsFormValue.plotArea!,
-                buildingArea: indicatorsFormValue.buildingArea!,
-                sectionsCount: indicatorsFormValue.sectionsCount!,
-                floorsCount: indicatorsFormValue.floorsCount ?? undefined,
-                roomsCount: indicatorsFormValue.roomsCount ?? undefined,
-                parkingSpacesCount: indicatorsFormValue.parkingSpacesCount ?? undefined
+                ...(indicatorsFormValue.totalArea !== null && { totalArea: indicatorsFormValue.totalArea }),
+                ...(indicatorsFormValue.plotArea !== null && { plotArea: indicatorsFormValue.plotArea }),
+                ...(indicatorsFormValue.buildingArea !== null && { buildingArea: indicatorsFormValue.buildingArea }),
+                ...(indicatorsFormValue.sectionsCount !== null && { sectionsCount: indicatorsFormValue.sectionsCount }),
+                ...(indicatorsFormValue.floorsCount !== null && { floorsCount: indicatorsFormValue.floorsCount }),
+                ...(indicatorsFormValue.roomsCount !== null && { roomsCount: indicatorsFormValue.roomsCount }),
+                ...(indicatorsFormValue.parkingSpacesCount !== null && { parkingSpacesCount: indicatorsFormValue.parkingSpacesCount }),
             },
             team: {
-                chiefArchitect: teamFormValue.chiefArchitect || undefined,
-                chiefEngineer: teamFormValue.chiefEngineer || undefined,
-                architects: teamFormValue.architects.length ? teamFormValue.architects : undefined,
-                engineers: teamFormValue.engineers.length ? teamFormValue.engineers : undefined,
-                bimSpecialists: teamFormValue.bimSpecialists.length ? teamFormValue.bimSpecialists : undefined,
-                visualizers: teamFormValue.visualizers.length ? teamFormValue.visualizers : undefined,
-                partners: teamFormValue.partners.length ? teamFormValue.partners : undefined
-            }
-        };
+                ...(teamFormValue.chiefArchitect && { chiefArchitect: teamFormValue.chiefArchitect }),
+                ...(teamFormValue.chiefEngineer && { chiefEngineer: teamFormValue.chiefEngineer }),
+                ...(teamFormValue.architects.length && { architects: teamFormValue.architects }),
+                ...(teamFormValue.engineers.length && { engineers: teamFormValue.engineers }),
+                ...(teamFormValue.bimSpecialists.length && { bimSpecialists: teamFormValue.bimSpecialists }),
+                ...(teamFormValue.visualizers.length && { visualizers: teamFormValue.visualizers }),
+                ...(teamFormValue.partners.length && { partners: teamFormValue.partners }),
+            },
+        } as IObjectFormValue;
+    }
+
+    public fromModelToDraft(): Partial<IObjectFormValue> {
+        const mainFormValue = this.mainForm.getRawValue();
+        const mediaFormValue = this.mediaForm.getRawValue();
+        const indicatorsFormValue = this.indicatorsForm.getRawValue();
+        const teamFormValue = this.teamForm.getRawValue();
+
+        return {
+            ...(mainFormValue.title && { title: mainFormValue.title }),
+            ...(mainFormValue.shortTitle && { shortTitle: mainFormValue.shortTitle }),
+            ...(mainFormValue.city && { city: mainFormValue.city }),
+            ...(mainFormValue.type !== null && { type: mainFormValue.type }),
+            ...(mainFormValue.stage !== null && { stage: mainFormValue.stage }),
+            ...(mainFormValue.shortDescription && { shortDescription: mainFormValue.shortDescription }),
+            ...(mainFormValue.customer && { customer: mainFormValue.customer }),
+            ...(mainFormValue.fullDescription && { fullDescription: mainFormValue.fullDescription }),
+            ...(teamFormValue.projectManager && { projectManager: teamFormValue.projectManager }),
+            ...(mainFormValue.designYear !== null && { designYear: mainFormValue.designYear }),
+            ...(mainFormValue.implementationYear !== null && { implementationYear: mainFormValue.implementationYear }),
+            media: {
+                ...(mediaFormValue.mainImage && { mainImage: mediaFormValue.mainImage }),
+                ...(mediaFormValue.presentationCover && { presentationCover: mediaFormValue.presentationCover }),
+                ...(mediaFormValue.images.length && { images: mediaFormValue.images }),
+                ...(mediaFormValue.schemas.length && { schemas: mediaFormValue.schemas }),
+                ...(mediaFormValue.renders.length && { renders: mediaFormValue.renders }),
+                ...(mediaFormValue.photos.length && { photos: mediaFormValue.photos }),
+                ...(mediaFormValue.portfolioImages.length && { portfolioImages: mediaFormValue.portfolioImages }),
+            },
+            indicators: {
+                ...(indicatorsFormValue.totalArea !== null && { totalArea: indicatorsFormValue.totalArea }),
+                ...(indicatorsFormValue.plotArea !== null && { plotArea: indicatorsFormValue.plotArea }),
+                ...(indicatorsFormValue.buildingArea !== null && { buildingArea: indicatorsFormValue.buildingArea }),
+                ...(indicatorsFormValue.sectionsCount !== null && { sectionsCount: indicatorsFormValue.sectionsCount }),
+                ...(indicatorsFormValue.floorsCount !== null && { floorsCount: indicatorsFormValue.floorsCount }),
+                ...(indicatorsFormValue.roomsCount !== null && { roomsCount: indicatorsFormValue.roomsCount }),
+                ...(indicatorsFormValue.parkingSpacesCount !== null && { parkingSpacesCount: indicatorsFormValue.parkingSpacesCount }),
+            },
+            team: {
+                ...(teamFormValue.chiefArchitect && { chiefArchitect: teamFormValue.chiefArchitect }),
+                ...(teamFormValue.chiefEngineer && { chiefEngineer: teamFormValue.chiefEngineer }),
+                ...(teamFormValue.architects.length && { architects: teamFormValue.architects }),
+                ...(teamFormValue.engineers.length && { engineers: teamFormValue.engineers }),
+                ...(teamFormValue.bimSpecialists.length && { bimSpecialists: teamFormValue.bimSpecialists }),
+                ...(teamFormValue.visualizers.length && { visualizers: teamFormValue.visualizers }),
+                ...(teamFormValue.partners.length && { partners: teamFormValue.partners }),
+            },
+        } as Partial<IObjectFormValue>;
     }
 
     public isStepValid(stepIndex: number): boolean {

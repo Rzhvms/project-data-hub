@@ -1,8 +1,8 @@
 <div class="object-form">
     <header class="object-form__header">
         <tui-stepper
-            [activeItemIndex]="activeStepIndex()"
-            (activeItemIndexChange)="activeStepIndex.set($event)"
+            [activeItemIndex]="model().activeStepIndex()"
+            (activeItemIndexChange)="model().activeStepIndex.set($event)"
         >
             @for (step of model().stepList; track step) {
                 <button tuiStep>
@@ -14,17 +14,17 @@
             <button
                 size="m"
                 appearance="flat-grayscale"
-                [disabled]="activeStepIndex() <= 0"
+                [disabled]="model().activeStepIndex() <= 0"
                 tuiIconButton
                 iconStart="@tui.chevron-left"
-                (click)="activeStepIndex.update((value) => value -= 1)"
+                (click)="model().activeStepIndex.update((value) => value - 1)"
             >
                 Назад
             </button>
             <button
                 size="m"
                 appearance="flat-grayscale"
-                [disabled]="activeStepIndex() >= model().stepList.length - 1"
+                [disabled]="model().activeStepIndex() >= model().stepList.length - 1"
                 tuiIconButton
                 iconEnd="@tui.chevron-right"
                 (click)="goToNextStep()"
@@ -34,7 +34,7 @@
         </div>
     </header>
     <main>
-        @switch (model().stepList[activeStepIndex()]) {
+        @switch (model().stepList[model().activeStepIndex()]) {
             @case ('Основные') {
                 <ng-container *ngTemplateOutlet="main"></ng-container>
             }
