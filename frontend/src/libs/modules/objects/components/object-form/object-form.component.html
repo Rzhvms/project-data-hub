@@ -278,32 +278,54 @@
             <tui-accordion>
                 <button tuiAccordion>Изображения</button>
                 <tui-expand>
-                    <button
-                        tuiButton
-                        type="button"
-                    >
-                        Изображения
-                    </button>
+                    <ng-container *ngTemplateOutlet="imageUploadArray; context: { control: model().mediaForm.controls.images }" />
                 </tui-expand>
                 <button tuiAccordion>Схемы</button>
                 <tui-expand>
-                    Схемы
+                    <ng-container *ngTemplateOutlet="imageUploadArray; context: { control: model().mediaForm.controls.schemas }" />
                 </tui-expand>
                 <button tuiAccordion>Рендеры</button>
                 <tui-expand>
-                    Рендеры
+                    <ng-container *ngTemplateOutlet="imageUploadArray; context: { control: model().mediaForm.controls.renders }" />
                 </tui-expand>
                 <button tuiAccordion>Фото</button>
                 <tui-expand>
-                    Фото
+                    <ng-container *ngTemplateOutlet="imageUploadArray; context: { control: model().mediaForm.controls.photos }" />
                 </tui-expand>
                 <button tuiAccordion>Портфолио</button>
                 <tui-expand>
-                    Портфолио
+                    <ng-container *ngTemplateOutlet="imageUploadArray; context: { control: model().mediaForm.controls.portfolioImages }" />
                 </tui-expand>
             </tui-accordion>
         </div>
     </form>
+</ng-template>
+
+<ng-template #imageUploadArray let-control="control">
+    <div class="object-form__array-image-row">
+        @if (control.value.length < 5) {
+            <button
+                appearance="outline"
+                tuiButton
+                type="button"
+                iconStart="@tui.plus"
+                class="object-form__add-image-btn"
+                (click)="openImageModalForArray(control)"
+            >
+                Добавить изображение
+            </button>
+        }
+        @for (image of control.value; track $index) {
+            <tui-file
+                class="object-form__array-image"
+                size="l"
+                [style.cursor]="'pointer'"
+                [file]="image.file"
+                (click)="openImageModalForArray(control, image)"
+                (remove)="removeImageFromArray(control, image)"
+            />
+        }
+    </div>
 </ng-template>
 
 <ng-template #indicators>

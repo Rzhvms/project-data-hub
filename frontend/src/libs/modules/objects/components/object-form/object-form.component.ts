@@ -118,6 +118,13 @@ export class ObjectFormComponent {
         setTimeout(() => this._isRemovingImage.set(false));
     }
 
+    protected removeImageFromArray(control: FormControl<MediaImage[]>, image: MediaImage): void {
+        this._isRemovingImage.set(true);
+        control.setValue(control.value.filter(item => item !== image));
+        this._cdr.markForCheck();
+        setTimeout(() => this._isRemovingImage.set(false));
+    }
+
     private openImageModal(image: MediaImage | null): Observable<MediaImage | null> {
         return this._dialogService.open<MediaImage>(
             new PolymorpheusComponent(ObjectImageModalComponent),
