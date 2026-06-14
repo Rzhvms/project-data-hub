@@ -1,4 +1,30 @@
 .object-edit-page {
     display: flex;
     flex-direction: column;
+    height: 100%;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        padding-left: 1rem;
+        padding-top: 1rem;
+    }
+
+    &__header-title-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    &__header-buttons-wrapper {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    &__form {
+        height: 100%;
+        padding: 0 1.5rem;
+    }
 }

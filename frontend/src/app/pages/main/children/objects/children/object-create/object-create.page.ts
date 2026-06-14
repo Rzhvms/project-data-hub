@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { IObjectFormValue, ObjectFormComponent, ObjectFormViewModel, ObjectsRequestService } from '@project-data-hub/modules/objects';
-import { AppRoute } from '@project-data-hub/shared';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { IObjectFormValue, ObjectFormComponent } from '@project-data-hub/modules/objects';
 import { TuiButton } from '@taiga-ui/core';
+
+import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
 
 @Component({
     templateUrl: './object-create.page.html',
@@ -13,16 +13,7 @@ import { TuiButton } from '@taiga-ui/core';
         ObjectFormComponent
     ]
 })
-export class ObjectCreatePageComponent {
-    protected readonly formViewModel: ObjectFormViewModel = new ObjectFormViewModel();
-
-    private readonly _requestService: ObjectsRequestService = inject(ObjectsRequestService);
-    private readonly _router: Router = inject(Router);
-
-    protected navigateBack(): void {
-        this._router.navigate([AppRoute.ObjectsPage]);
-    }
-
+export class ObjectCreatePageComponent extends ObjectChildBasePageComponent {
     protected saveAsDraft(): void {
         const value: Partial<IObjectFormValue> = this.formViewModel.fromModelToDraft();
         console.log(value);

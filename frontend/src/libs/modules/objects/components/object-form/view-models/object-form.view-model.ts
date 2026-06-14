@@ -1,18 +1,18 @@
 import { signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MediaImage } from '@project-data-hub/modules/media';
-import { IObject,IObjectFormValue,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectType } from '@project-data-hub/modules/objects';
+import { IObject, IObjectFormValue, OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectType } from '@project-data-hub/modules/objects';
 import { IOption } from '@project-data-hub/shared';
 
 type MainForm = {
     title: FormControl<string>;
     shortTitle: FormControl<string>;
-    type: FormControl<ObjectType | null>;
+    type: FormControl<IOption | null>;
     city: FormControl<string>;
     customer: FormControl<string>;
     fullDescription: FormControl<string>;
     shortDescription: FormControl<string>;
-    stage: FormControl<ObjectStage | null>;
+    stage: FormControl<IOption | null>;
     designYear: FormControl<number | null>;
     implementationYear: FormControl<number | null>;
 };
@@ -66,7 +66,7 @@ export class ObjectFormViewModel {
         shortTitle: new FormControl('', {
             nonNullable: true
         }),
-        type: new FormControl<ObjectType | null>(null, {
+        type: new FormControl<IOption | null>(null, {
             validators: [Validators.required]
         }),
         city: new FormControl('', {
@@ -84,7 +84,7 @@ export class ObjectFormViewModel {
             validators: [Validators.required],
             nonNullable: true
         }),
-        stage: new FormControl<ObjectStage | null>(null, {
+        stage: new FormControl<IOption | null>(null, {
             validators: [Validators.required]
         }),
         designYear: new FormControl<number | null>(null),
@@ -169,12 +169,12 @@ export class ObjectFormViewModel {
         this.mainForm.patchValue({
             title: value.title,
             shortTitle: value.shortTitle,
-            type: value.type,
+            type: this.objectTypeList.find(o => o.value === value.type) ?? null,
             city: value.city,
             customer: value.customer,
             fullDescription: value.fullDescription,
             shortDescription: value.shortDescription,
-            stage: value.stage,
+            stage: this.objectStageList.find(o => o.value === value.stage) ?? null,
             designYear: value.designYear,
             implementationYear: value.implementationYear
         }, { emitEvent: false });
@@ -220,8 +220,8 @@ export class ObjectFormViewModel {
         return {
             title: mainFormValue.title,
             city: mainFormValue.city,
-            type: mainFormValue.type!,
-            stage: mainFormValue.stage!,
+            type: mainFormValue.type!.value as ObjectType,
+            stage: mainFormValue.stage!.value as ObjectStage,
             shortDescription: mainFormValue.shortDescription,
             projectManager: teamFormValue.projectManager,
             ...(mainFormValue.shortTitle && { shortTitle: mainFormValue.shortTitle }),
@@ -269,8 +269,8 @@ export class ObjectFormViewModel {
             ...(mainFormValue.title && { title: mainFormValue.title }),
             ...(mainFormValue.shortTitle && { shortTitle: mainFormValue.shortTitle }),
             ...(mainFormValue.city && { city: mainFormValue.city }),
-            ...(mainFormValue.type !== null && { type: mainFormValue.type }),
-            ...(mainFormValue.stage !== null && { stage: mainFormValue.stage }),
+            ...(mainFormValue.type !== null && { type: mainFormValue.type.value as ObjectType }),
+            ...(mainFormValue.stage !== null && { stage: mainFormValue.stage.value as ObjectStage }),
             ...(mainFormValue.shortDescription && { shortDescription: mainFormValue.shortDescription }),
             ...(mainFormValue.customer && { customer: mainFormValue.customer }),
             ...(mainFormValue.fullDescription && { fullDescription: mainFormValue.fullDescription }),

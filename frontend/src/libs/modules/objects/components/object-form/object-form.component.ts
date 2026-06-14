@@ -67,7 +67,7 @@ export class ObjectFormComponent {
     private readonly _destroyRef: DestroyRef = inject(DestroyRef);
     private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-    protected readonly optionStringify: TuiStringHandler<IOption> = (option) => option.label;
+    protected readonly optionStringify: TuiStringHandler<IOption | null> = (option) => option?.label ?? '';
     protected readonly optionMatcher: TuiIdentityMatcher<IOption> = (a, b) => a.value === b.value;
 
     protected goToNextStep(): void {
