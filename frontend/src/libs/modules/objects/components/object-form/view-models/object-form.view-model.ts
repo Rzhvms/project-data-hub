@@ -1,6 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MediaImage } from '@project-data-hub/modules/media';
-import { IObject, IObjectMedia,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
+import { IObject,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
 import { IOption } from '@project-data-hub/shared';
 
 type MainForm = {
@@ -188,7 +188,7 @@ export class ObjectFormViewModel {
 
         this.indicatorsForm.patchValue({
             totalArea: value.indicators.totalArea,
-            plotArea: value.indicators.buildingArea,
+            plotArea: value.indicators.plotArea,
             buildingArea: value.indicators.buildingArea,
             floorsCount: value.indicators.floorsCount,
             roomsCount: value.indicators.roomsCount,
@@ -198,7 +198,7 @@ export class ObjectFormViewModel {
 
         this.teamForm.patchValue({
             projectManager: value.projectManager,
-            chiefEngineer: value.team.chiefArchitect,
+            chiefEngineer: value.team.chiefEngineer,
             chiefArchitect: value.team.chiefArchitect,
             architects: value.team.architects,
             engineers: value.team.engineers,
@@ -210,6 +210,7 @@ export class ObjectFormViewModel {
 
     public fromModel(status: ObjectStatus): Omit<IObject, 'id' | 'createdAt' | 'updatedAt'> {
         const mainFormValue = this.mainForm.getRawValue();
+        const mediaFormValue = this.mediaForm.getRawValue();
         const indicatorsFormValue = this.indicatorsForm.getRawValue();
         const teamFormValue = this.teamForm.getRawValue();
 
@@ -227,8 +228,14 @@ export class ObjectFormViewModel {
             designYear: mainFormValue.designYear || undefined,
             implementationYear: mainFormValue.implementationYear || undefined,
             media: {
-
-            } as unknown as IObjectMedia,
+                mainImage: mediaFormValue.mainImage!,
+                images: mediaFormValue.images.length ? mediaFormValue.images : undefined,
+                photos: mediaFormValue.photos.length ? mediaFormValue.photos : undefined,
+                portfolioImages: mediaFormValue.portfolioImages.length ? mediaFormValue.portfolioImages : undefined,
+                presentationCover: mediaFormValue.presentationCover ?? undefined,
+                renders: mediaFormValue.renders.length ? mediaFormValue.renders : undefined,
+                schemas: mediaFormValue.schemas.length ? mediaFormValue.schemas : undefined
+            },
             indicators: {
                 totalArea: indicatorsFormValue.totalArea!,
                 plotArea: indicatorsFormValue.plotArea!,

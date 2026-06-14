@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { IObjectPreview, ObjectsRequestService } from '@project-data-hub/modules/objects';
 import { AppRoute, IOption } from '@project-data-hub/shared';
 import { TuiButton, TuiDropdown, TuiInput } from '@taiga-ui/core';
-import { debounceTime, take } from 'rxjs';
+import { catchError, debounceTime, of, take } from 'rxjs';
 
 import { ObjectsPageTableComponent } from './components/objects-page-table/objects-page-table.component';
 import { ObjectsPageToolBarComponent } from './components/objects-page-tool-bar/objects-page-tool-bar.component';
@@ -46,7 +46,10 @@ export class ObjectsPageComponent {
 
     private setObjectList(): void {
         this._requestService.getObjectList()
-            .pipe(take(1))
+            .pipe(
+                take(1),
+                catchError(() => of([]))
+            )
             .subscribe((objectList) => {
                 this.objectList.set(objectList);
                 this.filteredObjectList.set(objectList);
@@ -61,7 +64,7 @@ export class ObjectsPageComponent {
             )
             .subscribe((filterValue) => {
                 const statusFilters: Array<IOption<string>> = filterValue.statusFilter ?? [];
-                const typeFilterrs: Array<IOption<string>> = filterValue.typeFilter ?? [];
+                const typeFilters: Array<IOption<string>> = filterValue.typeFilter ?? [];
                 const searchValue: string = filterValue.search?.toLowerCase() ?? '';
 
                 const result: IObjectPreview[] = this.objectList().filter((object) => {
@@ -69,8 +72,8 @@ export class ObjectsPageComponent {
                         statusFilters.length === 0 ||
                         statusFilters.some((filter) => filter.value === object.status);
                     const isTypeMatched: boolean =
-                        typeFilterrs.length === 0 ||
-                        typeFilterrs.some((filter) => filter.value === object.type);
+                        typeFilters.length === 0 ||
+                        typeFilters.some((filter) => filter.value === object.type);
                     const isSearchMatched: boolean =
                         !searchValue ||
                         object.title.toLowerCase().includes(searchValue) ||
