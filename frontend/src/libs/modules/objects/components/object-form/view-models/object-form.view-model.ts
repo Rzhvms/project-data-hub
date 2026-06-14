@@ -1,11 +1,7 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MediaImage } from '@project-data-hub/modules/media';
 import { IObject, IObjectMedia,OBJECT_STAGE_OPTIONS, OBJECT_TYPE_OPTIONS, ObjectStage, ObjectStatus, ObjectType } from '@project-data-hub/modules/objects';
 import { IOption } from '@project-data-hub/shared';
-
-type ValidationState = {
-    isValid: boolean;
-    invalidForms: FormGroup[]
-}
 
 type MainForm = {
     title: FormControl<string>;
@@ -18,6 +14,16 @@ type MainForm = {
     stage: FormControl<ObjectStage | null>;
     designYear: FormControl<number | null>;
     implementationYear: FormControl<number | null>;
+};
+
+type MediaForm = {
+    mainImage: FormControl<MediaImage | null>;
+    presentationCover: FormControl<MediaImage | null>;
+    images: FormControl<MediaImage[]>;
+    schemas: FormControl<MediaImage[]>;
+    renders: FormControl<MediaImage[]>;
+    photos: FormControl<MediaImage[]>;
+    portfolioImages: FormControl<MediaImage[]>;
 };
 
 type IndicatorsForm = {
@@ -42,23 +48,6 @@ type TeamForm = {
 };
 
 export class ObjectFormViewModel {
-    public get isValid(): boolean {
-        return this._validationState.isValid;
-    }
-
-    private get _validationState(): ValidationState {
-        const invalidForms: FormGroup[] = [
-            this.mainForm,
-            this.indicatorsForm,
-            this.teamForm
-        ].filter((form) => form.invalid);
-
-        return {
-            isValid: invalidForms.length === 0,
-            invalidForms
-        };
-    }
-
     public readonly stepList: string[] = [
         'Основные',
         'Медиа',
@@ -99,6 +88,27 @@ export class ObjectFormViewModel {
         }),
         designYear: new FormControl<number | null>(null),
         implementationYear: new FormControl<number | null>(null)
+    });
+    public readonly mediaForm: FormGroup<MediaForm> = new FormGroup<MediaForm>({
+        mainImage: new FormControl<MediaImage | null>(null, {
+            validators: [Validators.required]
+        }),
+        presentationCover: new FormControl<MediaImage | null>(null),
+        images: new FormControl<MediaImage[]>([], {
+            nonNullable: true
+        }),
+        schemas: new FormControl<MediaImage[]>([], {
+            nonNullable: true
+        }),
+        renders: new FormControl<MediaImage[]>([], {
+            nonNullable: true
+        }),
+        photos: new FormControl<MediaImage[]>([], {
+            nonNullable: true
+        }),
+        portfolioImages: new FormControl<MediaImage[]>([], {
+            nonNullable: true
+        })
     });
     public readonly indicatorsForm: FormGroup<IndicatorsForm> = new FormGroup<IndicatorsForm>({
         totalArea: new FormControl<number | null>(null, {
@@ -145,6 +155,13 @@ export class ObjectFormViewModel {
         }),
     });
 
+    private readonly _forms: FormGroup[] = [
+        this.mainForm,
+        this.mediaForm,
+        this.indicatorsForm,
+        this.teamForm
+    ];
+
     public updateModel(value: IObject): void {
         this.mainForm.patchValue({
             title: value.title,
@@ -157,6 +174,16 @@ export class ObjectFormViewModel {
             stage: value.stage,
             designYear: value.designYear,
             implementationYear: value.implementationYear
+        }, { emitEvent: false });
+
+        this.mediaForm.patchValue({
+            mainImage: value.media.mainImage,
+            images: value.media.images,
+            schemas: value.media.schemas,
+            renders: value.media.renders,
+            photos: value.media.photos,
+            presentationCover: value.media.presentationCover,
+            portfolioImages: value.media.portfolioImages
         }, { emitEvent: false });
 
         this.indicatorsForm.patchValue({
@@ -223,7 +250,23 @@ export class ObjectFormViewModel {
         };
     }
 
-    public markInvalidAsTouched(): void {
-        this._validationState.invalidForms.forEach((form) => form.markAllAsTouched());
+    public isStepValid(stepIndex: number): boolean {
+        return this._forms[stepIndex]?.valid ?? true;
+    }
+
+        public markStepAsTouched(stepIndex: number): void {
+        this._forms[stepIndex]?.markAllAsTouched();
+    }
+
+    public validateAllAndGetFirstInvalidStep(): number | null {
+        for (let i = 0; i < this._forms.length; i++) {
+            if (this._forms[i].invalid) {
+                this._forms[i].markAllAsTouched();
+
+                return i;
+            }
+        }
+
+        return null;
     }
 }

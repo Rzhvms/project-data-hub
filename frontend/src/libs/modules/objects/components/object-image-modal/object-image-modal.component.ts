@@ -25,7 +25,7 @@ import { ObjectImageViewModel } from './view-models/object-image.view-model';
 export class ObjectImageModalComponent {
     protected readonly context: ObjectImageModalContext = injectContext<ObjectImageModalContext>();
     protected readonly model: ObjectImageViewModel = new ObjectImageViewModel(
-        this.context.data.image,
+        this.context.data ?? undefined,
     );
 
     protected removeFile(): void {

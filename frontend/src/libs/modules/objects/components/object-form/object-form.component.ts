@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     DestroyRef,
     inject,
@@ -10,7 +11,7 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MediaImage } from '@project-data-hub/modules/media';
 import { IOption } from '@project-data-hub/shared';
 import { TuiIdentityMatcher, TuiStringHandler } from '@taiga-ui/cdk';
@@ -19,6 +20,7 @@ import {
     TuiAccordion,
     TuiChevron,
     TuiDataListWrapper,
+    TuiFiles,
     TuiInputChip,
     TuiInputNumber,
     TuiInputYear,
@@ -27,6 +29,7 @@ import {
     TuiTextarea,
 } from '@taiga-ui/kit';
 import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
+import { Observable, tap } from 'rxjs';
 
 import { ObjectImageModalComponent } from '../object-image-modal/object-image-modal.component';
 import { ObjectFormViewModel } from './view-models/object-form.view-model';
@@ -51,6 +54,7 @@ import { ObjectFormViewModel } from './view-models/object-form.view-model';
         TuiInputNumber,
         TuiInputChip,
         TuiAccordion,
+        TuiFiles,
     ]
 })
 export class ObjectFormComponent {
@@ -59,31 +63,92 @@ export class ObjectFormComponent {
 
     protected readonly activeStepIndex: WritableSignal<number> = signal(0);
 
+    private readonly _isRemovingImage: WritableSignal<boolean> = signal(false);
+
     private readonly _dialogService: TuiDialogService = inject(TuiDialogService);
     private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+    private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
     protected readonly optionStringify: TuiStringHandler<IOption> = (option) => option.label;
     protected readonly optionMatcher: TuiIdentityMatcher<IOption> = (a, b) => a.value === b.value;
 
     protected goToNextStep(): void {
-        if (!this.model().isValid) {
-            this.model().markInvalidAsTouched();
-        } else {
-            this.activeStepIndex.update((value) => value + 1);
+        const step = this.activeStepIndex();
+        if (!this.model().isStepValid(step)) {
+            this.model().markStepAsTouched(step);
+
+            return;
         }
+
+        this.activeStepIndex.update((value) => value + 1);
     }
 
-    protected openImageModal(fileType: string): void {
-        this._dialogService.open<MediaImage>(new PolymorpheusComponent(ObjectImageModalComponent), {
-            label: 'Добавить изображение',
-            size: 'l',
-            data: {
-                fileType
+    protected openSingleImageModal(control: FormControl<MediaImage | null>): void {
+        if (this._isRemovingImage()) {
+            return;
+        }
+
+        this.openImageModal(control.value)
+            .pipe(
+                tap(this.handleImageResult(control)),
+                takeUntilDestroyed(this._destroyRef)
+            ).subscribe();
+    }
+
+    protected openImageModalForArray(
+        control: FormControl<MediaImage[]>,
+        value?: MediaImage,
+    ): void {
+        if (this._isRemovingImage()) {
+            return;
+        }
+
+        this.openImageModal(value ?? null)
+            .pipe(
+                tap(this.handleImageResult(control, value)),
+                takeUntilDestroyed(this._destroyRef)
+            )
+            .subscribe();
+    }
+
+    protected removeSingleImage(control: FormControl<MediaImage | null>): void {
+        this._isRemovingImage.set(true);
+        control.setValue(null);
+        this._cdr.markForCheck();
+        setTimeout(() => this._isRemovingImage.set(false));
+    }
+
+    private openImageModal(image: MediaImage | null): Observable<MediaImage | null> {
+        return this._dialogService.open<MediaImage>(
+            new PolymorpheusComponent(ObjectImageModalComponent),
+            {
+                label: 'Добавить изображение',
+                size: 'l',
+                data: image
             }
-        })
-        .pipe(
-            takeUntilDestroyed(this._destroyRef)
-        )
-        .subscribe();
+        );
+    }
+
+    private handleImageResult(
+        control: FormControl<MediaImage | MediaImage[] | null>,
+        value?: MediaImage
+    ): (image: MediaImage | null) => void {
+        return (image: MediaImage | null): void => {
+            if (!image) {
+                return;
+            }
+
+            const currentValue: MediaImage | MediaImage[] | null = control.value;
+             if (Array.isArray(currentValue)) {
+                control.setValue(
+                    value
+                        ? currentValue.map(item => item === value ? image : item)
+                        : [...currentValue, image],
+                );
+            } else {
+                control.setValue(image);
+            }
+            this._cdr.markForCheck();
+        };
     }
 }

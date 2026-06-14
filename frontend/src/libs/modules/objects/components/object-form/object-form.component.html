@@ -215,13 +215,62 @@
 
 <ng-template #media>
     <form class="object-form__section">
-        <div class="object-form__group">
-            <div class="object-form__row">
-                <div>
+        <div class="object-form__subsection">
+            <div class="object-form__group">
+                <div class="object-form__image-container">
                     <h3>Основное изображение*</h3>
+                    @let mainImageControl = model().mediaForm.controls.mainImage;
+                    @if (!mainImageControl.value) {
+                        <button
+                            appearance="outline"
+                            tuiButton
+                            type="button"
+                            iconStart="@tui.plus"
+                            (click)="openSingleImageModal(mainImageControl)"
+                        >
+                            Добавить изображение
+                        </button>
+                        <tui-error [formControl]="mainImageControl" />
+                    } @else {
+                        <tui-files>
+                            <tui-file
+                                size="l"
+                                [style.cursor]="'pointer'"
+                                [file]="mainImageControl.value!.file"
+                                (click)="openSingleImageModal(mainImageControl)"
+                                (remove)="removeSingleImage(mainImageControl)"
+                            >
+                            </tui-file>
+                        </tui-files>
+                    }
                 </div>
-                <div>
+            </div>
+            <div class="object-form__group">
+                <div class="object-form__image-container">
                     <h3>Обложка для презентации</h3>
+                    @let presentationCoverControl = model().mediaForm.controls.presentationCover;
+                    @if (!presentationCoverControl.value) {
+                        <button
+                            appearance="outline"
+                            tuiButton
+                            iconStart="@tui.plus"
+                            type="button"
+                            (click)="openSingleImageModal(presentationCoverControl)"
+                        >
+                            Добавить изображение
+                        </button>
+                    } @else {
+                        <tui-files>
+                            <tui-file
+                                size="l"
+                                [style.cursor]="'pointer'"
+                                [file]="presentationCoverControl.value!.file"
+                                (click)="openSingleImageModal(presentationCoverControl)"
+                                (remove)="removeSingleImage(presentationCoverControl)"
+                            >
+                            </tui-file>
+                        </tui-files>
+                    }
                 </div>
             </div>
         </div>
@@ -229,7 +278,10 @@
             <tui-accordion>
                 <button tuiAccordion>Изображения</button>
                 <tui-expand>
-                    <button tuiButton type="button" (click)="openImageModal('image/*')">
+                    <button
+                        tuiButton
+                        type="button"
+                    >
                         Изображения
                     </button>
                 </tui-expand>
