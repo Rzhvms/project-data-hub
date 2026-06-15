@@ -27,8 +27,101 @@
         align-items: center;
     }
 
-    &__form {
+    &__content {
         height: 100%;
-        padding: 0 1.5rem;
+        padding: 0 1.5rem 1.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__tabs {
+        margin-bottom: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    &__subsection-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+
+    &__field-row {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+        min-width: 0;
+
+        &_full {
+            flex: 2;
+        }
+    }
+
+    &__field-label {
+        font-size: 0.9rem;
+        color: var(--tui-text-secondary);
+        font-weight: 500;
+    }
+
+    &__field-value {
+        font-size: 1.1rem;
+        word-break: break-word;
+
+        &_empty {
+            color: var(--tui-text-tertiary);
+            font-style: italic;
+        }
+    }
+
+    &__accordion {
+        margin-top: 0.5rem;
+    }
+
+    &__image {
+        max-width: 100%;
+        max-height: 15rem;
+        object-fit: contain;
+        border-radius: var(--tui-radius-m);
+        background: var(--tui-background-neutral-1);
+    }
+
+    &__image-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+    }
+
+    &__image-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        max-width: 18rem;
+
+        .object-view-page__image {
+            height: 12rem;
+            max-height: none;
+            width: 100%;
+        }
+    }
+
+    &__image-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        font-size: 0.95rem;
+        color: var(--tui-text-secondary);
     }
 }
