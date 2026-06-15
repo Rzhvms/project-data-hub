@@ -1,3 +1,66 @@
-<div class="object-view-page">
-    <h1>Object view page</h1>
-</div>
+@if (object(); as object) {
+    <div class="object-view-page">
+        <header class="object-view-page__header">
+            <div class="object-view-page__header-title-wrapper">
+                <button
+                    size="m"
+                    appearance="action-grayscale"
+                    iconStart="@tui.chevron-left"
+                    tuiIconButton
+                    type="button"
+                    (click)="navigateBack()"
+                >
+                    Назад
+                </button>
+                <h1>{{ object.title }}</h1>
+                <div
+                    class="object-view-page__header-status"
+                    [appearance]="getUiStatus(object.status)"
+                    tuiBadge
+                    size="xl"
+                    tuiStatus
+                >
+                    {{ objectStatusLabels[object.status] || 'Другое' }}
+                </div>
+            </div>
+            <div class="object-view-page__header-buttons-wrapper">
+                @if (object.status === 'archived') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.archive-restore"
+                        (click)="returnFromArchive()"
+                    >
+                        Вернуть из архива
+                    </button>
+                }
+                @if (object.status === 'draft') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.pen"
+                        (click)="edit()"
+                    >
+                        Редактировать
+                    </button>
+                }
+                @if (object.status === 'published') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.archive"
+                        type="button"
+                        appearance="primary-destructive"
+                        (click)="archivate()"
+                    >
+                        Архивировать
+                    </button>
+                }
+            </div>
+        </header>
+
+        <div class="object-view-page__form">
+
+        </div>
+    </div>
+}
