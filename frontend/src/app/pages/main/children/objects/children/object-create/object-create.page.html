@@ -1,0 +1,41 @@
+<div class="object-create-page">
+    <header class="object-create-page__header">
+        <div class="object-create-page__header-title-wrapper">
+            <button
+                size="m"
+                appearance="action-grayscale"
+                iconStart="@tui.chevron-left"
+                tuiIconButton
+                type="button"
+                (click)="navigateBack()"
+            >
+                Назад
+            </button>
+            <h1>Создать объект</h1>
+        </div>
+        <div class="object-create-page__header-buttons-wrapper">
+            <button
+                appearance="secondary-grayscale"
+                tuiButton
+                size="m"
+                iconStart="@tui.save"
+                (click)="saveAsDraft()"
+            >
+                Сохранить
+            </button>
+            <button
+                tuiButton
+                size="m"
+                iconStart="@tui.cloud-upload"
+                (click)="publish()"
+            >
+                Опубликовать
+            </button>
+        </div>
+    </header>
+
+    <object-form
+        class="object-create-page__form"
+        [model]="formViewModel"
+    />
+</div>

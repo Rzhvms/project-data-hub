@@ -115,7 +115,7 @@ module.exports = defineConfig([
                     },
                 },
                 {
-                    selector: ['classProperty', 'parameterProperty'],
+                    selector: ['classProperty', 'parameterProperty', 'accessor'],
                     format: ['camelCase'],
                     modifiers: ['private'],
                     prefix: ['_'],

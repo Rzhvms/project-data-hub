@@ -1,0 +1,426 @@
+@if (object(); as obj) {
+    <div class="object-view-page">
+        <header class="object-view-page__header">
+            <div class="object-view-page__header-title-wrapper">
+                <button
+                    size="m"
+                    appearance="action-grayscale"
+                    iconStart="@tui.chevron-left"
+                    tuiIconButton
+                    type="button"
+                    (click)="navigateBack()"
+                >
+                    Назад
+                </button>
+                <h1>{{ obj.title }}</h1>
+                <div
+                    class="object-view-page__header-status"
+                    [appearance]="getUiStatus(obj.status)"
+                    tuiBadge
+                    size="xl"
+                    tuiStatus
+                >
+                    {{ objectStatusLabels[obj.status] || 'Другое' }}
+                </div>
+            </div>
+            <div class="object-view-page__header-buttons-wrapper">
+                @if (obj.status === 'archived') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.archive-restore"
+                        (click)="returnFromArchive()"
+                    >
+                        Вернуть из архива
+                    </button>
+                }
+                @if (obj.status === 'draft') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.pen"
+                        (click)="edit()"
+                    >
+                        Редактировать
+                    </button>
+                }
+                @if (obj.status === 'published') {
+                    <button
+                        tuiButton
+                        size="m"
+                        iconStart="@tui.archive"
+                        type="button"
+                        appearance="primary-destructive"
+                        (click)="archivate()"
+                    >
+                        Архивировать
+                    </button>
+                }
+            </div>
+        </header>
+
+        <div class="object-view-page__content">
+            <tui-tabs
+                [(activeItemIndex)]="activeTabIndex"
+                class="object-view-page__tabs"
+            >
+                <button type="button" tuiTab>Основные</button>
+                <button type="button" tuiTab>Медиа</button>
+                <button type="button" tuiTab>Размеры</button>
+                <button type="button" tuiTab>Команда</button>
+            </tui-tabs>
+
+            @switch (activeTabIndex()) {
+                @case (0) {
+                    <div class="object-view-page__section">
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Название</span>
+                                <span class="object-view-page__field-value">{{ obj.title }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Краткое название</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.shortTitle">
+                                    {{ formatValue(obj.shortTitle) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Тип</span>
+                                <span class="object-view-page__field-value">{{ objectTypeLabels[obj.type] }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Стадия</span>
+                                <span class="object-view-page__field-value">{{ objectStageLabels[obj.stage] }}</span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Город</span>
+                                <span class="object-view-page__field-value">{{ obj.city }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Заказчик</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.customer">
+                                    {{ formatValue(obj.customer) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Год дизайна</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="obj.designYear === null || obj.designYear === undefined">
+                                    {{ formatValue(obj.designYear) }}
+                                </span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Год реализации</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="obj.implementationYear === null || obj.implementationYear === undefined">
+                                    {{ formatValue(obj.implementationYear) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field object-view-page__field_full">
+                                <span class="object-view-page__field-label">Краткое описание</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.shortDescription" [style.max-width]="'48%'">
+                                    {{ formatValue(obj.shortDescription) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field object-view-page__field_full">
+                                <span class="object-view-page__field-label">Полное описание</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.fullDescription" [style.max-width]="'48%'">
+                                    {{ formatValue(obj.fullDescription) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @case (1) {
+                    <div class="object-view-page__section">
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <h3 class="object-view-page__subsection-title">Основное изображение</h3>
+                                @if (obj.media.mainImage; as mainImage) {
+                                    <img
+                                        [src]="getImageUrl(mainImage.file)"
+                                        [alt]="mainImage.title"
+                                        class="object-view-page__image"
+                                    />
+                                    <div class="object-view-page__image-meta">
+                                        <span>{{ mainImage.title }}</span>
+                                        @if (mainImage.description) {
+                                            <span>{{ mainImage.description }}</span>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </div>
+
+                            <div class="object-view-page__field">
+                                <h3 class="object-view-page__subsection-title">Обложка для презентации</h3>
+                                @if (obj.media.presentationCover; as cover) {
+                                    <img
+                                        [src]="getImageUrl(cover.file)"
+                                        [alt]="cover.title"
+                                        class="object-view-page__image"
+                                    />
+                                    <div class="object-view-page__image-meta">
+                                        <span>{{ cover.title }}</span>
+                                        @if (cover.description) {
+                                            <span>{{ cover.description }}</span>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </div>
+                        </div>
+
+                        <tui-accordion class="object-view-page__accordion">
+                            <button tuiAccordion>Изображения @if (obj.media.images?.length) { ({{ obj.media.images!.length }}) }</button>
+                            <tui-expand>
+                                @if (obj.media.images?.length) {
+                                    <div class="object-view-page__image-grid">
+                                        @for (image of obj.media.images; track image.id) {
+                                            <div class="object-view-page__image-card">
+                                                <img
+                                                    [src]="getImageUrl(image.file)"
+                                                    [alt]="image.title"
+                                                    class="object-view-page__image"
+                                                />
+                                                <div class="object-view-page__image-meta">
+                                                    <span>{{ image.title }}</span>
+                                                    @if (image.description) {
+                                                        <span>{{ image.description }}</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </tui-expand>
+
+                            <button tuiAccordion>Схемы @if (obj.media.schemas?.length) { ({{ obj.media.schemas!.length }}) }</button>
+                            <tui-expand>
+                                @if (obj.media.schemas?.length) {
+                                    <div class="object-view-page__image-grid">
+                                        @for (image of obj.media.schemas; track image.id) {
+                                            <div class="object-view-page__image-card">
+                                                <img
+                                                    [src]="getImageUrl(image.file)"
+                                                    [alt]="image.title"
+                                                    class="object-view-page__image"
+                                                />
+                                                <div class="object-view-page__image-meta">
+                                                    <span>{{ image.title }}</span>
+                                                    @if (image.description) {
+                                                        <span>{{ image.description }}</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </tui-expand>
+
+                            <button tuiAccordion>Рендеры @if (obj.media.renders?.length) { ({{ obj.media.renders!.length }}) }</button>
+                            <tui-expand>
+                                @if (obj.media.renders?.length) {
+                                    <div class="object-view-page__image-grid">
+                                        @for (image of obj.media.renders; track image.id) {
+                                            <div class="object-view-page__image-card">
+                                                <img
+                                                    [src]="getImageUrl(image.file)"
+                                                    [alt]="image.title"
+                                                    class="object-view-page__image"
+                                                />
+                                                <div class="object-view-page__image-meta">
+                                                    <span>{{ image.title }}</span>
+                                                    @if (image.description) {
+                                                        <span>{{ image.description }}</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </tui-expand>
+
+                            <button tuiAccordion>Фото @if (obj.media.photos?.length) { ({{ obj.media.photos!.length }}) }</button>
+                            <tui-expand>
+                                @if (obj.media.photos?.length) {
+                                    <div class="object-view-page__image-grid">
+                                        @for (image of obj.media.photos; track image.id) {
+                                            <div class="object-view-page__image-card">
+                                                <img
+                                                    [src]="getImageUrl(image.file)"
+                                                    [alt]="image.title"
+                                                    class="object-view-page__image"
+                                                />
+                                                <div class="object-view-page__image-meta">
+                                                    <span>{{ image.title }}</span>
+                                                    @if (image.description) {
+                                                        <span>{{ image.description }}</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </tui-expand>
+
+                            <button tuiAccordion>Портфолио @if (obj.media.portfolioImages?.length) { ({{ obj.media.portfolioImages!.length }}) }</button>
+                            <tui-expand>
+                                @if (obj.media.portfolioImages?.length) {
+                                    <div class="object-view-page__image-grid">
+                                        @for (image of obj.media.portfolioImages; track image.id) {
+                                            <div class="object-view-page__image-card">
+                                                <img
+                                                    [src]="getImageUrl(image.file)"
+                                                    [alt]="image.title"
+                                                    class="object-view-page__image"
+                                                />
+                                                <div class="object-view-page__image-meta">
+                                                    <span>{{ image.title }}</span>
+                                                    @if (image.description) {
+                                                        <span>{{ image.description }}</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <span class="object-view-page__field-value_empty">не заполнено</span>
+                                }
+                            </tui-expand>
+                        </tui-accordion>
+                    </div>
+                }
+
+                @case (2) {
+                    <div class="object-view-page__section">
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Общая площадь, м²</span>
+                                <span class="object-view-page__field-value">{{ obj.indicators.totalArea }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Площадь участка, м²</span>
+                                <span class="object-view-page__field-value">{{ obj.indicators.plotArea }}</span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Площадь застройки, м²</span>
+                                <span class="object-view-page__field-value">{{ obj.indicators.buildingArea }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Количество секций</span>
+                                <span class="object-view-page__field-value">{{ obj.indicators.sectionsCount }}</span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Количество этажей</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="obj.indicators.floorsCount === null || obj.indicators.floorsCount === undefined">
+                                    {{ formatValue(obj.indicators.floorsCount) }}
+                                </span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Количество помещений</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="obj.indicators.roomsCount === null || obj.indicators.roomsCount === undefined">
+                                    {{ formatValue(obj.indicators.roomsCount) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Парковочные места</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="obj.indicators.parkingSpacesCount === null || obj.indicators.parkingSpacesCount === undefined">
+                                    {{ formatValue(obj.indicators.parkingSpacesCount) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @case (3) {
+                    <div class="object-view-page__section">
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Руководитель проекта</span>
+                                <span class="object-view-page__field-value">{{ obj.projectManager }}</span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Партнёры</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.partners?.length">
+                                    {{ formatValue(obj.team.partners) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Главный архитектор</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.chiefArchitect">
+                                    {{ formatValue(obj.team.chiefArchitect) }}
+                                </span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Архитекторы</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.architects?.length">
+                                    {{ formatValue(obj.team.architects) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Главный инженер</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.chiefEngineer">
+                                    {{ formatValue(obj.team.chiefEngineer) }}
+                                </span>
+                            </div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Инженеры</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.engineers?.length">
+                                    {{ formatValue(obj.team.engineers) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field"></div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">BIM-специалисты</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.bimSpecialists?.length">
+                                    {{ formatValue(obj.team.bimSpecialists) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="object-view-page__field-row">
+                            <div class="object-view-page__field"></div>
+                            <div class="object-view-page__field">
+                                <span class="object-view-page__field-label">Визуализаторы</span>
+                                <span class="object-view-page__field-value" [class.object-view-page__field-value_empty]="!obj.team.visualizers?.length">
+                                    {{ formatValue(obj.team.visualizers) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}

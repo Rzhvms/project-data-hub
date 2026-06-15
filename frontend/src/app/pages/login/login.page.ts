@@ -30,7 +30,6 @@ type LoginForm = FormGroup<{
         TuiError,
         TuiForm,
         TuiCardLarge,
-        TuiIcon
     ],
     providers: [ICON_RESOLVER_PROVIDER]
 })

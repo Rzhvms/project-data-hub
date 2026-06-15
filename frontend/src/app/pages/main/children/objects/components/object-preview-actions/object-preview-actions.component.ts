@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, InputSignal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IObjectPreview } from '@project-data-hub/modules/objects';
+import { AppRoute } from '@project-data-hub/shared';
 import { TuiButton, TuiDropdown } from '@taiga-ui/core';
 
 @Component({
@@ -14,4 +16,13 @@ import { TuiButton, TuiDropdown } from '@taiga-ui/core';
 })
 export class ObjectPreviewActionsComponent {
     public readonly object: InputSignal<IObjectPreview> = input.required();
+    private readonly _router: Router = inject(Router);
+
+    protected redirectToChild(childPath: string): void {
+        this._router.navigate([
+            AppRoute.ObjectsPage,
+            childPath,
+            this.object().id
+        ]);
+    }
 }

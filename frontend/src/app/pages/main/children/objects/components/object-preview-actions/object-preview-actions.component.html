@@ -15,27 +15,21 @@
                     iconStart="@tui.eye"
                     type="button"
                     appearance="secondary-grayscale"
+                    (click)="redirectToChild('view')"
                 >
                     Просмотреть
                 </button>
-                <button
-                    tuiButton
-                    iconStart="@tui.pen"
-                    type="button"
-                    appearance="secondary-grayscale"
-                >
-                    Редактировать
-                </button>
-                <button
-                    tuiButton
-                    iconStart="@tui.layers-2"
-                    type="button"
-                    appearance="secondary-grayscale"
-                >
-                    Дублировать
-                </button>
                 @if (object().status !== 'archived') {
                     @if (object().status === 'draft') {
+                        <button
+                            tuiButton
+                            iconStart="@tui.pen"
+                            type="button"
+                            appearance="secondary-grayscale"
+                            (click)="redirectToChild('edit')"
+                        >
+                            Редактировать
+                        </button>
                         <button
                             tuiButton
                             iconStart="@tui.cloud-upload"
@@ -90,7 +84,7 @@
                     type="button"
                     appearance="primary"
                 >
-                    Выгрузить в PDF
+                    Выгрузить в DOCX
                 </button>
             </div>
         </ng-template>

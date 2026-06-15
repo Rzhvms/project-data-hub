@@ -4,7 +4,7 @@ import { AppRoute } from '@project-data-hub/shared';
 export const MAIN_PAGE_ROUTES: Routes = [
     {
         path: AppRoute.ObjectsPage,
-        loadComponent: () => import('./children/objects/objects.page').then(m => m.ObjectsPageComponent)
+        loadChildren: () => import('./children/objects/objects.routes').then(m => m.OBJECTS_ROUTES)
     },
     {
         path: AppRoute.MediaPage,

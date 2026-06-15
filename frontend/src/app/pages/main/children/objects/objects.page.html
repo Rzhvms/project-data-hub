@@ -1,13 +1,11 @@
 <div class="objects-page">
     <header class="objects-page__header">
-        <div>
-            <h1 class="objects-page__title">Объекты</h1>
-            <span>Управление архитектурой объектов</span>
-        </div>
+        <h1>Объекты</h1>
         <button
             tuiButton
             size="m"
             iconStart="@tui.plus"
+            (click)="redirectToCreate()"
         >
             Добавить
         </button>

@@ -1,3 +1,49 @@
 <div class="media-page">
+    <header class="media-page__header">
+        <h1>Медиа</h1>
+        <button
+            tuiButton
+            size="m"
+            iconStart="@tui.plus"
+            (click)="openUpload()"
+        >
+            Добавить
+        </button>
+    </header>
 
+    <media-page-tool-bar class="media-page__tool-bar" [model]="toolBarViewModel" />
+
+    <div class="media-page__scroll">
+        @if (filteredImages().length) {
+            <div class="media-page__grid">
+                @for (image of filteredImages(); track image.id) {
+                    <button
+                        class="media-page__card"
+                        type="button"
+                        (click)="openDetail(image)"
+                    >
+                        <div class="media-page__card-image-wrapper">
+                            <img
+                                [src]="getImageUrl(image.file)"
+                                [alt]="image.title"
+                                class="media-page__card-image"
+                                loading="lazy"
+                            />
+                        </div>
+                        <div class="media-page__card-body">
+                            <span class="media-page__card-title">{{ image.title }}</span>
+                            @if (image.description) {
+                                <span class="media-page__card-description">{{ image.description }}</span>
+                            }
+                        </div>
+                    </button>
+                }
+            </div>
+        } @else {
+            <div class="media-page__empty">
+                <h2 class="media-page__empty-title">Не найдено подходящих изображений :(</h2>
+                <span>Попробуйте изменить фильтры или поисковый запрос</span>
+            </div>
+        }
+    </div>
 </div>

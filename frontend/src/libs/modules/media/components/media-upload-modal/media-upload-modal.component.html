@@ -1,0 +1,77 @@
+<form
+    class="media-upload-modal"
+    [formGroup]="model.form"
+    (ngSubmit)="save()"
+>
+    <div class="media-upload-modal__form">
+        @if (!model.form.controls.file.value) {
+            <label tuiInputFiles>
+                <input
+                    tuiInputFiles
+                    accept="image/*"
+                    [formControl]="model.form.controls.file"
+                />
+            </label>
+        }
+        <tui-files>
+            @if (model.form.controls.file.value; as file) {
+                <tui-file
+                    size="l"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+            }
+        </tui-files>
+        <label tuiLabel>
+            Название*
+            <tui-textfield tuiTextfieldSize="m">
+                <input
+                    tuiInput
+                    [formControl]="model.form.controls.title"
+                    placeholder="Укажите название"
+                />
+            </tui-textfield>
+            <tui-error [formControl]="model.form.controls.title" />
+        </label>
+        <label tuiLabel>
+            Описание*
+            <tui-textfield tuiTextfieldSize="m">
+                <textarea
+                    tuiTextarea
+                    [formControl]="model.form.controls.description"
+                    placeholder="Укажите описание"
+                    [limit]="300"
+                    [min]="2"
+                    [max]="6"
+                ></textarea>
+            </tui-textfield>
+            <tui-error [formControl]="model.form.controls.description" />
+        </label>
+        <label tuiLabel>
+            Альтернативный текст
+            <tui-textfield tuiTextfieldSize="m">
+                <input
+                    tuiInput
+                    [formControl]="model.form.controls.alternativeText"
+                    placeholder="Укажите альтернативный текст"
+                />
+            </tui-textfield>
+        </label>
+    </div>
+    <footer class="media-upload-modal__footer">
+        <button
+            tuiButton
+            appearance="secondary"
+            type="button"
+            (click)="context.$implicit.complete()"
+        >
+            Отменить
+        </button>
+        <button
+            tuiButton
+            type="submit"
+        >
+            Сохранить
+        </button>
+    </footer>
+</form>

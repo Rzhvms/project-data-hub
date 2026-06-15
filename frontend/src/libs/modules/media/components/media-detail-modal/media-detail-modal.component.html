@@ -1,0 +1,51 @@
+<div class="media-detail-modal">
+    <div class="media-detail-modal__image-wrapper">
+        <img [src]="imageUrl" [alt]="image.title" class="media-detail-modal__image" />
+    </div>
+    <div class="media-detail-modal__meta">
+        <div class="media-detail-modal__field">
+            <span class="media-detail-modal__field-label">ID</span>
+            <span class="media-detail-modal__field-value">{{ image.id }}</span>
+        </div>
+        <div class="media-detail-modal__field">
+            <span class="media-detail-modal__field-label">Название</span>
+            <span class="media-detail-modal__field-value">{{ image.title }}</span>
+        </div>
+        <div class="media-detail-modal__field">
+            <span class="media-detail-modal__field-label">Описание</span>
+            <span class="media-detail-modal__field-value">{{ image.description }}</span>
+        </div>
+        @if (image.alternativeText) {
+            <div class="media-detail-modal__field">
+                <span class="media-detail-modal__field-label">Альтернативный текст</span>
+                <span class="media-detail-modal__field-value">{{ image.alternativeText }}</span>
+            </div>
+        }
+        <div class="media-detail-modal__field">
+            <span class="media-detail-modal__field-label">Использование</span>
+            <div class="media-detail-modal__tags">
+                @if (image.useInSite) {
+                    <span class="media-detail-modal__tag">На сайте</span>
+                }
+                @if (image.useInPresentation) {
+                    <span class="media-detail-modal__tag">В презентации</span>
+                }
+                @if (image.useInPortfolio) {
+                    <span class="media-detail-modal__tag">В портфолио</span>
+                }
+                @if (!image.useInSite && !image.useInPresentation && !image.useInPortfolio) {
+                    <span class="media-detail-modal__tag media-detail-modal__tag_inactive">Не используется</span>
+                }
+            </div>
+        </div>
+        <div class="media-detail-modal__field">
+            <span class="media-detail-modal__field-label">Файл</span>
+            <span class="media-detail-modal__field-value">{{ image.file.name }}</span>
+        </div>
+        <div class="media-detail-modal__actions">
+            <button tuiButton size="m" iconStart="@tui.download" (click)="download(); close()">
+                Скачать
+            </button>
+        </div>
+    </div>
+</div>
