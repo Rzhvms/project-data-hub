@@ -26,8 +26,11 @@
     &__empty {
         display: flex;
         flex-direction: column;
-        padding-left: 1.5rem;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
         gap: 0.5rem;
+        color: var(--tui-text-tertiary);
     }
 
     &__empty-title {

@@ -1,0 +1,18 @@
+<search class="media-page-tool-bar" tuiSearch>
+    <form [formGroup]="model().form">
+        <fieldset tuiTextfieldSize="s">
+            <tui-textfield iconStart="@tui.search">
+                <input
+                    formControlName="search"
+                    placeholder="Поиск по названию, описанию"
+                    tuiInput
+                />
+            </tui-textfield>
+            <tui-filter
+                formControlName="usageFilter"
+                size="s"
+                [items]="model().usageFilterItems"
+            />
+        </fieldset>
+    </form>
+</search>
