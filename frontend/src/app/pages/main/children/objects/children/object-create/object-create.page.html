@@ -19,6 +19,7 @@
                 tuiButton
                 size="m"
                 iconStart="@tui.save"
+                [loading]="isSavingDraft()"
                 (click)="saveAsDraft()"
             >
                 Сохранить
@@ -27,6 +28,7 @@
                 tuiButton
                 size="m"
                 iconStart="@tui.cloud-upload"
+                [loading]="isPublishing()"
                 (click)="publish()"
             >
                 Опубликовать

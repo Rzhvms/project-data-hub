@@ -35,6 +35,8 @@
                             iconStart="@tui.cloud-upload"
                             type="button"
                             appearance="primary"
+                            [loading]="isPublishing()"
+                            (click)="publish()"
                         >
                             Опубликовать
                         </button>
@@ -44,6 +46,8 @@
                         iconStart="@tui.archive"
                         type="button"
                         appearance="primary-destructive"
+                        [loading]="isArchiving()"
+                        (click)="archive()"
                     >
                         Архивировать
                     </button>
@@ -53,6 +57,8 @@
                         iconStart="@tui.archive-restore"
                         type="button"
                         appearance="primary"
+                        [loading]="isRestoring()"
+                        (click)="restore()"
                     >
                         Вернуть из архива
                     </button>
@@ -75,6 +81,8 @@
                     iconStart="@tui.file-chart-pie"
                     type="button"
                     appearance="primary"
+                    [loading]="isExportingPptx()"
+                    (click)="exportTo('pptx')"
                 >
                     Выгрузить в PPTX
                 </button>
@@ -83,6 +91,8 @@
                     iconStart="@tui.file-text"
                     type="button"
                     appearance="primary"
+                    [loading]="isExportingDocx()"
+                    (click)="exportTo('docx')"
                 >
                     Выгрузить в DOCX
                 </button>
@@ -90,4 +100,3 @@
         </ng-template>
     </button>
 </div>
-

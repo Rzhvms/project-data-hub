@@ -1,4 +1,8 @@
-@if (object(); as obj) {
+@if (isLoading()) {
+    <div class="object-view-page__loader">
+        Загрузка...
+    </div>
+} @else if (object(); as obj) {
     <div class="object-view-page">
         <header class="object-view-page__header">
             <div class="object-view-page__header-title-wrapper">
@@ -29,6 +33,7 @@
                         tuiButton
                         size="m"
                         iconStart="@tui.archive-restore"
+                        [loading]="isRestoring()"
                         (click)="returnFromArchive()"
                     >
                         Вернуть из архива
@@ -51,6 +56,7 @@
                         iconStart="@tui.archive"
                         type="button"
                         appearance="primary-destructive"
+                        [loading]="isArchiving()"
                         (click)="archivate()"
                     >
                         Архивировать
@@ -422,5 +428,9 @@
                 }
             }
         </div>
+    </div>
+} @else {
+    <div class="object-view-page__loader">
+        Объект не найден
     </div>
 }

@@ -46,6 +46,16 @@
             <button tuiButton size="m" iconStart="@tui.download" (click)="download(); close()">
                 Скачать
             </button>
+            <button
+                tuiButton
+                size="m"
+                iconStart="@tui.trash"
+                appearance="primary-destructive"
+                [loading]="isDeleting()"
+                (click)="delete()"
+            >
+                Удалить
+            </button>
         </div>
     </div>
 </div>

@@ -35,6 +35,7 @@ export class ObjectsPageComponent {
     constructor() {
         this.setObjectList();
         this.initFilters();
+        this.initChanges();
     }
 
     protected redirectToCreate(): void {
@@ -51,9 +52,15 @@ export class ObjectsPageComponent {
                 catchError(() => of([]))
             )
             .subscribe((objectList) => {
-                this.objectList.set(objectList);
-                this.filteredObjectList.set(objectList);
+                this.objectList.set([...objectList]);
+                this.filteredObjectList.set([...objectList]);
             });
+    }
+
+    private initChanges(): void {
+        this._requestService.changes$
+            .pipe(takeUntilDestroyed(this._destroyRef))
+            .subscribe(() => this.setObjectList());
     }
 
     private initFilters(): void {

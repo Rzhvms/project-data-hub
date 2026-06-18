@@ -1,3 +1,105 @@
 <div class="wp-settings-page">
+    <header class="wp-settings-page__header">
+        <h1>Подключение к WordPress</h1>
+    </header>
 
+    <div class="wp-settings-page__content">
+        @if (!isConnected()) {
+            <section class="wp-settings-page__card">
+                <h2 class="wp-settings-page__card-title">Параметры подключения</h2>
+
+                <form [formGroup]="form" class="wp-settings-page__form">
+                    <label tuiLabel>
+                        Адрес сайта
+                        <tui-textfield tuiTextfieldSize="m">
+                            <input
+                                tuiInput
+                                formControlName="siteUrl"
+                                placeholder="https://example.com"
+                            />
+                        </tui-textfield>
+                        <tui-error [formControl]="form.controls.siteUrl" />
+                    </label>
+
+                    <label tuiLabel>
+                        Имя пользователя
+                        <tui-textfield tuiTextfieldSize="m">
+                            <input
+                                tuiInput
+                                formControlName="username"
+                                placeholder="admin"
+                            />
+                        </tui-textfield>
+                        <tui-error [formControl]="form.controls.username" />
+                    </label>
+
+                    <label tuiLabel>
+                        Пароль приложения
+                        <tui-textfield tuiTextfieldSize="m">
+                            <input
+                                tuiInput
+                                type="password"
+                                formControlName="applicationPassword"
+                                placeholder="xxxx xxxx xxxx xxxx xxxx xxxx"
+                            />
+                        </tui-textfield>
+                        <tui-error [formControl]="form.controls.applicationPassword" />
+                    </label>
+
+                    <div class="wp-settings-page__actions">
+                        <button
+                            tuiButton
+                            size="m"
+                            appearance="outline"
+                            [loading]="isTesting()"
+                            (click)="testConnection()"
+                        >
+                            Подключиться
+                        </button>
+                    </div>
+                </form>
+            </section>
+        }
+
+        @if (connectionStatus(); as status) {
+            <section class="wp-settings-page__card">
+                <h2 class="wp-settings-page__card-title">Статус подключения</h2>
+
+                <div class="wp-settings-page__status">
+                    <div
+                        class="wp-settings-page__status-icon"
+                        [class.wp-settings-page__status-icon_success]="status.success"
+                        [class.wp-settings-page__status-icon_error]="!status.success"
+                    >
+                        {{ status.success ? '✓' : '✗' }}
+                    </div>
+                    <div class="wp-settings-page__status-info">
+                        <span class="wp-settings-page__status-message">{{ status.message }}</span>
+                        @if (status.success) {
+                            <span class="wp-settings-page__status-detail">
+                                Сайт: {{ connectedUrl() }} (v{{ status.wpVersion }})
+                            </span>
+                            <span class="wp-settings-page__status-detail">
+                                Пользователь: {{ status.userDisplayName }}
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                @if (status.success) {
+                    <div class="wp-settings-page__actions">
+                        <button
+                            tuiButton
+                            size="m"
+                            appearance="outline-destructive"
+                            [loading]="isDisconnecting()"
+                            (click)="disconnect()"
+                        >
+                            Отключиться
+                        </button>
+                    </div>
+                }
+            </section>
+        }
+    </div>
 </div>
