@@ -1,0 +1,156 @@
+.wp-settings-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    &__header {
+        padding: 1.5rem;
+        padding-top: 1rem;
+    }
+
+    &__content {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 0 1.5rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--tui-border-normal) transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--tui-border-normal);
+            border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: var(--tui-text-secondary);
+        }
+    }
+
+    &__card {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        border: 1px solid var(--tui-border-normal);
+        border-radius: var(--tui-radius-l);
+        padding: 1.5rem;
+        background: var(--tui-background-elevation-1);
+    }
+
+    &__card-title {
+        font: var(--tui-typography-heading-h5);
+        margin: 0;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 0.75rem;
+        padding-top: 0.5rem;
+    }
+
+    &__status {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    &__status-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        flex-shrink: 0;
+
+        &_success {
+            background: var(--tui-background-positive);
+            color: var(--tui-text-positive);
+        }
+
+        &_error {
+            background: var(--tui-background-negative);
+            color: var(--tui-text-negative);
+        }
+    }
+
+    &__status-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__status-message {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    &__status-detail {
+        font-size: 0.85rem;
+        color: var(--tui-text-secondary);
+    }
+
+    &__sync-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    &__sync-info {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--tui-border-normal);
+    }
+
+    &__sync-label {
+        color: var(--tui-text-secondary);
+    }
+
+    &__sync-value {
+        font-weight: 500;
+    }
+
+    &__sync-stats {
+        display: flex;
+        gap: 2rem;
+    }
+
+    &__sync-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+    }
+
+    &__sync-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--tui-text-positive);
+    }
+
+    &__sync-stat-label {
+        font-size: 0.8rem;
+        color: var(--tui-text-secondary);
+    }
+}
