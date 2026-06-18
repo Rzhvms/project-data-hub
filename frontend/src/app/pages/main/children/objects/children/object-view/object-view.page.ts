@@ -12,8 +12,8 @@ import {
 } from '@project-data-hub/modules/objects';
 import { AppRoute, createOptionLabelMap } from '@project-data-hub/shared';
 import { TuiButton } from '@taiga-ui/core';
-import { TuiAccordion, TuiBadge, TuiStatus, TuiTabs } from '@taiga-ui/kit';
-import { take, tap } from 'rxjs';
+import { TuiAccordion, TuiBadge, TuiButtonLoading, TuiStatus, TuiTabs } from '@taiga-ui/kit';
+import { delay, switchMap, take, tap } from 'rxjs';
 
 import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
 
@@ -23,6 +23,7 @@ import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TuiButton,
+        TuiButtonLoading,
         TuiBadge,
         TuiStatus,
         TuiTabs,
@@ -31,7 +32,10 @@ import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
 })
 export class ObjectViewPageComponent extends ObjectChildBasePageComponent implements OnDestroy {
     protected readonly object: WritableSignal<IObject | null> = signal(null);
+    protected readonly isLoading: WritableSignal<boolean> = signal(true);
     protected readonly activeTabIndex: WritableSignal<number> = signal(0);
+    protected readonly isArchiving: WritableSignal<boolean> = signal(false);
+    protected readonly isRestoring: WritableSignal<boolean> = signal(false);
 
     protected readonly objectTypeLabels: Record<ObjectType, string> = createOptionLabelMap(OBJECT_TYPE_OPTIONS);
     protected readonly objectStageLabels: Record<ObjectStage, string> = createOptionLabelMap(OBJECT_STAGE_OPTIONS);
@@ -46,12 +50,16 @@ export class ObjectViewPageComponent extends ObjectChildBasePageComponent implem
         super();
 
         if (!this._objectId) {
+            this.isLoading.set(false);
             return;
         }
 
         this.requestService.getObjectById(this._objectId)
             .pipe(
-                tap((value) => this.object.set(value)),
+                tap((value) => {
+                    this.object.set(value);
+                    this.isLoading.set(false);
+                }),
                 take(1),
             )
             .subscribe();
@@ -70,11 +78,31 @@ export class ObjectViewPageComponent extends ObjectChildBasePageComponent implem
     }
 
     protected archivate(): void {
-        console.log(this._objectId);
+        this.isArchiving.set(true);
+
+        this.requestService.changeObjectStatus(this._objectId!, 'archived').pipe(
+            delay(600),
+            switchMap(() => this.requestService.getObjectById(this._objectId!)),
+            take(1),
+            tap((obj) => {
+                this.object.set(obj);
+                this.isArchiving.set(false);
+            }),
+        ).subscribe();
     }
 
     protected returnFromArchive(): void {
-        console.log(this._objectId);
+        this.isRestoring.set(true);
+
+        this.requestService.changeObjectStatus(this._objectId!, 'draft').pipe(
+            delay(600),
+            switchMap(() => this.requestService.getObjectById(this._objectId!)),
+            take(1),
+            tap((obj) => {
+                this.object.set(obj);
+                this.isRestoring.set(false);
+            }),
+        ).subscribe();
     }
 
     protected formatValue(value: unknown): string {

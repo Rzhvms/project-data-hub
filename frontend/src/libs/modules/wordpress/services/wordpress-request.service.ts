@@ -4,6 +4,15 @@ import { delay } from 'rxjs/operators';
 
 import { IConnectionTestResult, ISyncStatus, IWordpressSettings } from '../types/wordpress-connection.type';
 
+const LS_KEY = 'data-hub-mock:wordpress-settings';
+const LS_CONNECTION_KEY = 'data-hub-mock:wordpress-connection';
+
+interface PersistedConnection {
+    isConnected: boolean;
+    connectionStatus: IConnectionTestResult;
+    connectedUrl: string;
+}
+
 @Injectable()
 export class WordpressRequestService {
     private _settings: IWordpressSettings | null = null;
@@ -16,12 +25,47 @@ export class WordpressRequestService {
         isSyncing: false,
     };
 
+    constructor() {
+        const saved: string | null = localStorage.getItem(LS_KEY);
+
+        if (saved) {
+            try {
+                this._settings = JSON.parse(saved) as IWordpressSettings;
+            } catch {
+                /* ignore */
+            }
+        }
+    }
+
     public getSettings(): IWordpressSettings | null {
         return this._settings;
     }
 
+    public getPersistedConnection(): PersistedConnection | null {
+        const raw = localStorage.getItem(LS_CONNECTION_KEY);
+
+        if (raw) {
+            try {
+                return JSON.parse(raw) as PersistedConnection;
+            } catch {
+                /* ignore */
+            }
+        }
+
+        return null;
+    }
+
+    public persistConnection(state: PersistedConnection): void {
+        localStorage.setItem(LS_CONNECTION_KEY, JSON.stringify(state));
+    }
+
+    public clearPersistedConnection(): void {
+        localStorage.removeItem(LS_CONNECTION_KEY);
+    }
+
     public testConnection(settings: IWordpressSettings): Observable<IConnectionTestResult> {
         this._settings = settings;
+        localStorage.setItem(LS_KEY, JSON.stringify(settings));
 
         const result: IConnectionTestResult = {
             success: true,
@@ -31,6 +75,8 @@ export class WordpressRequestService {
             userId: 1,
             userDisplayName: settings.username,
         };
+
+        this._connectionStatus = result;
 
         return of(result).pipe(delay(1200));
     }

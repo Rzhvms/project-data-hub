@@ -30,7 +30,6 @@ import { MediaPageToolBarViewModel } from './components/media-page-tool-bar/view
         style: 'display: block; height: 100%;',
     },
     imports: [TuiButton, MediaPageToolBarComponent],
-    providers: [MediaRequestService],
 })
 export class MediaPageComponent implements OnDestroy {
     protected readonly images: WritableSignal<MediaImage[]> = signal([]);
@@ -45,23 +44,27 @@ export class MediaPageComponent implements OnDestroy {
     private readonly _objectUrls: Map<string, string> = new Map<string, string>();
 
     constructor() {
-        this._requestService
-            .getMediaImages()
-            .pipe(take(1))
-            .subscribe((images: MediaImage[]) => {
-                this.images.set(images);
-                this.filteredImages.set(images);
-            });
-
+        this.loadMedia();
         this.initFilters();
+        this.initChanges();
     }
 
-    public ngOnDestroy(): void {
+        public ngOnDestroy(): void {
         for (const url of this._objectUrls.values()) {
             URL.revokeObjectURL(url);
         }
 
         this._objectUrls.clear();
+    }
+
+    protected loadMedia(): void {
+        this._requestService
+            .getMediaImages()
+            .pipe(take(1))
+            .subscribe((images: MediaImage[]) => {
+                this.images.set([...images]);
+                this.filteredImages.set([...images]);
+            });
     }
 
     protected getImageUrl(file: File): string {
@@ -103,7 +106,9 @@ export class MediaPageComponent implements OnDestroy {
                 .pipe(take(1))
                 .subscribe((result: MediaImage | undefined) => {
                     if (result) {
-                        this.images.update((list: MediaImage[]) => [result, ...list]);
+                        this._requestService.uploadMedia(result.file, result)
+                            .pipe(take(1))
+                            .subscribe();
                     }
                 });
         });
@@ -111,6 +116,12 @@ export class MediaPageComponent implements OnDestroy {
 
     protected trackById(index: number, image: MediaImage): string {
         return image.id;
+    }
+
+    private initChanges(): void {
+        this._requestService.changes$
+            .pipe(takeUntilDestroyed(this._destroyRef))
+            .subscribe(() => this.loadMedia());
     }
 
     private initFilters(): void {

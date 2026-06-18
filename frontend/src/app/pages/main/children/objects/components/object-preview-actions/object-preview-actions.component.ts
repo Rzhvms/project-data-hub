@@ -22,6 +22,9 @@ export class ObjectPreviewActionsComponent {
 
     protected readonly isExportingPptx: WritableSignal<boolean> = signal(false);
     protected readonly isExportingDocx: WritableSignal<boolean> = signal(false);
+    protected readonly isPublishing: WritableSignal<boolean> = signal(false);
+    protected readonly isArchiving: WritableSignal<boolean> = signal(false);
+    protected readonly isRestoring: WritableSignal<boolean> = signal(false);
 
     private readonly _router: Router = inject(Router);
     private readonly _requestService: ObjectsRequestService = inject(ObjectsRequestService);
@@ -32,6 +35,36 @@ export class ObjectPreviewActionsComponent {
             childPath,
             this.object().id
         ]);
+    }
+
+    protected publish(): void {
+        this.isPublishing.set(true);
+
+        this._requestService.changeObjectStatus(this.object().id, 'published').pipe(
+            delay(600),
+            take(1),
+            tap(() => this.isPublishing.set(false)),
+        ).subscribe();
+    }
+
+    protected archive(): void {
+        this.isArchiving.set(true);
+
+        this._requestService.changeObjectStatus(this.object().id, 'archived').pipe(
+            delay(600),
+            take(1),
+            tap(() => this.isArchiving.set(false)),
+        ).subscribe();
+    }
+
+    protected restore(): void {
+        this.isRestoring.set(true);
+
+        this._requestService.changeObjectStatus(this.object().id, 'draft').pipe(
+            delay(600),
+            take(1),
+            tap(() => this.isRestoring.set(false)),
+        ).subscribe();
     }
 
     protected exportTo(format: 'pptx' | 'docx'): void {

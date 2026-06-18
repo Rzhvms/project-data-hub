@@ -50,6 +50,22 @@ export class WPSettingsPageComponent {
 
     private readonly _requestService: WordpressRequestService = inject(WordpressRequestService);
 
+    constructor() {
+        const saved = this._requestService.getSettings();
+
+        if (saved) {
+            this.form.patchValue(saved);
+        }
+
+        const persistedConnection = this._requestService.getPersistedConnection();
+
+        if (persistedConnection) {
+            this.isConnected.set(persistedConnection.isConnected);
+            this.connectionStatus.set(persistedConnection.connectionStatus);
+            this.connectedUrl.set(persistedConnection.connectedUrl);
+        }
+    }
+
     protected disconnect(): void {
         this.isDisconnecting.set(true);
 
@@ -58,6 +74,7 @@ export class WPSettingsPageComponent {
             this.connectionStatus.set(null);
             this.connectedUrl.set('');
             this.form.reset();
+            this._requestService.clearPersistedConnection();
             this.isDisconnecting.set(false);
         }, 800);
     }
@@ -86,6 +103,11 @@ export class WPSettingsPageComponent {
 
                 if (result.success) {
                     this.isConnected.set(true);
+                    this._requestService.persistConnection({
+                        isConnected: true,
+                        connectionStatus: result,
+                        connectedUrl: settings.siteUrl,
+                    });
                 }
             });
     }

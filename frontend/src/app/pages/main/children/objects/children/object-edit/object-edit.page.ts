@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IObjectFormValue, ObjectFormComponent } from '@project-data-hub/modules/objects';
+import { IObject, IObjectFormValue, ObjectFormComponent } from '@project-data-hub/modules/objects';
+import { AppRoute } from '@project-data-hub/shared';
 import { TuiButton } from '@taiga-ui/core';
-import { take, tap } from 'rxjs';
+import { TuiButtonLoading } from '@taiga-ui/kit';
+import { delay, switchMap, take, tap } from 'rxjs';
 
 import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
 
@@ -12,11 +14,15 @@ import { ObjectChildBasePageComponent } from '../base/object-child.base.page';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TuiButton,
+        TuiButtonLoading,
         ObjectFormComponent
     ]
 })
 export class ObjectEditPageComponent extends ObjectChildBasePageComponent {
     private readonly _objectId: string | undefined = inject(ActivatedRoute).snapshot.params['objectId']
+
+    protected readonly isSavingDraft: WritableSignal<boolean> = signal(false);
+    protected readonly isPublishing: WritableSignal<boolean> = signal(false);
 
     constructor() {
         super();
@@ -33,9 +39,15 @@ export class ObjectEditPageComponent extends ObjectChildBasePageComponent {
     }
 
     protected saveAsDraft(): void {
-            const value: Partial<IObjectFormValue> = this.formViewModel.fromModelToDraft();
-            console.log(value);
-        }
+        const value: Partial<IObjectFormValue> = this.formViewModel.fromModelToDraft();
+        this.isSavingDraft.set(true);
+
+        this.requestService.updateObject(this._objectId!, value).pipe(
+            delay(600),
+            take(1),
+            tap(() => this.isSavingDraft.set(false)),
+        ).subscribe();
+    }
 
     protected publish(): void {
         const invalidStep: number | null = this.formViewModel.validateAllAndGetFirstInvalidStep();
@@ -44,7 +56,19 @@ export class ObjectEditPageComponent extends ObjectChildBasePageComponent {
 
             return;
         }
+
         const value: IObjectFormValue = this.formViewModel.fromModel();
-        console.log(value);
+        this.isPublishing.set(true);
+
+        this.requestService.updateObject(this._objectId!, value, 'published').pipe(
+            delay(600),
+            take(1),
+            tap((obj: IObject | null) => {
+                this.isPublishing.set(false);
+                if (obj) {
+                    this.router.navigate([AppRoute.ObjectsPage, 'view', obj.id]);
+                }
+            }),
+        ).subscribe();
     }
 }
