@@ -119,4 +119,8 @@ export class ObjectsRequestService {
     private extractFileName(url: string): string {
         return url.split('/').pop() ?? 'image';
     }
+
+    public exportFile(id: string, format: 'pptx' | 'docx'): Observable<Blob> {
+        return this._http.get(`/mocks/mock-files/${id}.${format}`, { responseType: 'blob' });
+    }
 }

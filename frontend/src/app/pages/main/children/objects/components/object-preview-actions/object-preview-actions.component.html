@@ -75,6 +75,8 @@
                     iconStart="@tui.file-chart-pie"
                     type="button"
                     appearance="primary"
+                    [loading]="isExportingPptx()"
+                    (click)="exportTo('pptx')"
                 >
                     Выгрузить в PPTX
                 </button>
@@ -83,6 +85,8 @@
                     iconStart="@tui.file-text"
                     type="button"
                     appearance="primary"
+                    [loading]="isExportingDocx()"
+                    (click)="exportTo('docx')"
                 >
                     Выгрузить в DOCX
                 </button>
@@ -90,4 +94,3 @@
         </ng-template>
     </button>
 </div>
-
