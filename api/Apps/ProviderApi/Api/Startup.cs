@@ -1,6 +1,7 @@
 using Application;
 using CoreLib.Api.Controllers;
 using CoreLib.Api.Handlers;
+using CoreLib.ApiConnector;
 using CoreLib.Audit;
 using CoreLib.Database;
 using CoreLib.User;
@@ -40,6 +41,7 @@ public sealed class Startup(IWebHostEnvironment env, IConfiguration configuratio
         services.AddCoreControllers();
         services.AddCoreUser();
         services.AddCoreAudit(Configuration);
+        services.AddApiConnectors(Configuration);
         services.AddCoreDatabases();
         
         services

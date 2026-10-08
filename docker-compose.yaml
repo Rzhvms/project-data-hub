@@ -86,6 +86,7 @@ services:
 
       JwtKeys__DirectoryPath: identity-keys
 
+      ApiConnectors__Enabled: ${API_CONNECTORS_ENABLED}
       AuditLogCleanup__RetentionDays: ${AUDIT_LOG_RETENTION_DAYS}
       AuditLogCleanup__CheckIntervalHours: ${AUDIT_LOG_CHECK_INTERVAL_HOURS}
     ports:
@@ -115,6 +116,7 @@ services:
       Minio__SecretKey: ${MINIO_ROOT_PASSWORD}
       Minio__Bucket: ${MINIO_BUCKET}
 
+      ApiConnectors__Enabled: ${API_CONNECTORS_ENABLED}
       AuditLogCleanup__RetentionDays: ${AUDIT_LOG_RETENTION_DAYS}
       AuditLogCleanup__CheckIntervalHours: ${AUDIT_LOG_CHECK_INTERVAL_HOURS}
     ports:

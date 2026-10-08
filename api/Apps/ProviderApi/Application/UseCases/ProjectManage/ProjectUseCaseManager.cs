@@ -5,6 +5,7 @@ using Application.Ports.Repositories;
 using Application.UseCases.ProjectManage.Dto.Request;
 using Application.UseCases.ProjectManage.Dto.Response;
 using Application.UseCases.ProjectManage.Interfaces;
+using CoreLib.ApiConnector;
 using CoreLib.Audit;
 using CoreLib.Exceptions;
 using CoreLib.User;
@@ -18,7 +19,8 @@ internal class ProjectUseCaseManager(
     ICategoryRepository categoryRepository,
     IParticipantRepository participantRepository,
     IAuditService auditService,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IApiConnectorService apiConnector)
     : IProjectUseCaseManager
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -148,6 +150,8 @@ internal class ProjectUseCaseManager(
 
             transaction.Commit();
             await auditService.LogAsync("PublishProject", "Project", request.ProjectId, currentUser.UserId, currentUser.UserName, $"Опубликован проект {request.ProjectId}");
+
+            await NotifyConnectorsAsync("PublishProject", new { draftData.ProjectId, draftData.Title, draftData.ShortDescription });
         }
         catch
         {
@@ -263,6 +267,21 @@ internal class ProjectUseCaseManager(
             },
             _ => new ProjectDraftData()
         };
+    }
+
+    /// <summary>
+    /// Отправляет уведомление через коннектор
+    /// </summary>
+    private async Task NotifyConnectorsAsync(string action, object data)
+    {
+        try
+        {
+            await apiConnector.SendAsync(action, data);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ApiConnector] {action} failed: {ex.Message}");
+        }
     }
 
     /// <summary>

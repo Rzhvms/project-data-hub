@@ -1,8 +1,10 @@
 using System.Data;
 using Application.Ports.Repositories;
 using Application.Ports.Storages;
+using CoreLib.ApiConnector;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
+using Infrastructure.Repositories.ApiConnector;
 using Infrastructure.Repositories.Categories;
 using Infrastructure.Repositories.Participants;
 using Infrastructure.Repositories.Project;
@@ -43,6 +45,7 @@ public static class InfrastructureStartUp
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IProjectMetricsRepository, ProjectMetricsRepository>();
         services.AddScoped<IImageRepository, ProjectImageRepository>();
+        services.AddScoped<IApiConnectorConfigRepository, ApiConnectorConfigRepository>();
         
         services.AddScoped<IMinioFileReader, MinioFileReader>(); 
     }
